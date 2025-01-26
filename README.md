@@ -78,12 +78,21 @@ Start-WimWitch
 
 ## 🎯 Quick Start
 
+<div align="center">
+
 ```mermaid
+%%{init: { 'sequence': {'showSequenceNumbers': false}, 'theme':'default', 'flowchart': {'htmlLabels': true}, 'themeCSS': '.node rect { cursor: default !important; }' } }%%
 graph LR
-    A[Install Module] --> B[Import Module]
-    B --> C[Start WimWitch]
-    C --> D[Customize Image]
+    A["💿 Install<br><i>Module</i>"]:::step --> B["📥 Import<br><i>Module</i>"]:::step
+    B --> C["🧙‍♂️ Start<br><i>WimWitch</i>"]:::step
+    C --> D["✨ Customize<br><i>Image</i>"]:::final
+    
+    classDef step fill:#f8f9fa,stroke:#4a5568,stroke-width:2px,color:#2d3748,rx:8,ry:8
+    classDef final fill:#ebf8ff,stroke:#3182ce,stroke-width:2px,color:#2c5282,rx:8,ry:8
+    linkStyle default stroke:#4a5568,stroke-width:2px,stroke-dasharray: 5 5
 ```
+
+</div>
 
 ## 🛠️ Building from Source
 
@@ -124,5 +133,4 @@ Mickaël CHAVE
 <div align="center">
 
 **WimWitch-Reloaded** - _Keeping the magic alive_ ✨
-
 </div>
