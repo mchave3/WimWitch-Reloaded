@@ -5,67 +5,6 @@
 # Functions for Controls
 #===========================================================================
 
-#Function for injecting drivers into the mounted WIM
-Function Start-DriverInjection($Folder) {
-    #This filters out invalid paths, such as the default value
-    $testpath = Test-Path $folder -PathType Container
-    If ($testpath -eq $false) { return }
-
-    If ($testpath -eq $true) {
-
-        Update-Log -data "Applying drivers from $folder" -class Information
-
-        Get-ChildItem $Folder -Recurse -Filter '*inf' | ForEach-Object { Install-Driver $_.FullName }
-        Update-Log -Data "Completed driver injection from $folder" -Class Information
-    }
-}
-
-#Function to retrieve OSDUpdate Version
-Function Get-OSDBInstallation {
-    Update-Log -Data 'Getting OSD Installation information' -Class Information
-    try {
-        Import-Module -Name OSDUpdate -ErrorAction Stop
-    } catch {
-        $WPFUpdatesOSDBVersion.Text = 'Not Installed.'
-        Update-Log -Data 'OSD Update is not installed.' -Class Warning
-        Return
-    }
-    try {
-        $OSDBVersion = Get-Module -Name OSDUpdate -ErrorAction Stop
-        $WPFUpdatesOSDBVersion.Text = $OSDBVersion.Version
-        $text = $osdbversion.version
-        Update-Log -data "Installed version of OSD Update is $text." -Class Information
-        Return
-    } catch {
-        Update-Log -Data 'Unable to fetch OSD Update version.' -Class Error
-        Return
-    }
-}
-
-# Function to retrieve OSDSUS Version
-
-Function Get-OSDSUSInstallation {
-    Update-Log -Data 'Getting OSDSUS Installation information' -Class 'Information'
-    try {
-        Import-Module -Name OSDSUS -ErrorAction Stop
-    } catch {
-        $WPFUpdatesOSDSUSVersion.Text = 'Not Installed'
-
-        Update-Log -Data 'OSDSUS is not installed.' -Class Warning
-        Return
-    }
-    try {
-        $OSDSUSVersion = Get-Module -Name OSDSUS -ErrorAction Stop
-        $WPFUpdatesOSDSUSVersion.Text = $OSDSUSVersion.Version
-        $text = $osdsusversion.version
-        Update-Log -data "Installed version of OSDSUS is $text." -Class Information
-        Return
-    } catch {
-        Update-Log -Data 'Unable to fetch OSDSUS version.' -Class Error
-        Return
-    }
-}
-
 #Function to retrieve current OSDUpdate Version
 Function Get-OSDBCurrentVer {
     Update-Log -Data 'Checking for the most current OSDUpdate version available' -Class Information
