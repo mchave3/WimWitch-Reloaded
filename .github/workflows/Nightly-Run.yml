@@ -15,3 +15,6 @@ jobs:
     uses: PSModule/Process-PSModule/.github/workflows/CI.yml@main
     secrets:
       APIKey: ${{ secrets.APIKEY }}
+    with:
+      Name: WimWitch-Reloaded
+      Path: WimWitch-Reloaded/WimWitch-Reloaded

@@ -20,5 +20,6 @@ jobs:
     secrets:
       APIKey: ${{ secrets.APIKEY }}
     with:
-      Prerelease: false
+      Name: WimWitch-Reloaded
       Path: WimWitch-Reloaded/WimWitch-Reloaded
+      Prerelease: false
