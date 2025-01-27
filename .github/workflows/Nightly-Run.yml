@@ -18,4 +18,4 @@ jobs:
     with:
       Name: WimWitch-Reloaded
       Path: WimWitch-Reloaded/WimWitch-Reloaded
-      SkipTests: All
+      SkipTests: SourceCode
