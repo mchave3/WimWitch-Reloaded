@@ -27,7 +27,7 @@ Author = 'Mickaël CHAVE'
 CompanyName = 'Unknown'
 
 # Copyright statement for this module
-# Copyright = '(c) Mickaël CHAVE. All rights reserved.'
+Copyright = '(c) Mickaël CHAVE. All rights reserved.'
 
 # Description of the functionality provided by this module
 # Description = ''
