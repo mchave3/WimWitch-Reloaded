@@ -26,7 +26,8 @@ permissions:
 jobs:
   Process-PSModule:
     uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@v2
-    secrets: inherit
+    secrets: 
+      APIKey: ${{ secrets.APIKEY }}
     with:
       Prerelease: true
       Path: WimWitch-Reloaded/WimWitch-Reloaded
