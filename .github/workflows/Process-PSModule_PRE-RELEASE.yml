@@ -25,7 +25,7 @@ permissions:
 
 jobs:
   Process-PSModule:
-    uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@main
+    uses: mchave3/Process-PSModule/.github/workflows/workflow.yml@main
     secrets:
       APIKey: ${{ secrets.APIKEY }}
     with:
