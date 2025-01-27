@@ -23,4 +23,4 @@ jobs:
       Name: WimWitch-Reloaded
       Path: WimWitch-Reloaded/WimWitch-Reloaded
       Prerelease: false
-      SkipTests: Module
+      SkipTests: SourceCode
