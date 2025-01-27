@@ -1,4 +1,4 @@
-name: Process-PSModule
+name: Process-PSModule_RELEASE
 
 on:
   pull_request:
