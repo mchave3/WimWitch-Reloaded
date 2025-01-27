@@ -1,6 +1,15 @@
-name: Process-PSModule_RELEASE
+name: Process-PSModule_PRE-RELEASE
 
 on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+      - opened
+      - reopened
+      - synchronize
+      - labeled
   workflow_dispatch:
 
 concurrency:
@@ -16,5 +25,5 @@ jobs:
     uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@v2
     secrets: inherit
     with:
-      Prerelease: false
+      Prerelease: true
       Path: WimWitch-Reloaded/WimWitch-Reloaded
