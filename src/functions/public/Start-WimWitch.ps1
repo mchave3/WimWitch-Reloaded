@@ -1,7 +1,7 @@
 Function Start-WimWitch {
 
 
-    #Requires -Version 5.0
+    #Requires -Version 5.1
     #Requires -Modules OSDSUS, OSDUpdate
     #-- Requires -ShellId <ShellId>
     # Requires -RunAsAdministrator
