@@ -3,4 +3,5 @@
 @{
     Author = 'Mickaël CHAVE'
     CompanyName = 'Mickaël CHAVE'
+    PowerShellVersion = '5.1'
 }
