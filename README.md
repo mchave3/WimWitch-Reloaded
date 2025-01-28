@@ -2,10 +2,10 @@
 
 <div align="center">
 
-[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/WimWitch-Reloaded?style=flat-square&label=Release)](https://www.powershellgallery.com/packages/WimWitch-Reloaded)
-[![PowerShell Gallery Pre-Release Version](https://img.shields.io/powershellgallery/v/WimWitch-Reloaded?style=flat-square&label=Pre-release&include_prereleases)](https://www.powershellgallery.com/packages/WimWitch-Reloaded)
-[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/WimWitch-Reloaded?style=flat-square)](https://www.powershellgallery.com/packages/WimWitch-Reloaded)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/WimWitch-Reloaded?style=flat-square&label=Release&color=blue)](https://www.powershellgallery.com/packages/WimWitch-Reloaded)
+[![GitHub Pre-Release](https://img.shields.io/github/v/release/mchave3/WimWitch-Reloaded?include_prereleases&style=flat-square&label=Pre-Release&color=orange)](https://github.com/mchave3/WimWitch-Reloaded/releases)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/WimWitch-Reloaded?style=flat-square&color=green)](https://www.powershellgallery.com/packages/WimWitch-Reloaded)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
 </div>
 
