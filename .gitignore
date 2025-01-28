@@ -1,7 +1,13 @@
-Thumbs.db
-Desktop.ini
+# VS Code files for those working on multiple tools
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
 
-artifacts
-artifacts/*
-PSTestReport
-PSTestReport/*
+# Local History for Visual Studio Code
+.history/*
+
+# PSModule framework outputs folder
+outputs/*
