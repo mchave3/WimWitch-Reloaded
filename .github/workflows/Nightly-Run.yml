@@ -17,3 +17,4 @@ jobs:
       APIKey: ${{ secrets.APIKEY }}
     with:
       SkipTests: SourceCode
+      PublishDocs: false
