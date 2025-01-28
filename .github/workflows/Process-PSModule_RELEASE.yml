@@ -1,0 +1,26 @@
+name: Process-PSModule_RELEASE
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  statuses: write
+  pages: write
+  id-token: write
+
+jobs:
+  Process-PSModule:
+    uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@v3
+    secrets:
+      APIKey: ${{ secrets.APIKEY }}
+    with:
+      Name: WimWitch-Reloaded
+      Path: WimWitch-Reloaded/WimWitch-Reloaded
+      Prerelease: false
+      SkipTests: SourceCode
