@@ -4,12 +4,9 @@ on:
   pull_request:
     branches:
       - main
+      - beta
     types:
       - closed
-      - opened
-      - reopened
-      - synchronize
-      - labeled
   workflow_dispatch:
 
 concurrency:
@@ -25,6 +22,7 @@ permissions:
 
 jobs:
   Process-PSModule:
+    if: github.event.pull_request.merged == true
     uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@main
     secrets:
       APIKey: ${{ secrets.APIKEY }}
