@@ -1,6 +1,6 @@
-name: Nightly Run
+name: 🌙 Nightly Run
 
-run-name: "🌙 Nightly Build - Started on ${{ format(github.event.timestamp, 'DD/MM/YYYY HH:mm:ss') }} UTC"
+run-name: "🌙 Nightly Run"
 
 on:
   workflow_dispatch:

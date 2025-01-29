@@ -21,29 +21,6 @@ permissions:
   id-token: write
 
 jobs:
-  debug-info:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
-    steps:
-      - name: Debug workflow information
-        run: |
-          echo "==================== Pull Request Information ===================="
-          echo "PR Status:"
-          echo "  Merged: ${{ github.event.pull_request.merged }}"
-          echo "  Number: ${{ github.event.pull_request.number }}"
-          echo "  Title: ${{ github.event.pull_request.title }}"
-          echo ""
-          echo "Branch Information:"
-          echo "  Base (Target): ${{ github.base_ref }}"
-          echo "  Head (Source): ${{ github.head_ref }}"
-          echo ""
-          echo "Workflow Details:"
-          echo "  Event: ${{ github.event_name }}"
-          echo "  Workflow: ${{ github.workflow }}"
-          echo "  Repository: ${{ github.repository }}"
-          echo "  Actor: ${{ github.actor }}"
-          echo "=========================================================="
-
   Process-PSModule:
     if: github.event.pull_request.merged == true
     uses: PSModule/Process-PSModule/.github/workflows/workflow.yml@main
