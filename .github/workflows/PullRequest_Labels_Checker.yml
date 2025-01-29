@@ -1,7 +1,7 @@
 ---
-    name: 🏭 Verify PR Labels
+    name: 🏷 Verify PR Labels
 
-    run-name: "🏭 Verify PR Labels - [${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}] by @${{ github.actor }}"
+    run-name: "🏷 Verify PR Labels - [${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}] by @${{ github.actor }}"
     
     on:
       pull_request_target:
@@ -12,7 +12,7 @@
         name: 🏭 Verify
         runs-on: ubuntu-latest
         steps:
-          - name: 🏷 Verify PR has a valid label
+          - name: 🏭 Verify PR has a valid label
             uses: jesusvasquez333/verify-pr-label-action@v1.4.0
             with:
               github-token: "${{ secrets.GITHUB_TOKEN }}"
