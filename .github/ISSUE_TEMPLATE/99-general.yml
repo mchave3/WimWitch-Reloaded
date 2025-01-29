@@ -1,0 +1,18 @@
+# For top level: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
+name: ❔ [Other]
+description: 📝 Submit an issue with any other topic
+title: '❔ [Other]: '
+labels: ['Triage']
+# For body: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🙏 Thanks for taking the time to fill out this form! Please provide as much information as possible so we can help you quickly.
+  - type: textarea
+    id: description
+    attributes:
+      label: 💭 Description
+      description: 💭 A clear and concise description.
+    validations:
+      required: true

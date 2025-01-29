@@ -1,0 +1,53 @@
+# For top level: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
+name: 🔍 [Bug Report]
+description: 📝 Submit a bug report
+title: '🔍 [Bug]: '
+labels: ['Bug', 'Triage']
+# For body: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🙏 Thanks for taking the time to fill out this bug report! Please provide as much information as possible so we can help you quickly.
+  - type: textarea
+    id: description
+    attributes:
+      label: 🔎 Describe the bug
+      description: A clear and concise description of what the bug is vs. what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: version
+    attributes:
+      label: ℹ️ Version information
+      description: |
+        What version of the software were you running when encountering the bug?
+        For modules, please provide the outputs of `$PSVersionTable` and `Get-Module -ListAvailable -Name 'ModuleName'`.
+        For actions or workflows, please provide the version of the action or workflow you were using.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: 📝 To reproduce
+      description: Steps to reproduce the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: code-snippet
+    attributes:
+      label: 💻 Code snippet
+      description: Add a code snippet to help us understand what you're trying to do.
+      render: powershell
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: 📋 Relevant output
+      description: |
+        For powershell commands, run the command using `-Debug` and `-Verbose` flags and paste the output here.
+        For actions or workflows, please provide the relevant output or a link to the workflow run.
+      render: Shell
+    validations:
+      required: true

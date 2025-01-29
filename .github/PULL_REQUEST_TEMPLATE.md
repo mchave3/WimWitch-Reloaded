@@ -2,51 +2,32 @@
 
 <!-- Select the type of version change this PR represents -->
 
-- [ ] Major (Breaking changes) - v[X+1].0.0
-- [ ] Minor (New features) - v[X].[Y+1].0
-- [ ] Patch (Bug fixes) - v[X].[Y].[Z+1]
-- [ ] Pre-release - v[X].[Y].[Z]-alpha/beta/rc
+- [ ] Major (v[X+1].0.0) - Breaking changes that require updates to implementation
+- [ ] Minor (v[X].[Y+1].0) - New features that maintain backward compatibility
+- [ ] Patch (v[X].[Y].[Z+1]) - Bug fixes and minor improvements
+- [ ] Pre-release (v[X].[Y].[Z]-alpha/beta/rc) - Development or testing versions
 
 ## Description
 
-<!-- Provide a clear description of the changes -->
+<!-- Provide a clear description of what this PR changes or adds -->
 
-## Type of change
+## Type of Change
 
-- [ ] 🔧 PowerShell Function Update
-- [ ] 📚 Comment-Based Help
-- [ ] 🧪 Pester Tests
-- [ ] 📖 Module Documentation
-- [ ] ⚙️ Module Manifest
-- [ ] 🔒 Security Fix
-- [ ] 🐛 Bug Fix
+- [ ] ✨ Feature (New or enhanced functionality)
+- [ ] 🔧 Bug Fix
+- [ ] 📖 Documentation
+- [ ] 🔄 Other
 
-## Validation
+## Validation Steps
 
-- [ ] Tested in PowerShell 5.1
-- [ ] Tested in PowerShell 7+
-- [ ] Pester tests pass
-- [ ] PSScriptAnalyzer shows no warnings
-- [ ] Help documentation is up-to-date
-- [ ] Module manifest is up-to-date
+- [ ] Code is tested and working (PowerShell 5.1 & 7+)
+- [ ] Documentation updated (if needed)
+- [ ] No breaking changes introduced
 
-## Dependencies
+## Related Issue
 
-- [ ] This PR adds new dependencies
-- [ ] This PR updates existing dependencies
-- [ ] This PR removes dependencies
+Fixes #
 
-## Performance Impact
+## Additional Notes
 
-<!-- Describe any performance impacts this change may have -->
-
-- [ ] This change impacts application performance
-- [ ] Performance tests have been run
-
-## Checklist
-
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have updated the documentation
-- [ ] I have added tests that prove my fix/feature works
-- [ ] My changes generate no new warnings
+<!-- Any additional information that reviewers should know -->

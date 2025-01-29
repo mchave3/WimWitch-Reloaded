@@ -110,11 +110,27 @@ The project includes Pester tests and uses PSScriptAnalyzer for code quality che
 
 ## 👥 Contributing
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+We welcome contributions! Please follow these steps:
+
+1. Review our [Code of Conduct](.github/CODE_OF_CONDUCT.md) and [Contributing Guidelines](.github/CONTRIBUTING.md)
+2. Open an issue or claim an existing one
+3. Fork the repository
+4. Create a branch from `main`
+5. Write tests for your changes
+6. Implement your changes
+7. Open a draft pull request:
+   - Use the PR template
+   - Link the related issue
+   - Review your own changes
+8. Mark as "Ready for review" when complete
+9. Address any review feedback
+
+For detailed guidance, see our [Contributing Guide](.github/CONTRIBUTING.md).
+
+Need help getting started? Check out:
+- [Setting up Git](https://docs.github.com/get-started/quickstart/set-up-git)
+- [GitHub Flow](https://docs.github.com/get-started/quickstart/github-flow)
+- [Working with Pull Requests](https://docs.github.com/github/collaborating-with-pull-requests)
 
 ## 📄 License
 
