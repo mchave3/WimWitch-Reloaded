@@ -1,6 +1,6 @@
-name: Linter
+name: 🔍 Linter
 
-run-name: "Linter - [${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}] by @${{ github.actor }}"
+run-name: "🔍 Linter - [${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}] by @${{ github.actor }}"
 
 on: [pull_request]
 
@@ -15,15 +15,15 @@ permissions:
 
 jobs:
   Lint:
-    name: Lint code base
+    name: 🧹 Lint code base
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: 📥 Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Lint code base
+      - name: 🔎 Lint code base
         uses: super-linter/super-linter@latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
