@@ -1,5 +1,4 @@
 ---
-labels:
 - name: "Major"
   color: "B60205"
   description: "Major changes that impact existing compatibility"
