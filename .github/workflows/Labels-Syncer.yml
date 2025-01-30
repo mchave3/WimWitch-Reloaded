@@ -3,6 +3,10 @@ name: ♻️ Sync labels
 
 run-name: "♻️ Sync labels"
 
+permissions:
+  issues: write
+  contents: read
+
 on:
   workflow_dispatch:
 

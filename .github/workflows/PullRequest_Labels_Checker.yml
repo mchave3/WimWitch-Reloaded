@@ -3,6 +3,10 @@
 
     run-name: "🏷 Verify PR Labels - [${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}] by @${{ github.actor }}"
     
+    permissions:
+      pull-requests: read
+      contents: read
+    
     on:
       pull_request_target:
         types: [opened, labeled, unlabeled, synchronize]
