@@ -3,6 +3,7 @@ name: 🔍 [Bug Report]
 description: 📝 Submit a bug report
 title: '🔍 [Bug]: '
 labels: ['Bug']
+projects: ['WimWitch-Reloaded']
 # For body: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
 body:
   - type: markdown
