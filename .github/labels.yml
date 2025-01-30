@@ -1,6 +1,5 @@
 ---
 labels:
-  # 🔥 Versioning & Releases
   - name: "Major"
     color: "B60205"
     description: "Major changes that impact existing compatibility"
@@ -16,8 +15,6 @@ labels:
   - name: "NoRelease"
     color: "000000"
     description: "Do not include in the release notes"
-
-  # 🐞 Bugs & Fixes
   - name: "Bug"
     color: "d73a4a"
     description: "Something isn't working as expected"
@@ -27,8 +24,6 @@ labels:
   - name: "Security"
     color: "B60205"
     description: "Security-related fixes"
-
-  # 🚀 Features & Enhancements
   - name: "Feature"
     color: "0052cc"
     description: "New feature request or suggestion"
@@ -38,8 +33,6 @@ labels:
   - name: "Performance"
     color: "FBCA04"
     description: "Optimization and performance improvements"
-
-  # 🎯 Workflow & Project Management
   - name: "Triage"
     color: "fbca04"
     description: "Issue needs to be examined by maintainers"
