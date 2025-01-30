@@ -11,7 +11,7 @@
 - name: "Prerelease"
   color: "1D76DB"
   description: "Test version for validation before release"
-- name: "ignore-for-release"
+- name: "NoRelease"
   color: "000000"
   description: "Do not include in the release notes"
 - name: "Bug"
