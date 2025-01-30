@@ -2,7 +2,6 @@
 name: ❔ [Other]
 description: 📝 Submit an issue with any other topic
 title: '❔ [Other]: '
-labels: ['Triage']
 # For body: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
 body:
   - type: markdown

@@ -3,7 +3,7 @@
 name: 🚀 [Feature]
 description: 📝 Suggest/request a new feature
 title: '🚀 [Feature]: '
-labels: ['Feature', 'Triage']
+labels: ['Feature', 'Enhancement']
 body:
   - type: markdown
     attributes:
