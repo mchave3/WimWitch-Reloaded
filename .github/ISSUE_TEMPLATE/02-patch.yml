@@ -3,6 +3,7 @@ name: 🔧 [Patch]
 description: 📝 Submit a request to improve or change something that already exists
 title: '🔧 [Patch]: '
 labels: ['Patch', 'Enhancement']
+projects: ['mchave3/3']
 # For body: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
 body:
   - type: markdown
