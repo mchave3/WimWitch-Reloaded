@@ -57,7 +57,18 @@ Function Start-WimWitch {
 
     )
 
-    $WWScriptVer = '4.0.1'
+    # Retrieve available versions
+    $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } | Sort-Object Version -Descending | Select-Object -First 1
+
+    # Check version and include pre-release if available
+    if ($module) {
+        $WWScriptVer = $module.Version.ToString()
+        if ($module.PrivateData.PSData.PreRelease) {
+            $WWScriptVer += "-$($module.PrivateData.PSData.PreRelease)"
+        }
+    } else {
+        $WWScriptVer = "Version not found"
+    }
 
     #region XAML
     #Your XAML goes here
@@ -69,7 +80,12 @@ Function Start-WimWitch {
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WIM_Witch_Tabbed"
         mc:Ignorable="d"
-        Title="WIM Witch - $WWScriptVer" Height="500" Width="800" Background="#FF610536">
+        Title="WimWitch Reloaded - $WWScriptVer" 
+        Width="800"
+        Height="500"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Normal"
+        ResizeMode="CanMinimize">
     <Grid>
         <TabControl x:Name="TabControl" Margin="-3,-1,3,1" Background="#FFACACAC" BorderBrush="#FF610536" >
             <TabItem Header="Import WIM + .Net" Height="20" MinWidth="100">
