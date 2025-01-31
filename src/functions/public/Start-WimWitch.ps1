@@ -1,5 +1,28 @@
-Function Start-WimWitch {
+<#
+.SYNOPSIS
+    Start the WimWitch-Reloaded GUI
 
+.DESCRIPTION
+    This function is used to start the WimWitch-Reloaded GUI. It will allow you to import WIM files, inject drivers, and more.
+
+.NOTES
+    Name:        Start-WimWitch.ps1
+    Author:      Mickaël CHAVE
+    Created:     2025-01-31
+    Version:     1.0.0
+    Repository:  https://github.com/mchave3/WimWitch-Reloaded
+    License:     MIT License
+
+    Based on original WIM-Witch by TheNotoriousDRR :
+    https://github.com/thenotoriousdrr/WIM-Witch
+
+.LINK
+    https://github.com/mchave3/WimWitch-Reloaded
+
+.EXAMPLE
+    Start-WimWitch
+#>
+function Start-WimWitch {
 
     #Requires -Version 5.1
     #Requires -Modules OSDSUS, OSDUpdate
@@ -7,9 +30,8 @@ Function Start-WimWitch {
     # Requires -RunAsAdministrator
     #-- Requires -PSSnapin <PSSnapin-Name> [-Version <N>[.<n>]]
 
-
-    #============================================================================================================
-    Param(
+    [CmdletBinding()]
+    param(
         [parameter(mandatory = $false, HelpMessage = 'enable auto')]
         [switch]$auto,
 
@@ -54,25 +76,25 @@ Function Start-WimWitch {
 
         [parameter(mandatory = $false, HelpMessage = 'Select working directory')]
         [string]$global:workdir
-
     )
 
-    # Retrieve available versions
-    $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } | Sort-Object Version -Descending | Select-Object -First 1
+    process {
+        # Retrieve available versions
+        $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } | Sort-Object Version -Descending | Select-Object -First 1
 
-    # Check version and include pre-release if available
-    if ($module) {
-        $WWScriptVer = $module.Version.ToString()
-        if ($module.PrivateData.PSData.PreRelease) {
-            $WWScriptVer += "-$($module.PrivateData.PSData.PreRelease)"
+        # Check version and include pre-release if available
+        if ($module) {
+            $WWScriptVer = $module.Version.ToString()
+            if ($module.PrivateData.PSData.PreRelease) {
+                $WWScriptVer += "-$($module.PrivateData.PSData.PreRelease)"
+            }
+        } else {
+            $WWScriptVer = "Version not found"
         }
-    } else {
-        $WWScriptVer = "Version not found"
-    }
 
-    #region XAML
-    #Your XAML goes here
-    $inputXML = @"
+        #region XAML
+        #Your XAML goes here
+        $inputXML = @"
 <Window x:Class="WIM_Witch_Tabbed.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -352,897 +374,898 @@ Function Start-WimWitch {
 </Window>
 "@
 
-    $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window'
-    [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
-    [void][System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
-    [xml]$XAML = $inputXML
-    #Read XAML
+        $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window'
+        [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
+        [void][System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
+        [xml]$XAML = $inputXML
+        #Read XAML
 
-    $reader = (New-Object System.Xml.XmlNodeReader $xaml)
-    try {
-        $Form = [Windows.Markup.XamlReader]::Load( $reader )
-    } catch {
-        Write-Warning "Unable to parse XML, with error: $($Error[0])`n Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes (PowerShell cannot process them)"
-        throw
-    }
+        $reader = (New-Object System.Xml.XmlNodeReader $xaml)
+        try {
+            $Form = [Windows.Markup.XamlReader]::Load( $reader )
+        } catch {
+            Write-Warning "Unable to parse XML, with error: $($Error[0])`n Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes (PowerShell cannot process them)"
+            throw
+        }
 
-    #===========================================================================
-    # Load XAML Objects In PowerShell
-    #===========================================================================
+        #===========================================================================
+        # Load XAML Objects In PowerShell
+        #===========================================================================
 
-    $xaml.SelectNodes('//*[@Name]') | ForEach-Object { "trying item $($_.Name)" | Out-Null
-        try { Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name) -ErrorAction Stop }
-        catch { throw }
-    }
+        $xaml.SelectNodes('//*[@Name]') | ForEach-Object { "trying item $($_.Name)" | Out-Null
+            try { Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name) -ErrorAction Stop }
+            catch { throw }
+        }
 
-    #Section to do the icon magic
-    ###################################################
-    $base64 = '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'
-    # Create a streaming image by streaming the base64 string to a bitmap streamsource
-    $bitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-    $bitmap.BeginInit()
-    $bitmap.StreamSource = [System.IO.MemoryStream][System.Convert]::FromBase64String($base64)
-    $bitmap.EndInit()
-    $bitmap.Freeze()
+        #Section to do the icon magic
+        ###################################################
+        $base64 = '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'
+        # Create a streaming image by streaming the base64 string to a bitmap streamsource
+        $bitmap = New-Object System.Windows.Media.Imaging.BitmapImage
+        $bitmap.BeginInit()
+        $bitmap.StreamSource = [System.IO.MemoryStream][System.Convert]::FromBase64String($base64)
+        $bitmap.EndInit()
+        $bitmap.Freeze()
 
-    # This is the icon in the upper left hand corner of the app
-    $form.Icon = $bitmap
-    # This is the toolbar icon and description
-    $form.TaskbarItemInfo.Overlay = $bitmap
-    $form.TaskbarItemInfo.Description = "WIM Witch - $wwscriptver"
-    ###################################################
+        # This is the icon in the upper left hand corner of the app
+        $form.Icon = $bitmap
+        # This is the toolbar icon and description
+        $form.TaskbarItemInfo.Overlay = $bitmap
+        $form.TaskbarItemInfo.Description = "WIM Witch - $wwscriptver"
+        ###################################################
 
-    #endregion XAML
+        #endregion XAML
 
-    #region Main
-    #===========================================================================
-    # Run commands to set values of files and variables, etc.
-    #===========================================================================
+        #region Main
+        #===========================================================================
+        # Run commands to set values of files and variables, etc.
+        #===========================================================================
 
-    # Calls fuction to display the opening text blurb
+        # Calls fuction to display the opening text blurb
 
-    Show-OpeningText
+        Show-OpeningText
 
-    # Get-FormVariables #lists all WPF variables
-    $global:workdir = Select-WorkingDirectory
-    Test-WorkingDirectory
+        # Get-FormVariables #lists all WPF variables
+        $global:workdir = Select-WorkingDirectory
+        Test-WorkingDirectory
 
-    # Set the path and name for logging
-    $Log = "$global:workdir\logging\WIMWitch.log"
+        # Set the path and name for logging
+        $Log = "$global:workdir\logging\WIMWitch.log"
 
-    # Clears out old logs from previous builds and checks for other folders
-    Set-Logging
+        # Clears out old logs from previous builds and checks for other folders
+        Set-Logging
 
-    # Test for admin and exit if not
-    Test-Admin
+        # Test for admin and exit if not
+        Test-Admin
 
-    # Setting default values for the WPF form
-    $WPFMISWimFolderTextBox.Text = "$global:workdir\CompletedWIMs"
-    $WPFMISMountTextBox.Text = "$global:workdir\Mount"
-    $WPFJSONTextBoxSavePath.Text = "$global:workdir\Autopilot"
-
-
-    ##################
-    # Prereq Check segment
-
-    #Check for installed PowerShell version
-    if ($PSVersionTable.PSVersion.Major -ge 5) { Update-Log -Data 'PowerShell v5 or greater installed.' -Class Information }
-    else {
-        Update-Log -data 'PowerShell v5 or greater is required. Please upgrade PowerShell and try again.' -Class Error
-        Show-ClosingText
-        exit 0
-    }
+        # Setting default values for the WPF form
+        $WPFMISWimFolderTextBox.Text = "$global:workdir\CompletedWIMs"
+        $WPFMISMountTextBox.Text = "$global:workdir\Mount"
+        $WPFJSONTextBoxSavePath.Text = "$global:workdir\Autopilot"
 
 
-    #Check for admin rights
-    #Invoke-AdminCheck
+        ##################
+        # Prereq Check segment
 
-    #Check for 32 bit architecture
-    Invoke-ArchitectureCheck
-
-    #End Prereq segment
-    ###################
-
-    #===========================================================================
-    # Set default values for certain variables
-    #===========================================================================
-
-    #Set the value of the JSON field in Make It So tab
-    $WPFMISJSONTextBox.Text = 'False'
-
-    #Set the value of the Driver field in the Make It So tab
-    $WPFMISDriverTextBox.Text = 'False'
-
-    #Set the value of the Updates field in the Make It So tab
-    $WPFMISUpdatesTextBox.Text = 'False'
-
-    $WPFMISAppxTextBox.Text = 'False'
-
-    $global:Win10VerDet = ''
-
-    #===========================================================================
-    # Section for Combo box Functions
-    #===========================================================================
-
-    #Set the combo box values of the other import tab
-
-    $ObjectTypes = @('Language Pack', 'Local Experience Pack', 'Feature On Demand')
-    $WinOS = @('Windows Server', 'Windows 10', 'Windows 11')
-    $WinSrvVer = @('2019', '21H2')
-    $Win10Ver = @('1809', '2004')
-    $Win11Ver = @('21H2', '22H2', '23H2')
-
-    Foreach ($ObjectType in $ObjectTypes) { $WPFImportOtherCBType.Items.Add($ObjectType) | Out-Null }
-    Foreach ($WinOS in $WinOS) { $WPFImportOtherCBWinOS.Items.Add($WinOS) | Out-Null }
-
-    #Run Script Timing combox box
-    $RunScriptActions = @('After image mount', 'Before image dismount', 'On build completion')
-    Foreach ($RunScriptAction in $RunScriptActions) { $WPFCustomCBScriptTiming.Items.add($RunScriptAction) | Out-Null }
-
-    #ConfigMgr Tab Combo boxes
-    $ImageTypeCombos = @('Disabled', 'New Image', 'Update Existing Image')
-    $DPTypeCombos = @('Distribution Points', 'Distribution Point Groups')
-    foreach ($ImageTypeCombo in $ImageTypeCombos) { $WPFCMCBImageType.Items.Add($ImageTypeCombo) | Out-Null }
-    foreach ($DPTypeCombo in $DPTypeCombos) { $WPFCMCBDPDPG.Items.Add($DPTypeCombo) | Out-Null }
-    $WPFCMCBDPDPG.SelectedIndex = 0
-    $WPFCMCBImageType.SelectedIndex = 0
+        #Check for installed PowerShell version
+        if ($PSVersionTable.PSVersion.Major -ge 5) { Update-Log -Data 'PowerShell v5 or greater installed.' -Class Information }
+        else {
+            Update-Log -data 'PowerShell v5 or greater is required. Please upgrade PowerShell and try again.' -Class Error
+            Show-ClosingText
+            exit 0
+        }
 
 
-    Enable-ConfigMgrOptions
+        #Check for admin rights
+        #Invoke-AdminCheck
 
-    #Software Update Catalog Source combo box
-    $UpdateSourceCombos = @('None', 'OSDSUS', 'ConfigMgr')
-    foreach ($UpdateSourceCombo in $UpdateSourceCombos) { $WPFUSCBSelectCatalogSource.Items.Add($UpdateSourceCombo) | Out-Null }
-    $WPFUSCBSelectCatalogSource.SelectedIndex = 0
-    Invoke-UpdateTabOptions
+        #Check for 32 bit architecture
+        Invoke-ArchitectureCheck
 
-    #Check for ConfigMgr and set integration
-    if ((Find-ConfigManager) -eq 0) {
+        #End Prereq segment
+        ###################
 
-        if ((Import-CMModule) -eq 0) {
-            $WPFUSCBSelectCatalogSource.SelectedIndex = 2
+        #===========================================================================
+        # Set default values for certain variables
+        #===========================================================================
+
+        #Set the value of the JSON field in Make It So tab
+        $WPFMISJSONTextBox.Text = 'False'
+
+        #Set the value of the Driver field in the Make It So tab
+        $WPFMISDriverTextBox.Text = 'False'
+
+        #Set the value of the Updates field in the Make It So tab
+        $WPFMISUpdatesTextBox.Text = 'False'
+
+        $WPFMISAppxTextBox.Text = 'False'
+
+        $global:Win10VerDet = ''
+
+        #===========================================================================
+        # Section for Combo box Functions
+        #===========================================================================
+
+        #Set the combo box values of the other import tab
+
+        $ObjectTypes = @('Language Pack', 'Local Experience Pack', 'Feature On Demand')
+        $WinOS = @('Windows Server', 'Windows 10', 'Windows 11')
+        $WinSrvVer = @('2019', '21H2')
+        $Win10Ver = @('1809', '2004')
+        $Win11Ver = @('21H2', '22H2', '23H2')
+
+        Foreach ($ObjectType in $ObjectTypes) { $WPFImportOtherCBType.Items.Add($ObjectType) | Out-Null }
+        Foreach ($WinOS in $WinOS) { $WPFImportOtherCBWinOS.Items.Add($WinOS) | Out-Null }
+
+        #Run Script Timing combox box
+        $RunScriptActions = @('After image mount', 'Before image dismount', 'On build completion')
+        Foreach ($RunScriptAction in $RunScriptActions) { $WPFCustomCBScriptTiming.Items.add($RunScriptAction) | Out-Null }
+
+        #ConfigMgr Tab Combo boxes
+        $ImageTypeCombos = @('Disabled', 'New Image', 'Update Existing Image')
+        $DPTypeCombos = @('Distribution Points', 'Distribution Point Groups')
+        foreach ($ImageTypeCombo in $ImageTypeCombos) { $WPFCMCBImageType.Items.Add($ImageTypeCombo) | Out-Null }
+        foreach ($DPTypeCombo in $DPTypeCombos) { $WPFCMCBDPDPG.Items.Add($DPTypeCombo) | Out-Null }
+        $WPFCMCBDPDPG.SelectedIndex = 0
+        $WPFCMCBImageType.SelectedIndex = 0
+
+
+        Enable-ConfigMgrOptions
+
+        #Software Update Catalog Source combo box
+        $UpdateSourceCombos = @('None', 'OSDSUS', 'ConfigMgr')
+        foreach ($UpdateSourceCombo in $UpdateSourceCombos) { $WPFUSCBSelectCatalogSource.Items.Add($UpdateSourceCombo) | Out-Null }
+        $WPFUSCBSelectCatalogSource.SelectedIndex = 0
+        Invoke-UpdateTabOptions
+
+        #Check for ConfigMgr and set integration
+        if ((Find-ConfigManager) -eq 0) {
+
+            if ((Import-CMModule) -eq 0) {
+                $WPFUSCBSelectCatalogSource.SelectedIndex = 2
+                Invoke-UpdateTabOptions
+            }
+        } else
+        { Update-Log -Data 'Skipping ConfigMgr PowerShell module importation' }
+
+        #Set OSDSUS to Patch Catalog if CM isn't integratedg
+
+        if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 0) {
+            Update-Log -Data 'Setting OSDSUS as the Update Catalog' -Class Information
+            $WPFUSCBSelectCatalogSource.SelectedIndex = 1
             Invoke-UpdateTabOptions
         }
-    } else
-    { Update-Log -Data 'Skipping ConfigMgr PowerShell module importation' }
 
-    #Set OSDSUS to Patch Catalog if CM isn't integratedg
+        #Function Get-WindowsPatches($build,$OS)
 
-    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 0) {
-        Update-Log -Data 'Setting OSDSUS as the Update Catalog' -Class Information
-        $WPFUSCBSelectCatalogSource.SelectedIndex = 1
-        Invoke-UpdateTabOptions
-    }
+        if ($DownloadUpdates -eq $true) {
+            #    If (($UpdatePoShModules -eq $true) -and ($WPFUpdatesOSDBOutOfDateTextBlock.Visibility -eq "Visible")) {
+            If ($UpdatePoShModules -eq $true ) {
+                Update-OSDB
+                Update-OSDSUS
+            }
 
-    #Function Get-WindowsPatches($build,$OS)
 
-    if ($DownloadUpdates -eq $true) {
-        #    If (($UpdatePoShModules -eq $true) -and ($WPFUpdatesOSDBOutOfDateTextBlock.Visibility -eq "Visible")) {
-        If ($UpdatePoShModules -eq $true ) {
-            Update-OSDB
-            Update-OSDSUS
+            if ($Server2016 -eq $true) {
+                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                    Test-Superceded -action delete -OS 'Windows Server' -Build 1607
+                    Get-WindowsPatches -OS 'Windows Server' -build 1607
+                }
+
+
+                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                    Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 1607
+                    Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 1607
+                }
+            }
+
+            if ($Server2019 -eq $true) {
+                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                    Test-Superceded -action delete -OS 'Windows Server' -Build 1809
+                    Get-WindowsPatches -OS 'Windows Server' -build 1809
+                }
+
+                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                    Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 1809
+                    Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 1809
+                }
+            }
+
+            if ($Server2022 -eq $true) {
+                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                    Test-Superceded -action delete -OS 'Windows Server' -Build 21H2
+                    Get-WindowsPatches -OS 'Windows Server' -build 21H2
+                }
+
+
+                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                    Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 21H2
+                    Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 21H2
+                }
+            }
+
+
+            if ($Win10Version -ne 'none') {
+                if (($Win10Version -eq '1709')) {
+                    # -or ($Win10Version -eq "all")){
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 1709
+                        Get-WindowsPatches -OS 'Windows 10' -build 1709
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1709
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1709
+                    }
+                }
+
+                if (($Win10Version -eq '1803')) {
+                    # -or ($Win10Version -eq "all")){
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 1803
+                        Get-WindowsPatches -OS 'Windows 10' -build 1803
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1803
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1803
+                    }
+                }
+
+                if (($Win10Version -eq '1809') -or ($Win10Version -eq 'all')) {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 1809
+                        Get-WindowsPatches -OS 'Windows 10' -build 1809
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1809
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1809
+                    }
+                }
+
+
+                if (($Win10Version -eq '1903')) {
+                    # -or ($Win10Version -eq "all")){
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 1903
+                        Get-WindowsPatches -OS 'Windows 10' -build 1903
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1903
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1903
+                    }
+                }
+
+
+                if (($Win10Version -eq '1909') -or ($Win10Version -eq 'all')) {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 1909
+                        Get-WindowsPatches -OS 'Windows 10' -build 1909
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1909
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1909
+                    }
+                }
+
+                if (($Win10Version -eq '2004') -or ($Win10Version -eq 'all')) {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 2004
+                        Get-WindowsPatches -OS 'Windows 10' -build 2004
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2004
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 2004
+                    }
+                }
+
+                if (($Win10Version -eq '20H2') -or ($Win10Version -eq 'all')) {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 2009
+                        Get-WindowsPatches -OS 'Windows 10' -build 2009
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2009
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 2009
+                    }
+                }
+
+                if (($Win10Version -eq '21H1') -or ($Win10Version -eq 'all')) {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 21H1
+                        Get-WindowsPatches -OS 'Windows 10' -build 21H1
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H1
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 21H1
+                    }
+                }
+
+                if (($Win10Version -eq '21H2') -or ($Win10Version -eq 'all')) {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 10' -Build 21H2
+                        Get-WindowsPatches -OS 'Windows 10' -build 21H2
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H2
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 21H2
+                    }
+                }
+
+                if ($Win11Version -eq '21H2') {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 11' -Build 21H2
+                        Get-WindowsPatches -OS 'Windows 11' -build 21H2
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 21H2
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 21H2
+                    }
+                }
+                if ($Win11Version -eq '22H2') {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 11' -Build 22H2
+                        Get-WindowsPatches -OS 'Windows 11' -build 22H2
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 22H2
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 22H2
+                    }
+                }
+                if ($Win11Version -eq '23H2') {
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
+                        Test-Superceded -action delete -OS 'Windows 11' -Build 23H2
+                        Get-WindowsPatches -OS 'Windows 11' -build 23H2
+                    }
+                    if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
+                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 23H2
+                        Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 23H2
+                    }
+                }
+
+                Get-OneDrive
+            }
         }
 
+        #===========================================================================
+        # Section for Buttons to call Functions
+        #===========================================================================
 
-        if ($Server2016 -eq $true) {
-            if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                Test-Superceded -action delete -OS 'Windows Server' -Build 1607
-                Get-WindowsPatches -OS 'Windows Server' -build 1607
-            }
+        #Mount Dir Button
+        $WPFMISMountSelectButton.Add_Click( { Select-Mountdir })
+
+        #Source WIM File Button
+        $WPFSourceWIMSelectButton.Add_Click( { Select-SourceWIM })
+
+        #JSON File selection Button
+        $WPFJSONButton.Add_Click( { Select-JSONFile })
+
+        #Target Folder selection Button
+        $WPFMISFolderButton.Add_Click( { Select-TargetDir })
+
+        #Driver Directory Buttons
+        $WPFDriverDir1Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir1TextBox })
+        $WPFDriverDir2Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir2TextBox })
+        $WPFDriverDir3Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir3TextBox })
+        $WPFDriverDir4Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir4TextBox })
+        $WPFDriverDir5Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir5TextBox })
+
+        #Make it So Button, which builds the WIM file
+        $WPFMISMakeItSoButton.Add_Click( { Invoke-MakeItSo -appx $global:SelectedAppx })
+
+        #Update OSDBuilder Button
+        $WPFUpdateOSDBUpdateButton.Add_Click( {
+                Update-OSDB
+                Update-OSDSUS
+            })
+
+        #Update patch source
+        $WPFUpdatesDownloadNewButton.Add_Click( { Update-PatchSource })
+
+        #Select Appx packages to remove
+        $WPFAppxButton.Add_Click( { $global:SelectedAppx = Select-Appx })
+
+        #Select Autopilot path to save button
+        $WPFJSONButtonSavePath.Add_Click( { Select-NewJSONDir })
+
+        #retrieve autopilot profile from intune
+        $WPFJSONButtonRetrieve.Add_click( { get-wwautopilotprofile -login $WPFJSONTextBoxAADID.Text -path $WPFJSONTextBoxSavePath.Text })
+
+        #Button to save configuration file
+        $WPFSLSaveButton.Add_click( { Save-Configuration -filename $WPFSLSaveFileName.text })
+
+        #Button to load configuration file
+        $WPFSLLoadButton.Add_click( { Select-Config })
+
+        #Button to select ISO for importation
+        $WPFImportImportSelectButton.Add_click( { Select-ISO })
+
+        #Button to import content from iso
+        $WPFImportImportButton.Add_click( { Import-ISO })
+
+        #Combo Box dynamic change for Winver combo box
+        $WPFImportOtherCBWinOS.add_SelectionChanged({ Update-ImportVersionCB })
+
+        #Button to select the import path in the other components
+        $WPFImportOtherBSelectPath.add_click({ Select-ImportOtherPath
+
+                if ($WPFImportOtherCBType.SelectedItem -ne 'Feature On Demand') {
+                    if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Out-GridView -Title 'Select Objects' -PassThru) }
+                    if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack')) { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Where-Object { ($_.Name -like '*Windows-Client-Language-Pack*') } | Out-GridView -Title 'Select Objects' -PassThru) }
+                    if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack')) { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Out-GridView -Title 'Select Objects' -PassThru) }
+
+                }
+
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
+                    if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text) }
+                    if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Where-Object { ($_.Name -notlike '*Windows-Client-Language-Pack*') } | Out-GridView -Title 'Select Objects' -PassThru) }
+
+                }
 
 
-            if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 1607
-                Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 1607
-            }
+                $WPFImportOtherLBList.Items.Clear()
+                $count = 0
+                $path = $WPFImportOtherTBPath.text
+                foreach ($item in $items) {
+                    $WPFImportOtherLBList.Items.Add($item.name)
+                    $count = $count + 1
+                }
+
+                if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') { Update-Log -data "$count Language Packs selected from $path" -Class Information }
+                if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { Update-Log -data "$count Local Experience Packs selected from $path" -Class Information }
+                if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') { Update-Log -data "Features On Demand source selected from $path" -Class Information }
+
+            })
+
+        #Button to import Other Components content
+        $WPFImportOtherBImport.add_click({
+                if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows Server') {
+                    if ($WPFImportOtherCBWinVer.SelectedItem -eq '2019') { $WinVerConversion = '1809' }
+                } else {
+                    $WinVerConversion = $WPFImportOtherCBWinVer.SelectedItem
+                }
+
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') { Import-LanguagePacks -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text }
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { Import-LocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text }
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') { Import-FeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text } })
+
+        #Button Select LP's for importation
+        $WPFCustomBLangPacksSelect.add_click({ Select-LPFODCriteria -type 'LP' })
+
+        #Button to select FODs for importation
+        $WPFCustomBFODSelect.add_click({ Select-LPFODCriteria -type 'FOD' })
+
+        #Button to select LXPs for importation
+        $WPFCustomBLEPSelect.add_click({ Select-LPFODCriteria -type 'LXP' })
+
+        #Button to select PS1 script
+        $WPFCustomBSelectPath.add_click({
+                $Script = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+                    InitialDirectory = [Environment]::GetFolderPath('Desktop')
+                    Filter           = 'PS1 (*.ps1)|'
+                }
+                $null = $Script.ShowDialog()
+                $WPFCustomTBFile.text = $Script.FileName })
+
+        #Button to Select ConfigMgr Image Package
+        $WPFCMBSelectImage.Add_Click({
+                $image = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage -ComputerName $global:SiteServer) | Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description | Out-GridView -Title 'Pick an image' -PassThru
+                $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
+                if ((Test-Path -Path $path ) -eq $True) {
+                    # write-host "True"
+                    Get-Configuration -filename $path
+                } else {
+                    Get-ImageInfo -PackID $image.PackageID
+                }
+            })
+
+        #Button to select new file path (may not need)
+        #$WPFCMBFilePathSelect.Add_Click({ })
+
+        #Button to add DP/DPG to list box on ConfigMgr tab
+        $WPFCMBAddDP.Add_Click({ Select-DistributionPoints })
+
+        #Button to remove DP/DPG from list box on ConfigMgr tab
+        $WPFCMBRemoveDP.Add_Click({
+
+                while ($WPFCMLBDPs.SelectedItems) {
+                    $WPFCMLBDPs.Items.Remove($WPFCMLBDPs.SelectedItems[0])
+                }
+
+            })
+
+        #Combo Box dynamic change ConfigMgr type
+        $WPFCMCBImageType.add_SelectionChanged({ Enable-ConfigMgrOptions })
+
+        #Combo Box Software Update Catalog source
+        $WPFUSCBSelectCatalogSource.add_SelectionChanged({ Invoke-UpdateTabOptions })
+
+        #Button to remove items from Language Packs List Box
+        $WPFCustomBLangPacksRemove.Add_Click({
+
+                while ($WPFCustomLBLangPacks.SelectedItems) {
+                    $WPFCustomLBLangPacks.Items.Remove($WPFCustomLBLangPacks.SelectedItems[0])
+                }
+            })
+
+        #Button to remove items from LXP List Box
+        $WPFCustomBLEPSRemove.Add_Click({
+
+                while ($WPFCustomLBLEP.SelectedItems) {
+                    $WPFCustomLBLEP.Items.Remove($WPFCustomLBLEP.SelectedItems[0])
+                }
+
+            })
+
+        #Button to remove items from FOD List Box
+        $WPFCustomBFODRemove.Add_Click({
+
+                while ($WPFCustomLBFOD.SelectedItems) {
+                    $WPFCustomLBFOD.Items.Remove($WPFCustomLBFOD.SelectedItems[0])
+                }
+
+            })
+
+        #Button to select default app association XML
+        $WPFCustomBDefaultApp.Add_Click({ Select-DefaultApplicationAssociations })
+
+        #Button to select start menu XML
+        $WPFCustomBStartMenu.Add_Click({ Select-StartMenu })
+
+        #Button to select registry files
+        $WPFCustomBRegistryAdd.Add_Click({ Select-RegFiles })
+
+        #Button to remove registry files
+        $WPFCustomBRegistryRemove.Add_Click({
+
+                while ($WPFCustomLBRegistry.SelectedItems) {
+                    $WPFCustomLBRegistry.Items.Remove($WPFCustomLBRegistry.SelectedItems[0])
+                }
+
+            })
+
+        #Button to select ISO save folder
+        $WPFMISISOSelectButton.Add_Click({ Select-ISODirectory })
+
+        #Button to install CM Console Extension
+        $WPFCMBInstallExtensions.Add_Click({ Install-WWCMConsoleExtension })
+
+        #Button to set CM Site and Server properties
+        $WPFCMBSetCM.Add_Click({
+                Set-ConfigMgr
+                Import-CMModule
+
+            })
+
+
+        #===========================================================================
+        # Section for Checkboxes to call Functions
+        #===========================================================================
+
+        #Enable JSON Selection
+        $WPFJSONEnableCheckBox.Add_Click( {
+                If ($WPFJSONEnableCheckBox.IsChecked -eq $true) {
+                    $WPFJSONButton.IsEnabled = $True
+                    $WPFMISJSONTextBox.Text = 'True'
+                } else {
+                    $WPFJSONButton.IsEnabled = $False
+                    $WPFMISJSONTextBox.Text = 'False'
+                }
+            })
+
+        #Enable Driver Selection
+        $WPFDriverCheckBox.Add_Click( {
+                If ($WPFDriverCheckBox.IsChecked -eq $true) {
+                    $WPFDriverDir1Button.IsEnabled = $True
+                    $WPFDriverDir2Button.IsEnabled = $True
+                    $WPFDriverDir3Button.IsEnabled = $True
+                    $WPFDriverDir4Button.IsEnabled = $True
+                    $WPFDriverDir5Button.IsEnabled = $True
+                    $WPFMISDriverTextBox.Text = 'True'
+                } else {
+                    $WPFDriverDir1Button.IsEnabled = $False
+                    $WPFDriverDir2Button.IsEnabled = $False
+                    $WPFDriverDir3Button.IsEnabled = $False
+                    $WPFDriverDir4Button.IsEnabled = $False
+                    $WPFDriverDir5Button.IsEnabled = $False
+                    $WPFMISDriverTextBox.Text = 'False'
+                }
+            })
+
+        #Enable Updates Selection
+        $WPFUpdatesEnableCheckBox.Add_Click( {
+                If ($WPFUpdatesEnableCheckBox.IsChecked -eq $true) {
+                    $WPFMISUpdatesTextBox.Text = 'True'
+                } else {
+                    $WPFMISUpdatesTextBox.Text = 'False'
+                }
+            })
+
+        #Enable AppX Selection
+        $WPFAppxCheckBox.Add_Click( {
+                If ($WPFAppxCheckBox.IsChecked -eq $true) {
+                    $WPFAppxButton.IsEnabled = $True
+                    $WPFMISAppxTextBox.Text = 'True'
+                } else {
+                    $WPFAppxButton.IsEnabled = $False
+                }
+            })
+
+        #Enable install.wim selection in import
+        $WPFImportWIMCheckBox.Add_Click( {
+                If ($WPFImportWIMCheckBox.IsChecked -eq $true) {
+                    $WPFImportNewNameTextBox.IsEnabled = $True
+                    $WPFImportImportButton.IsEnabled = $True
+                } else {
+                    $WPFImportNewNameTextBox.IsEnabled = $False
+                    if ($WPFImportDotNetCheckBox.IsChecked -eq $False) { $WPFImportImportButton.IsEnabled = $False }
+                }
+            })
+
+        #Enable .Net binaries selection in import
+        $WPFImportDotNetCheckBox.Add_Click( {
+                If ($WPFImportDotNetCheckBox.IsChecked -eq $true) {
+                    $WPFImportImportButton.IsEnabled = $True
+                } else {
+                    if ($WPFImportWIMCheckBox.IsChecked -eq $False) { $WPFImportImportButton.IsEnabled = $False }
+                }
+            })
+
+        #Enable Win10 version selection
+        $WPFUpdatesW10Main.Add_Click( {
+                If ($WPFUpdatesW10Main.IsChecked -eq $true) {
+                    #$WPFUpdatesW10_1909.IsEnabled = $True
+                    $WPFUpdatesW10_1903.IsEnabled = $True
+                    $WPFUpdatesW10_1809.IsEnabled = $True
+                    $WPFUpdatesW10_1803.IsEnabled = $True
+                    $WPFUpdatesW10_1709.IsEnabled = $True
+                    $WPFUpdatesW10_2004.IsEnabled = $True
+                    $WPFUpdatesW10_20H2.IsEnabled = $True
+                    $WPFUpdatesW10_21H1.IsEnabled = $True
+                    $WPFUpdatesW10_21H2.IsEnabled = $True
+                    $WPFUpdatesW10_22H2.IsEnabled = $True
+                } else {
+                    #$WPFUpdatesW10_1909.IsEnabled = $False
+                    $WPFUpdatesW10_1903.IsEnabled = $False
+                    $WPFUpdatesW10_1809.IsEnabled = $False
+                    $WPFUpdatesW10_1803.IsEnabled = $False
+                    $WPFUpdatesW10_1709.IsEnabled = $False
+                    $WPFUpdatesW10_2004.IsEnabled = $False
+                    $WPFUpdatesW10_20H2.IsEnabled = $False
+                    $WPFUpdatesW10_21H1.IsEnabled = $False
+                    $WPFUpdatesW10_21H2.IsEnabled = $False
+                    $WPFUpdatesW10_22H2.IsEnabled = $False
+                }
+            })
+
+        #Enable Win11 version selection
+        $WPFUpdatesW11Main.Add_Click( {
+                If ($WPFUpdatesW11Main.IsChecked -eq $true) {
+                    $WPFUpdatesW11_21H2.IsEnabled = $True
+                    $WPFUpdatesW11_22H2.IsEnabled = $True
+                    $WPFUpdatesW11_23H2.IsEnabled = $True
+                } else {
+                    $WPFUpdatesW11_21H2.IsEnabled = $False
+                    $WPFUpdatesW11_22H2.IsEnabled = $False
+                    $WPFUpdatesW11_23H2.IsEnabled = $False
+
+                }
+            })
+
+        #Enable LP Selection
+        $WPFCustomCBLangPacks.Add_Click({
+                If ($WPFCustomCBLangPacks.IsChecked -eq $true) {
+                    $WPFCustomBLangPacksSelect.IsEnabled = $True
+                    $WPFCustomBLangPacksRemove.IsEnabled = $True
+                } else {
+                    $WPFCustomBLangPacksSelect.IsEnabled = $False
+                    $WPFCustomBLangPacksRemove.IsEnabled = $False
+                }
+            })
+
+        #ENable Language Experience Pack selection
+        $WPFCustomCBLEP.Add_Click({
+                If ($WPFCustomCBLEP.IsChecked -eq $true) {
+                    $WPFCustomBLEPSelect.IsEnabled = $True
+                    $WPFCustomBLEPSRemove.IsEnabled = $True
+                } else {
+                    $WPFCustomBLEPSelect.IsEnabled = $False
+                    $WPFCustomBLEPSRemove.IsEnabled = $False
+                }
+            })
+
+        #Enable Feature On Demand selection
+        $WPFCustomCBFOD.Add_Click({
+                If ($WPFCustomCBFOD.IsChecked -eq $true) {
+                    $WPFCustomBFODSelect.IsEnabled = $True
+                    $WPFCustomBFODRemove.IsEnabled = $True
+                } else {
+                    $WPFCustomBFODSelect.IsEnabled = $False
+                    $WPFCustomBFODRemove.IsEnabled = $False
+                }
+            })
+
+        #Enable Run Script settings
+        $WPFCustomCBRunScript.Add_Click({
+                If ($WPFCustomCBRunScript.IsChecked -eq $true) {
+                    $WPFCustomTBFile.IsEnabled = $True
+                    $WPFCustomBSelectPath.IsEnabled = $True
+                    $WPFCustomTBParameters.IsEnabled = $True
+                    $WPFCustomCBScriptTiming.IsEnabled = $True
+                } else {
+                    $WPFCustomTBFile.IsEnabled = $False
+                    $WPFCustomBSelectPath.IsEnabled = $False
+                    $WPFCustomTBParameters.IsEnabled = $False
+                    $WPFCustomCBScriptTiming.IsEnabled = $False
+                } })
+
+        #Enable Default App Association
+        $WPFCustomCBEnableApp.Add_Click({
+                If ($WPFCustomCBEnableApp.IsChecked -eq $true) {
+                    $WPFCustomBDefaultApp.IsEnabled = $True
+
+                } else {
+                    $WPFCustomBDefaultApp.IsEnabled = $False
+                }
+            })
+
+        #Enable Start Menu Layout
+        $WPFCustomCBEnableStart.Add_Click({
+                If ($WPFCustomCBEnableStart.IsChecked -eq $true) {
+                    $WPFCustomBStartMenu.IsEnabled = $True
+
+                } else {
+                    $WPFCustomBStartMenu.IsEnabled = $False
+                }
+            })
+
+        #Enable Registry selection list box buttons
+        $WPFCustomCBEnableRegistry.Add_Click({
+                If ($WPFCustomCBEnableRegistry.IsChecked -eq $true) {
+                    $WPFCustomBRegistryAdd.IsEnabled = $True
+                    $WPFCustomBRegistryRemove.IsEnabled = $True
+                    $WPFCustomLBRegistry.IsEnabled = $True
+
+                } else {
+                    $WPFCustomBRegistryAdd.IsEnabled = $False
+                    $WPFCustomBRegistryRemove.IsEnabled = $False
+                    $WPFCustomLBRegistry.IsEnabled = $False
+
+                }
+            })
+
+        #Enable ISO/Upgrade Package selection in import
+        $WPFImportISOCheckBox.Add_Click( {
+                If ($WPFImportISOCheckBox.IsChecked -eq $true) {
+                    $WPFImportImportButton.IsEnabled = $True
+                } else {
+                    if (($WPFImportWIMCheckBox.IsChecked -eq $False) -and ($WPFImportDotNetCheckBox.IsChecked -eq $False)) { $WPFImportImportButton.IsEnabled = $False }
+                }
+            })
+
+        #Enable not creating stand alone wim
+        $WPFMISCBNoWIM.Add_Click( {
+                If ($WPFMISCBNoWIM.IsChecked -eq $true) {
+                    $WPFMISWimNameTextBox.IsEnabled = $False
+                    $WPFMISWimFolderTextBox.IsEnabled = $False
+                    $WPFMISFolderButton.IsEnabled = $False
+
+                    $WPFMISWimNameTextBox.text = 'install.wim'
+                } else {
+                    $WPFMISWimNameTextBox.IsEnabled = $True
+                    $WPFMISWimFolderTextBox.IsEnabled = $True
+                    $WPFMISFolderButton.IsEnabled = $True
+                }
+            })
+
+        #Enable ISO creation fields
+        $WPFMISCBISO.Add_Click( {
+                If ($WPFMISCBISO.IsChecked -eq $true) {
+                    $WPFMISTBISOFileName.IsEnabled = $True
+                    $WPFMISTBFilePath.IsEnabled = $True
+                    $WPFMISCBDynamicUpdates.IsEnabled = $True
+                    $WPFMISCBNoWIM.IsEnabled = $True
+                    $WPFMISCBBootWIM.IsEnabled = $True
+                    $WPFMISISOSelectButton.IsEnabled = $true
+
+                } else {
+                    $WPFMISTBISOFileName.IsEnabled = $False
+                    $WPFMISTBFilePath.IsEnabled = $False
+                    $WPFMISISOSelectButton.IsEnabled = $false
+
+                }
+                if (($WPFMISCBISO.IsChecked -eq $false) -and ($WPFMISCBUpgradePackage.IsChecked -eq $false)) {
+                    $WPFMISCBDynamicUpdates.IsEnabled = $False
+                    $WPFMISCBDynamicUpdates.IsChecked = $False
+                    $WPFMISCBNoWIM.IsEnabled = $False
+                    $WPFMISCBNoWIM.IsChecked = $False
+                    $WPFMISWimNameTextBox.IsEnabled = $true
+                    $WPFMISWimFolderTextBox.IsEnabled = $true
+                    $WPFMISFolderButton.IsEnabled = $true
+                    $WPFMISCBBootWIM.IsChecked = $false
+                    $WPFMISCBBootWIM.IsEnabled = $false
+                }
+            })
+
+        #Enable upgrade package path option
+        $WPFMISCBUpgradePackage.Add_Click( {
+                If ($WPFMISCBUpgradePackage.IsChecked -eq $true) {
+                    $WPFMISTBUpgradePackage.IsEnabled = $True
+                    $WPFMISCBDynamicUpdates.IsEnabled = $True
+                    $WPFMISCBNoWIM.IsEnabled = $True
+                    $WPFMISCBBootWIM.IsEnabled = $True
+
+                } else {
+                    $WPFMISTBUpgradePackage.IsEnabled = $False
+                }
+                if (($WPFMISCBISO.IsChecked -eq $false) -and ($WPFMISCBUpgradePackage.IsChecked -eq $false)) {
+                    $WPFMISCBDynamicUpdates.IsEnabled = $False
+                    $WPFMISCBDynamicUpdates.IsChecked = $False
+                    $WPFMISCBNoWIM.IsEnabled = $False
+                    $WPFMISCBNoWIM.IsChecked = $False
+                    $WPFMISWimNameTextBox.IsEnabled = $true
+                    $WPFMISWimFolderTextBox.IsEnabled = $true
+                    $WPFMISFolderButton.IsEnabled = $true
+                    $WPFMISCBBootWIM.IsChecked = $false
+                    $WPFMISCBBootWIM.IsEnabled = $false
+                }
+            })
+
+        #Enable option to include Optional Updates
+        $WPFUpdatesEnableCheckBox.Add_Click({
+                if ($WPFUpdatesEnableCheckBox.IsChecked -eq $true) { $WPFUpdatesOptionalEnableCheckBox.IsEnabled = $True }
+                else {
+                    $WPFUpdatesOptionalEnableCheckBox.IsEnabled = $False
+                    $WPFUpdatesOptionalEnableCheckBox.IsChecked = $False
+                }
+            })
+
+        #==========================================================
+        #Run WIM Witch below
+        #==========================================================
+
+        #Runs WIM Witch from a single file, bypassing the GUI
+        if (($auto -eq $true) -and ($autofile -ne '')) {
+            Invoke-RunConfigFile -filename $autofile
+            Show-ClosingText
+            exit 0
         }
 
-        if ($Server2019 -eq $true) {
-            if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                Test-Superceded -action delete -OS 'Windows Server' -Build 1809
-                Get-WindowsPatches -OS 'Windows Server' -build 1809
+        #Runs WIM from a path with multiple files, bypassing the GUI
+        if (($auto -eq $true) -and ($autopath -ne '')) {
+            Update-Log -data "Running batch job from config folder $autopath" -Class Information
+            $files = Get-ChildItem -Path $autopath
+            Update-Log -data 'Setting batch job for the folling configs:' -Class Information
+            foreach ($file in $files) { Update-Log -Data $file -Class Information }
+            foreach ($file in $files) {
+                $fullpath = $autopath + '\' + $file
+                Invoke-RunConfigFile -filename $fullpath
             }
-
-            if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 1809
-                Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 1809
-            }
+            Update-Log -Data 'Work complete' -Class Information
+            Show-ClosingText
+            exit 0
         }
 
-        if ($Server2022 -eq $true) {
-            if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                Test-Superceded -action delete -OS 'Windows Server' -Build 21H2
-                Get-WindowsPatches -OS 'Windows Server' -build 21H2
-            }
-
-
-            if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 21H2
-                Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 21H2
-            }
+        #Loads the specified ConfigMgr config file from CM Console
+        if (($CM -eq 'Edit') -and ($autofile -ne '')) {
+            Update-Log -Data 'Loading ConfigMgr OS Image Package information...' -Class Information
+            Get-Configuration -filename $autofile
         }
 
+        #Closing action for the WPF form
+        Register-ObjectEvent -InputObject $form -EventName Closed -Action ( { Show-ClosingText }) | Out-Null
 
-        if ($Win10Version -ne 'none') {
-            if (($Win10Version -eq '1709')) {
-                # -or ($Win10Version -eq "all")){
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 1709
-                    Get-WindowsPatches -OS 'Windows 10' -build 1709
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1709
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1709
-                }
-            }
+        #display text information to the user
+        Invoke-TextNotification
 
-            if (($Win10Version -eq '1803')) {
-                # -or ($Win10Version -eq "all")){
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 1803
-                    Get-WindowsPatches -OS 'Windows 10' -build 1803
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1803
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1803
-                }
-            }
-
-            if (($Win10Version -eq '1809') -or ($Win10Version -eq 'all')) {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 1809
-                    Get-WindowsPatches -OS 'Windows 10' -build 1809
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1809
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1809
-                }
-            }
-
-
-            if (($Win10Version -eq '1903')) {
-                # -or ($Win10Version -eq "all")){
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 1903
-                    Get-WindowsPatches -OS 'Windows 10' -build 1903
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1903
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1903
-                }
-            }
-
-
-            if (($Win10Version -eq '1909') -or ($Win10Version -eq 'all')) {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 1909
-                    Get-WindowsPatches -OS 'Windows 10' -build 1909
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1909
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1909
-                }
-            }
-
-            if (($Win10Version -eq '2004') -or ($Win10Version -eq 'all')) {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 2004
-                    Get-WindowsPatches -OS 'Windows 10' -build 2004
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2004
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 2004
-                }
-            }
-
-            if (($Win10Version -eq '20H2') -or ($Win10Version -eq 'all')) {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 2009
-                    Get-WindowsPatches -OS 'Windows 10' -build 2009
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2009
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 2009
-                }
-            }
-
-            if (($Win10Version -eq '21H1') -or ($Win10Version -eq 'all')) {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 21H1
-                    Get-WindowsPatches -OS 'Windows 10' -build 21H1
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H1
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 21H1
-                }
-            }
-
-            if (($Win10Version -eq '21H2') -or ($Win10Version -eq 'all')) {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 10' -Build 21H2
-                    Get-WindowsPatches -OS 'Windows 10' -build 21H2
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H2
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 21H2
-                }
-            }
-
-            if ($Win11Version -eq '21H2') {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 11' -Build 21H2
-                    Get-WindowsPatches -OS 'Windows 11' -build 21H2
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 21H2
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 21H2
-                }
-            }
-            if ($Win11Version -eq '22H2') {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 11' -Build 22H2
-                    Get-WindowsPatches -OS 'Windows 11' -build 22H2
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 22H2
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 22H2
-                }
-            }
-            if ($Win11Version -eq '23H2') {
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows 11' -Build 23H2
-                    Get-WindowsPatches -OS 'Windows 11' -build 23H2
-                }
-                if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 23H2
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 23H2
-                }
-            }
-
-            Get-OneDrive
+        if ($HiHungryImDad -eq $true) {
+            $string = Invoke-DadJoke
+            Update-Log -Data $string -Class Comment
+            $WPFImportBDJ.Visibility = 'Visible'
         }
+
+        #Start GUI
+        Update-Log -data 'Starting WIM Witch GUI' -class Information
+        $Form.ShowDialog() | Out-Null #This starts the GUI
+
+        #endregion Main
     }
-
-    #===========================================================================
-    # Section for Buttons to call Functions
-    #===========================================================================
-
-    #Mount Dir Button
-    $WPFMISMountSelectButton.Add_Click( { Select-Mountdir })
-
-    #Source WIM File Button
-    $WPFSourceWIMSelectButton.Add_Click( { Select-SourceWIM })
-
-    #JSON File selection Button
-    $WPFJSONButton.Add_Click( { Select-JSONFile })
-
-    #Target Folder selection Button
-    $WPFMISFolderButton.Add_Click( { Select-TargetDir })
-
-    #Driver Directory Buttons
-    $WPFDriverDir1Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir1TextBox })
-    $WPFDriverDir2Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir2TextBox })
-    $WPFDriverDir3Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir3TextBox })
-    $WPFDriverDir4Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir4TextBox })
-    $WPFDriverDir5Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir5TextBox })
-
-    #Make it So Button, which builds the WIM file
-    $WPFMISMakeItSoButton.Add_Click( { Invoke-MakeItSo -appx $global:SelectedAppx })
-
-    #Update OSDBuilder Button
-    $WPFUpdateOSDBUpdateButton.Add_Click( {
-            Update-OSDB
-            Update-OSDSUS
-        })
-
-    #Update patch source
-    $WPFUpdatesDownloadNewButton.Add_Click( { Update-PatchSource })
-
-    #Select Appx packages to remove
-    $WPFAppxButton.Add_Click( { $global:SelectedAppx = Select-Appx })
-
-    #Select Autopilot path to save button
-    $WPFJSONButtonSavePath.Add_Click( { Select-NewJSONDir })
-
-    #retrieve autopilot profile from intune
-    $WPFJSONButtonRetrieve.Add_click( { get-wwautopilotprofile -login $WPFJSONTextBoxAADID.Text -path $WPFJSONTextBoxSavePath.Text })
-
-    #Button to save configuration file
-    $WPFSLSaveButton.Add_click( { Save-Configuration -filename $WPFSLSaveFileName.text })
-
-    #Button to load configuration file
-    $WPFSLLoadButton.Add_click( { Select-Config })
-
-    #Button to select ISO for importation
-    $WPFImportImportSelectButton.Add_click( { Select-ISO })
-
-    #Button to import content from iso
-    $WPFImportImportButton.Add_click( { Import-ISO })
-
-    #Combo Box dynamic change for Winver combo box
-    $WPFImportOtherCBWinOS.add_SelectionChanged({ Update-ImportVersionCB })
-
-    #Button to select the import path in the other components
-    $WPFImportOtherBSelectPath.add_click({ Select-ImportOtherPath
-
-            if ($WPFImportOtherCBType.SelectedItem -ne 'Feature On Demand') {
-                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Out-GridView -Title 'Select Objects' -PassThru) }
-                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack')) { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Where-Object { ($_.Name -like '*Windows-Client-Language-Pack*') } | Out-GridView -Title 'Select Objects' -PassThru) }
-                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack')) { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Out-GridView -Title 'Select Objects' -PassThru) }
-
-            }
-
-            if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
-                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text) }
-                if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Where-Object { ($_.Name -notlike '*Windows-Client-Language-Pack*') } | Out-GridView -Title 'Select Objects' -PassThru) }
-
-            }
-
-
-            $WPFImportOtherLBList.Items.Clear()
-            $count = 0
-            $path = $WPFImportOtherTBPath.text
-            foreach ($item in $items) {
-                $WPFImportOtherLBList.Items.Add($item.name)
-                $count = $count + 1
-            }
-
-            if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') { Update-Log -data "$count Language Packs selected from $path" -Class Information }
-            if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { Update-Log -data "$count Local Experience Packs selected from $path" -Class Information }
-            if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') { Update-Log -data "Features On Demand source selected from $path" -Class Information }
-
-        })
-
-    #Button to import Other Components content
-    $WPFImportOtherBImport.add_click({
-            if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows Server') {
-                if ($WPFImportOtherCBWinVer.SelectedItem -eq '2019') { $WinVerConversion = '1809' }
-            } else {
-                $WinVerConversion = $WPFImportOtherCBWinVer.SelectedItem
-            }
-
-            if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') { Import-LanguagePacks -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text }
-            if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { Import-LocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text }
-            if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') { Import-FeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text } })
-
-    #Button Select LP's for importation
-    $WPFCustomBLangPacksSelect.add_click({ Select-LPFODCriteria -type 'LP' })
-
-    #Button to select FODs for importation
-    $WPFCustomBFODSelect.add_click({ Select-LPFODCriteria -type 'FOD' })
-
-    #Button to select LXPs for importation
-    $WPFCustomBLEPSelect.add_click({ Select-LPFODCriteria -type 'LXP' })
-
-    #Button to select PS1 script
-    $WPFCustomBSelectPath.add_click({
-            $Script = New-Object System.Windows.Forms.OpenFileDialog -Property @{
-                InitialDirectory = [Environment]::GetFolderPath('Desktop')
-                Filter           = 'PS1 (*.ps1)|'
-            }
-            $null = $Script.ShowDialog()
-            $WPFCustomTBFile.text = $Script.FileName })
-
-    #Button to Select ConfigMgr Image Package
-    $WPFCMBSelectImage.Add_Click({
-            $image = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage -ComputerName $global:SiteServer) | Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description | Out-GridView -Title 'Pick an image' -PassThru
-            $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
-            if ((Test-Path -Path $path ) -eq $True) {
-                # write-host "True"
-                Get-Configuration -filename $path
-            } else {
-                Get-ImageInfo -PackID $image.PackageID
-            }
-        })
-
-    #Button to select new file path (may not need)
-    #$WPFCMBFilePathSelect.Add_Click({ })
-
-    #Button to add DP/DPG to list box on ConfigMgr tab
-    $WPFCMBAddDP.Add_Click({ Select-DistributionPoints })
-
-    #Button to remove DP/DPG from list box on ConfigMgr tab
-    $WPFCMBRemoveDP.Add_Click({
-
-            while ($WPFCMLBDPs.SelectedItems) {
-                $WPFCMLBDPs.Items.Remove($WPFCMLBDPs.SelectedItems[0])
-            }
-
-        })
-
-    #Combo Box dynamic change ConfigMgr type
-    $WPFCMCBImageType.add_SelectionChanged({ Enable-ConfigMgrOptions })
-
-    #Combo Box Software Update Catalog source
-    $WPFUSCBSelectCatalogSource.add_SelectionChanged({ Invoke-UpdateTabOptions })
-
-    #Button to remove items from Language Packs List Box
-    $WPFCustomBLangPacksRemove.Add_Click({
-
-            while ($WPFCustomLBLangPacks.SelectedItems) {
-                $WPFCustomLBLangPacks.Items.Remove($WPFCustomLBLangPacks.SelectedItems[0])
-            }
-        })
-
-    #Button to remove items from LXP List Box
-    $WPFCustomBLEPSRemove.Add_Click({
-
-            while ($WPFCustomLBLEP.SelectedItems) {
-                $WPFCustomLBLEP.Items.Remove($WPFCustomLBLEP.SelectedItems[0])
-            }
-
-        })
-
-    #Button to remove items from FOD List Box
-    $WPFCustomBFODRemove.Add_Click({
-
-            while ($WPFCustomLBFOD.SelectedItems) {
-                $WPFCustomLBFOD.Items.Remove($WPFCustomLBFOD.SelectedItems[0])
-            }
-
-        })
-
-    #Button to select default app association XML
-    $WPFCustomBDefaultApp.Add_Click({ Select-DefaultApplicationAssociations })
-
-    #Button to select start menu XML
-    $WPFCustomBStartMenu.Add_Click({ Select-StartMenu })
-
-    #Button to select registry files
-    $WPFCustomBRegistryAdd.Add_Click({ Select-RegFiles })
-
-    #Button to remove registry files
-    $WPFCustomBRegistryRemove.Add_Click({
-
-            while ($WPFCustomLBRegistry.SelectedItems) {
-                $WPFCustomLBRegistry.Items.Remove($WPFCustomLBRegistry.SelectedItems[0])
-            }
-
-        })
-
-    #Button to select ISO save folder
-    $WPFMISISOSelectButton.Add_Click({ Select-ISODirectory })
-
-    #Button to install CM Console Extension
-    $WPFCMBInstallExtensions.Add_Click({ Install-WWCMConsoleExtension })
-
-    #Button to set CM Site and Server properties
-    $WPFCMBSetCM.Add_Click({
-            Set-ConfigMgr
-            Import-CMModule
-
-        })
-
-
-    #===========================================================================
-    # Section for Checkboxes to call Functions
-    #===========================================================================
-
-    #Enable JSON Selection
-    $WPFJSONEnableCheckBox.Add_Click( {
-            If ($WPFJSONEnableCheckBox.IsChecked -eq $true) {
-                $WPFJSONButton.IsEnabled = $True
-                $WPFMISJSONTextBox.Text = 'True'
-            } else {
-                $WPFJSONButton.IsEnabled = $False
-                $WPFMISJSONTextBox.Text = 'False'
-            }
-        })
-
-    #Enable Driver Selection
-    $WPFDriverCheckBox.Add_Click( {
-            If ($WPFDriverCheckBox.IsChecked -eq $true) {
-                $WPFDriverDir1Button.IsEnabled = $True
-                $WPFDriverDir2Button.IsEnabled = $True
-                $WPFDriverDir3Button.IsEnabled = $True
-                $WPFDriverDir4Button.IsEnabled = $True
-                $WPFDriverDir5Button.IsEnabled = $True
-                $WPFMISDriverTextBox.Text = 'True'
-            } else {
-                $WPFDriverDir1Button.IsEnabled = $False
-                $WPFDriverDir2Button.IsEnabled = $False
-                $WPFDriverDir3Button.IsEnabled = $False
-                $WPFDriverDir4Button.IsEnabled = $False
-                $WPFDriverDir5Button.IsEnabled = $False
-                $WPFMISDriverTextBox.Text = 'False'
-            }
-        })
-
-    #Enable Updates Selection
-    $WPFUpdatesEnableCheckBox.Add_Click( {
-            If ($WPFUpdatesEnableCheckBox.IsChecked -eq $true) {
-                $WPFMISUpdatesTextBox.Text = 'True'
-            } else {
-                $WPFMISUpdatesTextBox.Text = 'False'
-            }
-        })
-
-    #Enable AppX Selection
-    $WPFAppxCheckBox.Add_Click( {
-            If ($WPFAppxCheckBox.IsChecked -eq $true) {
-                $WPFAppxButton.IsEnabled = $True
-                $WPFMISAppxTextBox.Text = 'True'
-            } else {
-                $WPFAppxButton.IsEnabled = $False
-            }
-        })
-
-    #Enable install.wim selection in import
-    $WPFImportWIMCheckBox.Add_Click( {
-            If ($WPFImportWIMCheckBox.IsChecked -eq $true) {
-                $WPFImportNewNameTextBox.IsEnabled = $True
-                $WPFImportImportButton.IsEnabled = $True
-            } else {
-                $WPFImportNewNameTextBox.IsEnabled = $False
-                if ($WPFImportDotNetCheckBox.IsChecked -eq $False) { $WPFImportImportButton.IsEnabled = $False }
-            }
-        })
-
-    #Enable .Net binaries selection in import
-    $WPFImportDotNetCheckBox.Add_Click( {
-            If ($WPFImportDotNetCheckBox.IsChecked -eq $true) {
-                $WPFImportImportButton.IsEnabled = $True
-            } else {
-                if ($WPFImportWIMCheckBox.IsChecked -eq $False) { $WPFImportImportButton.IsEnabled = $False }
-            }
-        })
-
-    #Enable Win10 version selection
-    $WPFUpdatesW10Main.Add_Click( {
-            If ($WPFUpdatesW10Main.IsChecked -eq $true) {
-                #$WPFUpdatesW10_1909.IsEnabled = $True
-                $WPFUpdatesW10_1903.IsEnabled = $True
-                $WPFUpdatesW10_1809.IsEnabled = $True
-                $WPFUpdatesW10_1803.IsEnabled = $True
-                $WPFUpdatesW10_1709.IsEnabled = $True
-                $WPFUpdatesW10_2004.IsEnabled = $True
-                $WPFUpdatesW10_20H2.IsEnabled = $True
-                $WPFUpdatesW10_21H1.IsEnabled = $True
-                $WPFUpdatesW10_21H2.IsEnabled = $True
-                $WPFUpdatesW10_22H2.IsEnabled = $True
-            } else {
-                #$WPFUpdatesW10_1909.IsEnabled = $False
-                $WPFUpdatesW10_1903.IsEnabled = $False
-                $WPFUpdatesW10_1809.IsEnabled = $False
-                $WPFUpdatesW10_1803.IsEnabled = $False
-                $WPFUpdatesW10_1709.IsEnabled = $False
-                $WPFUpdatesW10_2004.IsEnabled = $False
-                $WPFUpdatesW10_20H2.IsEnabled = $False
-                $WPFUpdatesW10_21H1.IsEnabled = $False
-                $WPFUpdatesW10_21H2.IsEnabled = $False
-                $WPFUpdatesW10_22H2.IsEnabled = $False
-            }
-        })
-
-    #Enable Win11 version selection
-    $WPFUpdatesW11Main.Add_Click( {
-            If ($WPFUpdatesW11Main.IsChecked -eq $true) {
-                $WPFUpdatesW11_21H2.IsEnabled = $True
-                $WPFUpdatesW11_22H2.IsEnabled = $True
-                $WPFUpdatesW11_23H2.IsEnabled = $True
-            } else {
-                $WPFUpdatesW11_21H2.IsEnabled = $False
-                $WPFUpdatesW11_22H2.IsEnabled = $False
-                $WPFUpdatesW11_23H2.IsEnabled = $False
-
-            }
-        })
-
-    #Enable LP Selection
-    $WPFCustomCBLangPacks.Add_Click({
-            If ($WPFCustomCBLangPacks.IsChecked -eq $true) {
-                $WPFCustomBLangPacksSelect.IsEnabled = $True
-                $WPFCustomBLangPacksRemove.IsEnabled = $True
-            } else {
-                $WPFCustomBLangPacksSelect.IsEnabled = $False
-                $WPFCustomBLangPacksRemove.IsEnabled = $False
-            }
-        })
-
-    #ENable Language Experience Pack selection
-    $WPFCustomCBLEP.Add_Click({
-            If ($WPFCustomCBLEP.IsChecked -eq $true) {
-                $WPFCustomBLEPSelect.IsEnabled = $True
-                $WPFCustomBLEPSRemove.IsEnabled = $True
-            } else {
-                $WPFCustomBLEPSelect.IsEnabled = $False
-                $WPFCustomBLEPSRemove.IsEnabled = $False
-            }
-        })
-
-    #Enable Feature On Demand selection
-    $WPFCustomCBFOD.Add_Click({
-            If ($WPFCustomCBFOD.IsChecked -eq $true) {
-                $WPFCustomBFODSelect.IsEnabled = $True
-                $WPFCustomBFODRemove.IsEnabled = $True
-            } else {
-                $WPFCustomBFODSelect.IsEnabled = $False
-                $WPFCustomBFODRemove.IsEnabled = $False
-            }
-        })
-
-    #Enable Run Script settings
-    $WPFCustomCBRunScript.Add_Click({
-            If ($WPFCustomCBRunScript.IsChecked -eq $true) {
-                $WPFCustomTBFile.IsEnabled = $True
-                $WPFCustomBSelectPath.IsEnabled = $True
-                $WPFCustomTBParameters.IsEnabled = $True
-                $WPFCustomCBScriptTiming.IsEnabled = $True
-            } else {
-                $WPFCustomTBFile.IsEnabled = $False
-                $WPFCustomBSelectPath.IsEnabled = $False
-                $WPFCustomTBParameters.IsEnabled = $False
-                $WPFCustomCBScriptTiming.IsEnabled = $False
-            } })
-
-    #Enable Default App Association
-    $WPFCustomCBEnableApp.Add_Click({
-            If ($WPFCustomCBEnableApp.IsChecked -eq $true) {
-                $WPFCustomBDefaultApp.IsEnabled = $True
-
-            } else {
-                $WPFCustomBDefaultApp.IsEnabled = $False
-            }
-        })
-
-    #Enable Start Menu Layout
-    $WPFCustomCBEnableStart.Add_Click({
-            If ($WPFCustomCBEnableStart.IsChecked -eq $true) {
-                $WPFCustomBStartMenu.IsEnabled = $True
-
-            } else {
-                $WPFCustomBStartMenu.IsEnabled = $False
-            }
-        })
-
-    #Enable Registry selection list box buttons
-    $WPFCustomCBEnableRegistry.Add_Click({
-            If ($WPFCustomCBEnableRegistry.IsChecked -eq $true) {
-                $WPFCustomBRegistryAdd.IsEnabled = $True
-                $WPFCustomBRegistryRemove.IsEnabled = $True
-                $WPFCustomLBRegistry.IsEnabled = $True
-
-            } else {
-                $WPFCustomBRegistryAdd.IsEnabled = $False
-                $WPFCustomBRegistryRemove.IsEnabled = $False
-                $WPFCustomLBRegistry.IsEnabled = $False
-
-            }
-        })
-
-    #Enable ISO/Upgrade Package selection in import
-    $WPFImportISOCheckBox.Add_Click( {
-            If ($WPFImportISOCheckBox.IsChecked -eq $true) {
-                $WPFImportImportButton.IsEnabled = $True
-            } else {
-                if (($WPFImportWIMCheckBox.IsChecked -eq $False) -and ($WPFImportDotNetCheckBox.IsChecked -eq $False)) { $WPFImportImportButton.IsEnabled = $False }
-            }
-        })
-
-    #Enable not creating stand alone wim
-    $WPFMISCBNoWIM.Add_Click( {
-            If ($WPFMISCBNoWIM.IsChecked -eq $true) {
-                $WPFMISWimNameTextBox.IsEnabled = $False
-                $WPFMISWimFolderTextBox.IsEnabled = $False
-                $WPFMISFolderButton.IsEnabled = $False
-
-                $WPFMISWimNameTextBox.text = 'install.wim'
-            } else {
-                $WPFMISWimNameTextBox.IsEnabled = $True
-                $WPFMISWimFolderTextBox.IsEnabled = $True
-                $WPFMISFolderButton.IsEnabled = $True
-            }
-        })
-
-    #Enable ISO creation fields
-    $WPFMISCBISO.Add_Click( {
-            If ($WPFMISCBISO.IsChecked -eq $true) {
-                $WPFMISTBISOFileName.IsEnabled = $True
-                $WPFMISTBFilePath.IsEnabled = $True
-                $WPFMISCBDynamicUpdates.IsEnabled = $True
-                $WPFMISCBNoWIM.IsEnabled = $True
-                $WPFMISCBBootWIM.IsEnabled = $True
-                $WPFMISISOSelectButton.IsEnabled = $true
-
-            } else {
-                $WPFMISTBISOFileName.IsEnabled = $False
-                $WPFMISTBFilePath.IsEnabled = $False
-                $WPFMISISOSelectButton.IsEnabled = $false
-
-            }
-            if (($WPFMISCBISO.IsChecked -eq $false) -and ($WPFMISCBUpgradePackage.IsChecked -eq $false)) {
-                $WPFMISCBDynamicUpdates.IsEnabled = $False
-                $WPFMISCBDynamicUpdates.IsChecked = $False
-                $WPFMISCBNoWIM.IsEnabled = $False
-                $WPFMISCBNoWIM.IsChecked = $False
-                $WPFMISWimNameTextBox.IsEnabled = $true
-                $WPFMISWimFolderTextBox.IsEnabled = $true
-                $WPFMISFolderButton.IsEnabled = $true
-                $WPFMISCBBootWIM.IsChecked = $false
-                $WPFMISCBBootWIM.IsEnabled = $false
-            }
-        })
-
-    #Enable upgrade package path option
-    $WPFMISCBUpgradePackage.Add_Click( {
-            If ($WPFMISCBUpgradePackage.IsChecked -eq $true) {
-                $WPFMISTBUpgradePackage.IsEnabled = $True
-                $WPFMISCBDynamicUpdates.IsEnabled = $True
-                $WPFMISCBNoWIM.IsEnabled = $True
-                $WPFMISCBBootWIM.IsEnabled = $True
-
-            } else {
-                $WPFMISTBUpgradePackage.IsEnabled = $False
-            }
-            if (($WPFMISCBISO.IsChecked -eq $false) -and ($WPFMISCBUpgradePackage.IsChecked -eq $false)) {
-                $WPFMISCBDynamicUpdates.IsEnabled = $False
-                $WPFMISCBDynamicUpdates.IsChecked = $False
-                $WPFMISCBNoWIM.IsEnabled = $False
-                $WPFMISCBNoWIM.IsChecked = $False
-                $WPFMISWimNameTextBox.IsEnabled = $true
-                $WPFMISWimFolderTextBox.IsEnabled = $true
-                $WPFMISFolderButton.IsEnabled = $true
-                $WPFMISCBBootWIM.IsChecked = $false
-                $WPFMISCBBootWIM.IsEnabled = $false
-            }
-        })
-
-    #Enable option to include Optional Updates
-    $WPFUpdatesEnableCheckBox.Add_Click({
-            if ($WPFUpdatesEnableCheckBox.IsChecked -eq $true) { $WPFUpdatesOptionalEnableCheckBox.IsEnabled = $True }
-            else {
-                $WPFUpdatesOptionalEnableCheckBox.IsEnabled = $False
-                $WPFUpdatesOptionalEnableCheckBox.IsChecked = $False
-            }
-        })
-
-    #==========================================================
-    #Run WIM Witch below
-    #==========================================================
-
-    #Runs WIM Witch from a single file, bypassing the GUI
-    if (($auto -eq $true) -and ($autofile -ne '')) {
-        Invoke-RunConfigFile -filename $autofile
-        Show-ClosingText
-        exit 0
-    }
-
-    #Runs WIM from a path with multiple files, bypassing the GUI
-    if (($auto -eq $true) -and ($autopath -ne '')) {
-        Update-Log -data "Running batch job from config folder $autopath" -Class Information
-        $files = Get-ChildItem -Path $autopath
-        Update-Log -data 'Setting batch job for the folling configs:' -Class Information
-        foreach ($file in $files) { Update-Log -Data $file -Class Information }
-        foreach ($file in $files) {
-            $fullpath = $autopath + '\' + $file
-            Invoke-RunConfigFile -filename $fullpath
-        }
-        Update-Log -Data 'Work complete' -Class Information
-        Show-ClosingText
-        exit 0
-    }
-
-    #Loads the specified ConfigMgr config file from CM Console
-    if (($CM -eq 'Edit') -and ($autofile -ne '')) {
-        Update-Log -Data 'Loading ConfigMgr OS Image Package information...' -Class Information
-        Get-Configuration -filename $autofile
-    }
-
-    #Closing action for the WPF form
-    Register-ObjectEvent -InputObject $form -EventName Closed -Action ( { Show-ClosingText }) | Out-Null
-
-    #display text information to the user
-    Invoke-TextNotification
-
-    if ($HiHungryImDad -eq $true) {
-        $string = Invoke-DadJoke
-        Update-Log -Data $string -Class Comment
-        $WPFImportBDJ.Visibility = 'Visible'
-    }
-
-    #Start GUI
-    Update-Log -data 'Starting WIM Witch GUI' -class Information
-    $Form.ShowDialog() | Out-Null #This starts the GUI
-
-    #endregion Main
 }
