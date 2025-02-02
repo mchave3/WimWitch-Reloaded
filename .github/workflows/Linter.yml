@@ -31,3 +31,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_YAML_PRETTIER: false
+          FILTER_REGEX_INCLUDE: .*src/.*
