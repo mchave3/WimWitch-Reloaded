@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell: Launch Script",
+            "name": "PowerShell: Launch Build Script",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${workspaceFolder}/WimWitch.ps1",
+            "script": "${workspaceFolder}/utilities/build.ps1",
             "cwd": "${workspaceFolder}"
         }
     ]
