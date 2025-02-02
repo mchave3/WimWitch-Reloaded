@@ -1,117 +1,97 @@
-```mermaid
----
-config:
-  theme: default
-  layout: elk
----
-flowchart TB
- subgraph Public["📂 Public"]
-        Start["Start-WimWitch"]
-  end
- subgraph UI["🖥️ UI Functions"]
-        GetForm["Get-FormVariables"]
-        SelectConfig["Select-Config"]
-        SelectSourceWIM["Select-SourceWIM"]
-        SelectMountDir["Select-Mountdir"]
-        SelectJSONFile["Select-JSONFile"]
-        SelectTargetDir["Select-TargetDir"]
-        SelectDriverSource["Select-DriverSource"]
-  end
- subgraph Core["🔧 Core Functions"]
-    direction LR
-        UpdateLog["Update-Log"]
-        SaveConfig["Save-Configuration"]
-        GetConfig["Get-Configuration"]
-        ImportWimInfo["Import-WimInfo"]
-        RemoveAppx["Remove-Appx"]
-        BackupWW["Backup-WIMWitch"]
-        InstallWWUpgrade["Install-WimWitchUpgrade"]
-        InvokeMakeItSo["Invoke-MakeItSo"]
-  end
- subgraph Updates["🔄 Update Management"]
-    direction LR
-        GetWindowsPatches["Get-WindowsPatches"]
-        DeployUpdates["Deploy-Updates"]
-        DeployLCU["Deploy-LCU"]
-        InvokeMSUpdate["Invoke-MSUpdateItemDownload"]
-        InvokeMEMCMUpdate["Invoke-MEMCMUpdatecatalog"]
-  end
- subgraph Image["📀 Image Management"]
-    direction LR
-        InstallStartLayout["Install-StartLayout"]
-        ImportISO["Import-ISO"]
-        CopyStageMedia["Copy-StageIsoMedia"]
-        InstallDrivers["Install-Driver"]
-        ImportFOD["Import-FeatureOnDemand"]
-        InstallFOD["Install-FeaturesOnDemand"]
-  end
- subgraph Language["🌐 Language Support"]
-        ImportLP["Import-LanguagePacks"]
-        InstallLP["Install-LanguagePacks"]
-        ImportLEP["Import-LocalExperiencePack"]
-        InstallLEP["Install-LocalExperiencePack"]
-  end
- subgraph System["🛠️ System Functions"]
-        CheckArch["Invoke-ArchitectureCheck"]
-        GetWinVer["Get-WinVersionNumber"]
-        GetWindowsType["Get-WindowsType"]
-        InvokeParseJSON["Invoke-ParseJSON"]
-  end
- subgraph Private["📂 Private"]
-    direction TB
-        UI
-        Core
-        Updates
-        Image
-        Language
-        System
-  end
-    Start --> GetForm & SelectSourceWIM & SelectMountDir & SelectJSONFile & SelectTargetDir & SelectDriverSource
-    GetForm --> UpdateLog
-    SelectSourceWIM --> ImportWimInfo
-    ImportWimInfo --> UpdateLog
-    SelectJSONFile --> InvokeParseJSON
-    SelectDriverSource --> InstallDrivers
-    InvokeMakeItSo --> DeployUpdates & ImportFOD & ImportLP
-    DeployUpdates --> DeployLCU
-    ImportFOD --> InstallFOD
-    ImportLP --> InstallLP
-     Start:::public
-     UpdateLog:::core
-     SaveConfig:::core
-     GetConfig:::core
-     ImportWimInfo:::core
-     RemoveAppx:::core
-     BackupWW:::core
-     InstallWWUpgrade:::core
-     InvokeMakeItSo:::core
-     GetWindowsPatches:::updates
-     DeployUpdates:::updates
-     DeployLCU:::updates
-     InvokeMSUpdate:::updates
-     InvokeMEMCMUpdate:::updates
-     InstallStartLayout:::image
-     ImportISO:::image
-     CopyStageMedia:::image
-     InstallDrivers:::image
-     ImportFOD:::image
-     InstallFOD:::image
-     ImportLP:::language
-     InstallLP:::language
-     ImportLEP:::language
-     InstallLEP:::language
-     CheckArch:::system
-     GetWinVer:::system
-     GetWindowsType:::system
-     InvokeParseJSON:::system
-    classDef default fill:#ffffff,stroke:#333,stroke-width:2px
-    classDef folder fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
-    classDef public fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
-    classDef function fill:#ffffff,stroke:#555,stroke-width:2px
-    classDef core fill:#fff3e0,stroke:#f57c00,stroke-width:2px
-    classDef updates fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
-    classDef image fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    classDef language fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef system fill:#e0f2f1,stroke:#00796b,stroke-width:2px
+# WimWitch Functions Documentation
 
+This directory contains the PowerShell functions that power WimWitch. The functions are organized into two main directories:
+
+## Directory Structure
+
+- 📂 `public/` - Contains the main entry point function
+  - `Start-WimWitch` - The primary function that initiates the WimWitch workflow
+
+- 📂 `private/` - Contains all internal functions organized by their purpose:
+
+### 🖥️ UI Functions
+Functions that handle user interface interactions and form management:
+- `Get-FormVariables` - Manages form variables and controls
+- `Select-Config` - Handles configuration selection
+- `Select-SourceWIM` - Manages WIM source selection
+- `Select-Mountdir` - Handles mount directory selection
+- `Select-JSONFile` - Manages JSON file selection
+- `Select-TargetDir` - Handles target directory selection
+- `Select-DriverSource` - Manages driver source selection
+
+### 🔧 Core Functions
+Essential functions for WimWitch operations:
+- `Update-Log` - Handles logging operations
+- `Save-Configuration` - Saves current configuration
+- `Get-Configuration` - Retrieves configuration settings
+- `Import-WimInfo` - Imports Windows image information
+- `Remove-Appx` - Manages AppX package removal
+- `Backup-WIMWitch` - Handles backup operations
+- `Install-WimWitchUpgrade` - Manages WimWitch upgrades
+- `Invoke-MakeItSo` - Orchestrates the main build process
+
+### 🔄 Update Management
+Functions for handling Windows updates:
+- `Get-WindowsPatches` - Retrieves available Windows patches
+- `Deploy-Updates` - Handles update deployment
+- `Deploy-LCU` - Manages Latest Cumulative Update deployment
+- `Invoke-MSUpdateItemDownload` - Handles Microsoft Update downloads
+- `Invoke-MEMCMUpdatecatalog` - Manages MEMCM update catalog operations
+
+### 📀 Image Management
+Functions for Windows image manipulation:
+- `Install-StartLayout` - Manages Start Menu layout
+- `Import-ISO` - Handles ISO file importing
+- `Copy-StageIsoMedia` - Manages ISO staging
+- `Install-Driver` - Handles driver installation
+- `Import-FeatureOnDemand` - Imports Features on Demand
+- `Install-FeaturesOnDemand` - Installs Features on Demand
+
+### 🌐 Language Support
+Functions for language management:
+- `Import-LanguagePacks` - Imports language packs
+- `Install-LanguagePacks` - Installs language packs
+- `Import-LocalExperiencePack` - Imports Local Experience Packs
+- `Install-LocalExperiencePack` - Installs Local Experience Packs
+
+### 🛠️ System Functions
+Core system and utility functions:
+- `Invoke-ArchitectureCheck` - Verifies system architecture
+- `Get-WinVersionNumber` - Retrieves Windows version
+- `Get-WindowsType` - Determines Windows edition type
+- `Invoke-ParseJSON` - Handles JSON parsing operations
+
+## Function Flow
+
+The function flow is visualized in the Mermaid diagram below, showing the relationships and dependencies between different components:
+
+```mermaid
+graph LR
+    %% Styles
+    classDef publicModule fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1a1a1a
+    classDef uiModule fill:#bbdefb,stroke:#1976d2,stroke-width:2px,color:#1a1a1a
+    classDef coreModule fill:#ffecb3,stroke:#ffa000,stroke-width:2px,color:#1a1a1a
+    classDef updateModule fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#1a1a1a
+    classDef imageModule fill:#ffcdd2,stroke:#d32f2f,stroke-width:2px,color:#1a1a1a
+    classDef langModule fill:#b2dfdb,stroke:#00796b,stroke-width:2px,color:#1a1a1a
+    classDef sysModule fill:#d7ccc8,stroke:#5d4037,stroke-width:2px,color:#1a1a1a
+
+    %% Main Components
+    Start[Start-WimWitch]:::publicModule
+    UI[UI Functions]:::uiModule
+    Core[Core Functions]:::coreModule
+    
+    %% Supporting Modules
+    Updates[Update Management]:::updateModule
+    Image[Image Management]:::imageModule
+    Lang[Language Support]:::langModule
+    Sys[System Functions]:::sysModule
+
+    %% Connections
+    Start --> |"Initialize"| UI
+    UI --> |"Process"| Core
+    Core --> |"Updates"| Updates
+    Core --> |"Images"| Image
+    Core --> |"Languages"| Lang
+    Sys --> |"Support"| Core
 ```
