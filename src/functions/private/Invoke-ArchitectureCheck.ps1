@@ -51,7 +51,7 @@ function Invoke-ArchitectureCheck {
                 $imageArch = "Unknown"
             }
             
-            Update-Log -Data "System Architecture: $($systemArch ? 'x64' : 'x86')" -Class Information
+            Update-Log -Data "System Architecture: $(if ($systemArch) { 'x64' } else { 'x86' })" -Class Information
             Update-Log -Data "Image Architecture: $imageArch" -Class Information
             
             # Check compatibility
