@@ -15,20 +15,41 @@ $binariesDir = Join-Path $outputDir "binaries"
 $requiredModules = @('OSDSUS', 'OSDUpdate')
 $modulesToUninstall = $requiredModules + @($moduleName)
 
+function Show-BuildBanner {
+    $banner = @"
+╔══════════════════════════════════════════════════════════════════════════╗
+║                      WimWitch-Reloaded Build Script                      ║
+║                     $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')                     ║
+╚══════════════════════════════════════════════════════════════════════════╝
+"@
+    Write-Host $banner -ForegroundColor Cyan
+}
+
 function Write-BuildLog {
     param(
         [string]$Message,
-        [ValidateSet('Info', 'Warning', 'Error')]
+        [ValidateSet('Info', 'Warning', 'Error', 'Success', 'Stage')]
         [string]$Type = 'Info'
     )
     
-    $color = switch ($Type) {
-        'Info' { 'Green' }
-        'Warning' { 'Yellow' }
-        'Error' { 'Red' }
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $icon = switch ($Type) {
+        'Info'    { "ℹ️" }
+        'Warning' { "⚠️" }
+        'Error'   { "❌" }
+        'Success' { "✅" }
+        'Stage'   { "🔄" }
     }
     
-    Write-Host "[$((Get-Date).ToString('HH:mm:ss'))] $Message" -ForegroundColor $color
+    $color = switch ($Type) {
+        'Info'    { 'White' }
+        'Warning' { 'Yellow' }
+        'Error'   { 'Red' }
+        'Success' { 'Green' }
+        'Stage'   { 'Cyan' }
+    }
+    
+    Write-Host "[$timestamp] $icon $Message" -ForegroundColor $color
 }
 
 function Install-RequiredModule {
@@ -70,8 +91,14 @@ function Install-RequiredModule {
     }
 }
 
+# Start build process
+Show-BuildBanner
+Write-BuildLog "Starting build process for $moduleName" -Type Stage
+Write-BuildLog "PowerShell Version: $($PSVersionTable.PSVersion)" -Type Info
+Write-BuildLog "Operating System: $([System.Environment]::OSVersion.VersionString)" -Type Info
+
 # 1. Uninstalling existing modules
-Write-BuildLog "Uninstalling existing modules..." -Type Warning
+Write-BuildLog "STAGE 1: Cleaning up existing modules" -Type Stage
 foreach ($module in $modulesToUninstall) {
     if (Get-Module -Name $module) {
         Remove-Module -Name $module -Force -ErrorAction SilentlyContinue
@@ -89,7 +116,7 @@ foreach ($module in $modulesToUninstall) {
 }
 
 # 2. Environment preparation
-Write-BuildLog "Preparing build environment..."
+Write-BuildLog "STAGE 2: Preparing build environment" -Type Stage
 
 # Clean or create output folder
 if (Test-Path $outputDir) {
@@ -111,7 +138,7 @@ New-Item -ItemType Directory -Path $binariesDir -Force | Out-Null
 Write-BuildLog "Binaries folder created: $binariesDir"
 
 # 3. Module build
-Write-BuildLog "Starting module build..."
+Write-BuildLog "STAGE 3: Building module" -Type Stage
 
 # Generate module content
 $moduleContent = @"
@@ -153,7 +180,7 @@ New-ModuleManifest @manifestParams
 Write-BuildLog "Module manifest created: $manifestFile"
 
 # 4. Installing required modules
-Write-BuildLog "Processing required modules..."
+Write-BuildLog "STAGE 4: Processing required modules" -Type Stage
 foreach ($module in $requiredModules) {
     if (!(Install-RequiredModule -ModuleName $module)) {
         Write-BuildLog "Failed to process required module: $module" -Type Error
@@ -162,10 +189,11 @@ foreach ($module in $requiredModules) {
 }
 
 # 5. Import and verify the newly built module
+Write-BuildLog "STAGE 5: Verifying module" -Type Stage
 try {
     Import-Module $moduleOutput -Force -ErrorAction Stop
     if (Get-Module -Name $moduleName) {
-        Write-BuildLog "Module successfully imported and verified" -Type Info
+        Write-BuildLog "Module successfully imported and verified" -Type Success
     } else {
         Write-BuildLog "Module import verification failed" -Type Error
         exit 1
@@ -176,10 +204,19 @@ catch {
     exit 1
 }
 
-Write-BuildLog "Build completed successfully!" -Type Info
-Write-BuildLog "Module available in: $moduleOutput" -Type Info
-Write-BuildLog "Currently loaded modules:" -Type Info
+# Build Summary
+$summary = @"
+══════════════════════ Build Summary ══════════════════════
+Module Name    : $moduleName
+Build Path     : $moduleOutput
+Build Time     : $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+Build Status   : Success
+══════════════════════════════════════════════════════════
+"@
 
-Get-Module | Where-Object { $_.Name -match 'OSDSUS|OSDUpdate|WimWitch-Reloaded' } | Format-Table -AutoSize
+Write-Host "`n$summary" -ForegroundColor Green
+Write-BuildLog "Currently loaded modules:" -Type Info
+Get-Module | Where-Object { $_.Name -match 'OSDSUS|OSDUpdate|WimWitch-Reloaded' } | 
+    Format-Table -AutoSize Name, Version, ModuleType, Path
 
 Start-WimWitch
