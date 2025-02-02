@@ -8,7 +8,7 @@
             "name": "PowerShell: Launch Build Script",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${workspaceFolder}/utilities/build.ps1",
+            "script": "${workspaceFolder}/scripts/build.ps1",
             "cwd": "${workspaceFolder}"
         }
     ]
