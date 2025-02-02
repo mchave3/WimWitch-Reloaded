@@ -17,10 +17,10 @@ $modulesToUninstall = $requiredModules + @($moduleName)
 
 function Show-BuildBanner {
     $banner = @"
-╔══════════════════════════════════════════════════════════════════════════╗
-║                      WimWitch-Reloaded Build Script                      ║
-║                     $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')                     ║
-╚══════════════════════════════════════════════════════════════════════════╝
+===========================================================
+                WimWitch-Reloaded Build Script              
+                $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')               
+===========================================================
 "@
     Write-Host $banner -ForegroundColor Cyan
 }
@@ -33,12 +33,12 @@ function Write-BuildLog {
     )
     
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $icon = switch ($Type) {
-        'Info'    { "ℹ️" }
-        'Warning' { "⚠️" }
-        'Error'   { "❌" }
-        'Success' { "✅" }
-        'Stage'   { "🔄" }
+    $prefix = switch ($Type) {
+        'Info'    { "[INFO]   " }
+        'Warning' { "[WARN]   " }
+        'Error'   { "[ERROR]  " }
+        'Success' { "[SUCCESS]" }
+        'Stage'   { "[STAGE]  " }
     }
     
     $color = switch ($Type) {
@@ -49,7 +49,7 @@ function Write-BuildLog {
         'Stage'   { 'Cyan' }
     }
     
-    Write-Host "[$timestamp] $icon $Message" -ForegroundColor $color
+    Write-Host "[$timestamp] $prefix $Message" -ForegroundColor $color
 }
 
 function Install-RequiredModule {
