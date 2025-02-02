@@ -28,7 +28,6 @@
 - [Contributing](#-contributing)
 - [License](#-license)
 - [Author](#-author)
-- [Version](#-version)
 
 ## 📋 Overview
 
