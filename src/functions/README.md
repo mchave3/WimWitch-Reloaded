@@ -1,5 +1,3 @@
-# Function Organization
-
 ```mermaid
 graph TB
     subgraph Public["📂 Public"]
@@ -11,8 +9,12 @@ graph TB
         
         subgraph UI["🖥️ UI Functions"]
             GetForm["Get-FormVariables"]
-            SelectConfig["Select-Config"] 
-            SelectNewJSONDir["Select-NewJSONDir"]
+            SelectConfig["Select-Config"]
+            SelectSourceWIM["Select-SourceWIM"]
+            SelectMountDir["Select-Mountdir"]
+            SelectJSONFile["Select-JSONFile"]
+            SelectTargetDir["Select-TargetDir"]
+            SelectDriverSource["Select-DriverSource"]
         end
 
         subgraph Core["🔧 Core Functions"]
@@ -22,35 +24,63 @@ graph TB
             GetConfig["Get-Configuration"]
             ImportWimInfo["Import-WimInfo"]
             RemoveAppx["Remove-Appx"]
-            RemoveOSIndex["Remove-OSIndex"]
+            BackupWW["Backup-WIMWitch"]
+            InstallWWUpgrade["Install-WimWitchUpgrade"]
+            InvokeMakeItSo["Invoke-MakeItSo"]
+        end
+
+        subgraph Updates["🔄 Update Management"]
+            direction LR
+            GetWindowsPatches["Get-WindowsPatches"]
+            DeployUpdates["Deploy-Updates"]
+            DeployLCU["Deploy-LCU"]
+            InvokeMSUpdate["Invoke-MSUpdateItemDownload"]
+            InvokeMEMCMUpdate["Invoke-MEMCMUpdatecatalog"]
         end
 
         subgraph Image["📀 Image Management"]
             direction LR
             InstallStartLayout["Install-StartLayout"]
-            SelectImportPath["Select-ImportOtherPath"]
+            ImportISO["Import-ISO"]
+            CopyStageMedia["Copy-StageIsoMedia"]
+            InstallDrivers["Install-Driver"]
             ImportFOD["Import-FeatureOnDemand"]
+            InstallFOD["Install-FeaturesOnDemand"]
         end
 
-        subgraph ConfigMgr["⚙️ ConfigMgr Integration"]
-            SelectDPs["Select-DistributionPoints"]
-            GetImageInfo["Get-ImageInfo"]
+        subgraph Language["🌐 Language Support"]
+            ImportLP["Import-LanguagePacks"]
+            InstallLP["Install-LanguagePacks"]
+            ImportLEP["Import-LocalExperiencePack"]
+            InstallLEP["Install-LocalExperiencePack"]
         end
 
         subgraph System["🛠️ System Functions"]
             CheckArch["Invoke-ArchitectureCheck"]
-            UpdateAutopilot["Update-Autopilot"]
+            GetWinVer["Get-WinVersionNumber"]
+            GetWindowsType["Get-WindowsType"]
+            InvokeParseJSON["Invoke-ParseJSON"]
         end
     end
 
     Start --> GetForm
     GetForm --> UpdateLog
-    SelectConfig --> GetConfig
-    GetConfig --> ImportWimInfo
+    Start --> SelectSourceWIM
+    SelectSourceWIM --> ImportWimInfo
     ImportWimInfo --> UpdateLog
-    RemoveAppx --> UpdateLog
-    InstallStartLayout --> UpdateLog
-    SelectDPs --> UpdateLog
+    Start --> SelectMountDir
+    Start --> SelectJSONFile
+    SelectJSONFile --> InvokeParseJSON
+    Start --> SelectTargetDir
+    Start --> SelectDriverSource
+    SelectDriverSource --> InstallDrivers
+
+    InvokeMakeItSo --> DeployUpdates
+    DeployUpdates --> DeployLCU
+    InvokeMakeItSo --> ImportFOD
+    ImportFOD --> InstallFOD
+    InvokeMakeItSo --> ImportLP
+    ImportLP --> InstallLP
     
     classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px;
     classDef folder fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
@@ -58,4 +88,5 @@ graph TB
     
     class Public,Private folder;
     class Start public;
-    class UI,Core,Image,ConfigMgr,System folder;
+    class UI,Core,Updates,Image,Language,System folder;
+```
