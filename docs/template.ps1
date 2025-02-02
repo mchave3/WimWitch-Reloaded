@@ -8,7 +8,7 @@
 .NOTES
     Name:        ScriptName.ps1
     Author:      Mickaël CHAVE
-    Created:     2025-01-31
+    Created:     2025-02-02
     Version:     1.0.0
     Repository:  https://github.com/mchave3/WimWitch-Reloaded
     License:     MIT License
