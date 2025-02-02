@@ -28,7 +28,6 @@
 - [Contributing](#-contributing)
 - [License](#-license)
 - [Author](#-author)
-- [Version](#-version)
 
 ## 📋 Overview
 
@@ -64,7 +63,7 @@ WimWitch-Reloaded is a maintained and enhanced fork of [TheNotoriousDRR's WIM-Wi
 Install-Module -Name WimWitch-Reloaded
 ```
 
-### Pre-Release Version
+### Prerelease Version
 ```powershell
 Install-Module -Name WimWitch-Reloaded -AllowPrerelease
 ```
