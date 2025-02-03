@@ -3,8 +3,7 @@
     Update the boot.wim file in the staging area.
 
 .DESCRIPTION
-    This function updates the boot.wim file in the staging area by mounting it,
-    applying updates, and managing the mounting/unmounting process.
+    This function updates the boot.wim file in the staging area by mounting it, applying updates, and managing the mounting/unmounting process.
 
 .NOTES
     Name:        Update-BootWIM.ps1
@@ -30,95 +29,68 @@ function Update-BootWIM {
     )
 
     process {
+        #create mount point in staging
         try {
-            Update-Log -Data 'Creating mount point in staging folder...' -Class Information
-            
-            if ((Test-Path -Path ($global:workdir + '\staging\mount')) -eq $false) {
-                New-Item -Path ($global:workdir + '\staging\mount') -ItemType Directory -Force | Out-Null
-            }
+            Update-Log -Data 'Creating mount point in staging folder...'
+            New-Item -Path $global:workdir\staging -Name 'mount' -ItemType Directory -ErrorAction Stop
+            Update-Log -Data 'Staging folder mount point created successfully' -Class Information
+        } catch {
+            Update-Log -data 'Failed to create the staging folder mount point' -Class Error
+            Update-Log -data $_.Exception.Message -class Error
+            return
+        }
 
-            $bootmountdir = $global:workdir + '\staging\mount'
-            $bootwim = $global:workdir + '\staging\media\sources\boot.wim'
+        #change attribute of boot.wim
+        #Change file attribute to normal
+        Update-Log -Data 'Setting file attribute of boot.wim to Normal' -Class Information
+        $attrib = Get-Item $global:workdir\staging\media\sources\boot.wim
+        $attrib.Attributes = 'Normal'
 
-            # Mount and update boot.wim index 1
+        $BootImages = Get-WindowsImage -ImagePath $global:workdir\staging\media\sources\boot.wim
+        Foreach ($BootImage in $BootImages) {
+            #Mount the PE Image
             try {
-                Update-Log -data 'Mounting boot.wim index 1...' -Class Information
-                Mount-WindowsImage -Path $bootmountdir -ImagePath $bootwim -Index 1 | Out-Null
-                Update-Log -Data 'boot.wim index 1 mounted successfully' -Class Information
-            }
-            catch {
-                Update-Log -Data 'Failed to mount boot.wim index 1' -Class Error
-                Update-Log -Data $_.Exception.Message -Class Error
+                $text = 'Mounting PE image number ' + $BootImage.ImageIndex
+                Update-Log -data $text -Class Information
+                Mount-WindowsImage -ImagePath $global:workdir\staging\media\sources\boot.wim -Path $global:workdir\staging\mount -Index $BootImage.ImageIndex -ErrorAction Stop
+            } catch {
+                Update-Log -Data 'Could not mount the boot.wim' -Class Error
+                Update-Log -data $_.Exception.Message -class Error
                 return
             }
 
-            # Apply updates to index 1
+            Update-Log -data 'Applying SSU Update' -Class Information
+            Deploy-Updates -class 'PESSU'
+            Update-Log -data 'Applying LCU Update' -Class Information
+            Deploy-Updates -class 'PELCU'
+
+            #Dismount the PE Image
             try {
-                Update-Log -Data 'Applying updates to boot.wim index 1...' -Class Information
-                $bootupdate = Get-ChildItem -Path ($global:workdir + '\staging\updates') -Filter '*.msu'
-                foreach ($update in $bootupdate) {
-                    $text = 'Applying ' + $update.name
-                    Update-Log -data $text -Class Information
-                    Add-WindowsPackage -PackagePath $update.fullname -Path $bootmountdir | Out-Null
-                }
-            }
-            catch {
-                Update-Log -Data 'Failed to apply updates to boot.wim index 1' -Class Error
-                Update-Log -Data $_.Exception.Message -Class Error
+                Update-Log -data 'Dismounting Windows PE image...' -Class Information
+                Dismount-WindowsImage -Path $global:workdir\staging\mount -Save -ErrorAction Stop
+            } catch {
+                Update-Log -data 'Could not dismount the winpe image.' -Class Error
+                Update-Log -data $_.Exception.Message -class Error
             }
 
-            # Dismount index 1
-            try {
-                Update-Log -Data 'Dismounting boot.wim index 1...' -Class Information
-                Dismount-WindowsImage -Path $bootmountdir -Save | Out-Null
-                Update-Log -Data 'boot.wim index 1 dismounted successfully' -Class Information
-            }
-            catch {
-                Update-Log -Data 'Failed to dismount boot.wim index 1' -Class Error
-                Update-Log -Data $_.Exception.Message -Class Error
-                return
-            }
-
-            # Mount and update boot.wim index 2
-            try {
-                Update-Log -data 'Mounting boot.wim index 2...' -Class Information
-                Mount-WindowsImage -Path $bootmountdir -ImagePath $bootwim -Index 2 | Out-Null
-                Update-Log -Data 'boot.wim index 2 mounted successfully' -Class Information
-            }
-            catch {
-                Update-Log -Data 'Failed to mount boot.wim index 2' -Class Error
-                Update-Log -Data $_.Exception.Message -Class Error
-                return
-            }
-
-            # Apply updates to index 2
-            try {
-                Update-Log -Data 'Applying updates to boot.wim index 2...' -Class Information
-                foreach ($update in $bootupdate) {
-                    $text = 'Applying ' + $update.name
-                    Update-Log -data $text -Class Information
-                    Add-WindowsPackage -PackagePath $update.fullname -Path $bootmountdir | Out-Null
-                }
-            }
-            catch {
-                Update-Log -Data 'Failed to apply updates to boot.wim index 2' -Class Error
-                Update-Log -Data $_.Exception.Message -Class Error
-            }
-
-            # Dismount index 2
-            try {
-                Update-Log -Data 'Dismounting boot.wim index 2...' -Class Information
-                Dismount-WindowsImage -Path $bootmountdir -Save | Out-Null
-                Update-Log -Data 'boot.wim index 2 dismounted successfully' -Class Information
-            }
-            catch {
-                Update-Log -Data 'Failed to dismount boot.wim index 2' -Class Error
-                Update-Log -Data $_.Exception.Message -Class Error
+            #Export the WinPE Image
+            Try {
+                Update-Log -data 'Exporting WinPE image index...' -Class Information
+                Export-WindowsImage -SourceImagePath $global:workdir\staging\media\sources\boot.wim -SourceIndex $BootImage.ImageIndex -DestinationImagePath $global:workdir\staging\tempboot.wim -ErrorAction Stop
+            } catch {
+                Update-Log -Data 'Failed to export WinPE image' -Class Error
+                Update-Log -data $_.Exception.Message -class Error
             }
         }
-        catch {
-            Update-Log -Data 'Failed to update boot.wim' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+
+        #Overwrite the stock boot.wim file with the updated one
+        try {
+            Update-Log -Data 'Overwriting boot.wim with updated and optimized version...' -Class Information
+            Move-Item -Path $global:workdir\staging\tempboot.wim -Destination $global:workdir\staging\media\sources\boot.wim -Force -ErrorAction Stop
+            Update-Log -Data 'Boot.WIM updated successfully' -Class Information
+        } catch {
+            Update-Log -Data 'Could not copy the updated boot.wim' -Class Error
+            Update-Log -data $_.Exception.Message -class Error
         }
     }
 }

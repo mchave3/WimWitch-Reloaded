@@ -1,11 +1,9 @@
 <#
 .SYNOPSIS
-    Select ISO staging directory.
+    Select the directory where the ISO will be saved.
 
 .DESCRIPTION
-    This function opens a folder browser dialog to allow the user to select
-    a directory for ISO staging. It validates the selected directory and
-    updates the UI accordingly.
+    This function allows the user to select the directory where the ISO will be saved.
 
 .NOTES
     Name:        Select-ISODirectory.ps1
@@ -31,29 +29,13 @@ function Select-ISODirectory {
     )
 
     process {
-        try {
-            Update-Log -Data 'Opening folder selection dialog for ISO staging...' -Class Information
-            
-            Add-Type -AssemblyName System.Windows.Forms
-            $FolderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
-            $FolderBrowser.Description = "Select ISO Staging Directory"
-            
-            if ($FolderBrowser.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-                $WPFMISISOSelection.Text = $FolderBrowser.SelectedPath
-                Update-Log -Data "Selected ISO staging directory: $($FolderBrowser.SelectedPath)" -Class Information
-                
-                # Enable related controls if directory is selected
-                if ($WPFMISISOSelection.Text.Length -gt 0) {
-                    $WPFMISISOSelectButton.IsEnabled = $true
-                }
-            }
-            else {
-                Update-Log -Data 'Directory selection cancelled by user' -Class Information
-            }
-        }
-        catch {
-            Update-Log -Data 'Failed to select ISO staging directory' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-        }
+        Add-Type -AssemblyName System.Windows.Forms
+        $browser = New-Object System.Windows.Forms.FolderBrowserDialog
+        $browser.Description = 'Select the folder to save the ISO'
+        $null = $browser.ShowDialog()
+        $MountDir = $browser.SelectedPath
+        $WPFMISTBFilePath.text = $MountDir
+        #Test-MountPath -path $WPFMISMountTextBox.text
+        Update-Log -Data 'ISO directory selected' -Class Information
     }
 }

@@ -3,8 +3,7 @@
     Copy ISO media files to the staging area.
 
 .DESCRIPTION
-    This function copies ISO media files to the staging area, preparing them
-    for ISO creation. It handles different Windows versions and their specific requirements.
+    This function copies ISO media files to the staging area, preparing them for ISO creation. It handles different Windows versions and their specific requirements.
 
 .NOTES
     Name:        Copy-StageIsoMedia.ps1
@@ -30,48 +29,32 @@ function Copy-StageIsoMedia {
     )
 
     process {
+        # if($WPFSourceWIMImgDesTextBox.Text -like '*Windows 10*'){$OS = 'Windows 10'}
+        # if($WPFSourceWIMImgDesTextBox.Text -like '*Server*'){$OS = 'Windows Server'}
+
         $OS = Get-WindowsType
-        $buildnum = Get-WinVersionNumber
-        $ISOMedia = $global:workdir + '\staging\media'
 
-        Update-Log -Data 'Copying ISO files to staging folder...' -Class Information
+        #$Ver = (Get-WinVersionNumber)
+        $Ver = $MISWinVer
 
-        if ((Test-Path -Path $ISOMedia) -eq $true) {
-            Update-Log -Data 'Removing existing ISO files from staging...' -Class Information
-            Remove-Item -Path $ISOMedia -Recurse -Force
-        }
-
-        if ($OS -eq 'Windows 10') {
-            $MediaPath = $global:workdir + '\imports\iso\windows 10\' + $buildnum
-        }
-        if ($OS -eq 'Windows Server') {
-            $MediaPath = $global:workdir + '\imports\iso\Windows Server\' + $buildnum
-        }
-        if ($OS -eq 'Windows 11') {
-            $MediaPath = $global:workdir + '\imports\iso\Windows 11\' + $buildnum
-        }
-
+        #create staging folder
         try {
-            Update-Log -Data 'Copying media files...' -Class Information
-            Copy-Item -Path $MediaPath -Destination $ISOMedia -Recurse
-            Update-Log -Data 'Media files copied successfully' -Class Information
-        }
-        catch {
-            Update-Log -Data 'Failed to copy media files' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-            return
+            Update-Log -Data 'Creating staging folder for media' -Class Information
+            New-Item -Path $global:workdir\staging -Name 'Media' -ItemType Directory -ErrorAction Stop | Out-Null
+            Update-Log -Data 'Media staging folder has been created' -Class Information
+        } catch {
+            Update-Log -Data 'Could not create staging folder' -Class Error
+            Update-Log -data $_.Exception.Message -class Error
         }
 
-        # Copy boot files
+        #copy source to staging
         try {
-            Update-Log -Data 'Copying boot files...' -Class Information
-            $bootfiles = $global:workdir + '\staging\bootfiles\*'
-            Copy-Item -Path $bootfiles -Destination $ISOMedia -Recurse -Force
-            Update-Log -Data 'Boot files copied successfully' -Class Information
-        }
-        catch {
-            Update-Log -Data 'Failed to copy boot files' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+            Update-Log -data 'Staging media binaries...' -Class Information
+            Copy-Item -Path $global:workdir\imports\iso\$OS\$Ver\* -Destination $global:workdir\staging\media -Force -Recurse -ErrorAction Stop
+            Update-Log -data 'Media files have been staged' -Class Information
+        } catch {
+            Update-Log -Data 'Failed to stage media binaries...' -Class Error
+            Update-Log -data $_.Exception.Message -class Error
         }
     }
 }

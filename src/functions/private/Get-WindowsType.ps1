@@ -3,8 +3,7 @@
     Determines the Windows type from the image description.
 
 .DESCRIPTION
-    This function analyzes the image description to determine if it's Windows 10,
-    Windows 11, or Windows Server.
+    This function analyzes the image description to determine if it's Windows 10, Windows 11, or Windows Server.
 
 .NOTES
     Name:        Get-WindowsType.ps1
@@ -36,7 +35,7 @@ function Get-WindowsType {
         elseif ($WPFSourceWIMImgDesTextBox.Text -like '*Windows 11*') {
             return 'Windows 11'
         }
-        elseif ($WPFSourceWIMImgDesTextBox.Text -like '*Server*') {
+        elseif ($WPFSourceWIMImgDesTextBox.Text -like '*Windows Server*') {
             return 'Windows Server'
         }
         else {

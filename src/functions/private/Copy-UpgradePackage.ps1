@@ -1,10 +1,9 @@
 <#
 .SYNOPSIS
-    Copy Windows upgrade package.
+    Copy staged installation media to the CM package folder.
 
 .DESCRIPTION
-    This function copies Windows upgrade package files to the specified
-    destination. It handles file copying and validates the process.
+    This function copies Windows upgrade package files to the specified destination. It handles file copying and validates the process.
 
 .NOTES
     Name:        Copy-UpgradePackage.ps1
@@ -30,28 +29,14 @@ function Copy-UpgradePackage {
     )
 
     process {
+        #copy staging folder to destination with force parameter
         try {
-            Update-Log -Data 'Starting upgrade package copy process...' -Class Information
-            
-            $sourcePath = $WPFSourceWIMSelectWIMTextBox.Text
-            $destPath = $WPFMISWimFolderTextBox.Text
-            
-            if (-not (Test-Path -Path $sourcePath)) {
-                throw "Source path not found: $sourcePath"
-            }
-            
-            if (-not (Test-Path -Path $destPath)) {
-                New-Item -Path $destPath -ItemType Directory -Force | Out-Null
-            }
-            
-            # Copy files
-            Copy-Item -Path $sourcePath -Destination $destPath -Force
-            
-            Update-Log -Data "Upgrade package copied successfully to: $destPath" -Class Information
-        }
-        catch {
-            Update-Log -Data 'Failed to copy upgrade package' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+            Update-Log -data 'Copying updated media to Upgrade Package folder...' -Class Information
+            Copy-Item -Path $global:workdir\staging\media\* -Destination $WPFMISTBUpgradePackage.text -Force -Recurse -ErrorAction Stop
+            Update-Log -Data 'Updated media has been copied' -Class Information
+        } catch {
+            Update-Log -Data "Couldn't copy the updated media to the upgrade package folder" -Class Error
+            Update-Log -data $_.Exception.Message -class Error
         }
     }
 }

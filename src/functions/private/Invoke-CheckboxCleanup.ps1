@@ -4,7 +4,6 @@
 
 .DESCRIPTION
     This function resets checkbox states in the UI to their default values.
-    It helps maintain a clean state between operations.
 
 .NOTES
     Name:        Invoke-CheckboxCleanup.ps1
@@ -30,30 +29,15 @@ function Invoke-CheckboxCleanup {
     )
 
     process {
-        try {
-            Update-Log -Data 'Cleaning up checkbox states...' -Class Information
-            
-            # Reset update checkboxes
-            $WPFUSCBEnableUpdates.IsChecked = $false
-            $WPFUSCBCheckDynamic.IsChecked = $false
-            
-            # Reset driver checkboxes
-            $WPFDriverCheckBox.IsChecked = $false
-            $WPFDriverOfflineCheckBox.IsChecked = $false
-            
-            # Reset feature checkboxes
-            $WPFFeatureCheckBox.IsChecked = $false
-            $WPFMISEnableAppxCheckBox.IsChecked = $false
-            
-            # Reset language checkboxes
-            $WPFLPCheckBox.IsChecked = $false
-            $WPFLPRemoveCheckBox.IsChecked = $false
-            
-            Update-Log -Data 'Checkbox states reset successfully' -Class Information
-        }
-        catch {
-            Update-Log -Data 'Failed to clean up checkbox states' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+        Update-Log -Data 'Cleaning null checkboxes...' -Class Information
+        $Variables = Get-Variable WPF*
+        foreach ($variable in $variables) {
+
+            if ($variable.value -like '*.CheckBox*') {
+                #write-host $variable.name
+                #write-host $variable.value.IsChecked
+                if ($variable.value.IsChecked -ne $true) { $variable.value.IsChecked = $false }
+            }
         }
     }
 }

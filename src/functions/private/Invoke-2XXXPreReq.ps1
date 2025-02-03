@@ -1,10 +1,9 @@
 <#
 .SYNOPSIS
-    Install prerequisites for Windows 10 20H2 and later versions.
+    Download and apply the required SSU for 2004/20H2 June '21 LCU.
 
 .DESCRIPTION
-    This function downloads and installs the necessary prerequisites for
-    Windows 10 version 20H2 and later versions during the image update process.
+    This function download and apply the required SSU for 2004/20H2 June '21 LCU.
 
 .NOTES
     Name:        Invoke-2XXXPreReq.ps1
@@ -34,40 +33,86 @@ function Invoke-2XXXPreReq {
         $executable = "$env:windir\system32\expand.exe"
         $mountdir = $WPFMISMountTextBox.Text
 
-        Update-Log -data 'Checking for SSU prerequisite...' -Class Information
+        Update-Log -data 'Mounting offline registry and validating UBR / Patch level...' -class Information
+        reg LOAD HKLM\OFFLINE $mountdir\Windows\System32\Config\SOFTWARE | Out-Null
+        $regvalues = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\OFFLINE\Microsoft\Windows NT\CurrentVersion\' )
 
-        try {
-            $prereqdir = $global:workdir + '\staging\prereq'
-            if ((Test-Path -Path $prereqdir) -eq $false) {
-                Update-Log -data 'Creating prerequisite folder...' -Class Information
-                New-Item -Path $prereqdir -ItemType Directory -Force | Out-Null
-            }
 
-            $prereqfile = $prereqdir + '\' + ($KB_URI -split '/')[-1]
-            if ((Test-Path -Path $prereqfile) -eq $false) {
-                Update-Log -data 'Downloading prerequisite...' -Class Information
-                Invoke-WebRequest -Uri $KB_URI -OutFile $prereqfile
-            }
+        Update-Log -data 'The UBR (Patch Level) is:' -class Information
+        Update-Log -data $regvalues.ubr -class information
+        reg UNLOAD HKLM\OFFLINE | Out-Null
 
-            Update-Log -data 'Extracting prerequisite...' -Class Information
-            $arguments = @(
-                "-F:*AMD64.cab"
-                $prereqfile
-                $prereqdir
-            )
-            Start-Process -FilePath $executable -ArgumentList $arguments -Wait
-
-            $cabs = Get-ChildItem -Path $prereqdir -Filter *AMD64.cab
-            foreach ($cab in $cabs) {
-                Update-Log -data "Installing prerequisite: $($cab.Name)..." -Class Information
-                Add-WindowsPackage -PackagePath $cab.FullName -Path $mountdir | Out-Null
-            }
-
-            Update-Log -data 'Prerequisites installed successfully' -Class Information
+        if ($null -eq $regvalues.ubr) {
+            Update-Log -data "Registry key wasn't copied. Can't continue." -class Error
+            return 1
         }
-        catch {
-            Update-Log -data 'Failed to install prerequisites' -Class Error
-            Update-Log -data $_.Exception.Message -Class Error
+
+        if ($regvalues.UBR -lt '985') {
+            Update-Log -data 'The image requires an additional required SSU.' -class Information
+            Update-Log -data 'Checking to see if the required SSU exists...' -class Information
+            if ((Test-Path "$global:workdir\updates\Windows 10\2XXX_prereq\SSU-19041.985-x64.cab") -eq $false) {
+                Update-Log -data 'The required SSU does not exist. Downloading it now...' -class Information
+
+                try {
+                    Invoke-WebRequest -Uri $KB_URI -OutFile "$global:workdir\staging\extract_me.cab" -ErrorAction stop
+                } catch {
+                    Update-Log -data 'Failed to download the update' -class Error
+                    Update-Log -data $_.Exception.Message -Class Error
+                    return 1
+                }
+
+                if ((Test-Path "$global:workdir\updates\Windows 10\2XXX_prereq") -eq $false) {
+
+                    try {
+                        Update-Log -data 'The folder for the required SSU does not exist. Creating it now...' -class Information
+                        New-Item -Path "$global:workdir\updates\Windows 10" -Name '2XXX_prereq' -ItemType Directory -ErrorAction stop | Out-Null
+                        Update-Log -data 'The folder has been created' -class information
+                    } catch {
+                        Update-Log -data 'Could not create the required folder.' -class error
+                        Update-Log -data $_.Exception.Message -Class Error
+                        return 1
+                    }
+                }
+
+                try {
+                    Update-Log -data 'Extracting the SSU from the May 2021 LCU...' -class Information
+                    Start-Process $executable -args @("`"$global:workdir\staging\extract_me.cab`"", '/f:*SSU*.CAB', "`"$global:workdir\updates\Windows 10\2XXX_prereq`"") -Wait -ErrorAction Stop
+                    Update-Log 'Extraction of SSU was success' -class information
+                } catch {
+                    Update-Log -data "Couldn't extract the SSU from the LCU" -class error
+                    Update-Log -data $_.Exception.Message -Class Error
+                    return 1
+
+                }
+
+                try {
+                    Update-Log -data 'Deleting the staged LCU file...' -class Information
+                    Remove-Item -Path $global:workdir\staging\extract_me.cab -Force -ErrorAction stop | Out-Null
+                    Update-Log -data 'The source file for the SSU has been Baleeted!' -Class Information
+                } catch {
+                    Update-Log -data 'Could not delete the source package' -Class Error
+                    Update-Log -data $_.Exception.Message -Class Error
+                    return 1
+                }
+            } else {
+                Update-Log -data 'The required SSU exists. No need to download' -Class Information
+            }
+
+            try {
+                Update-Log -data 'Applying the SSU...' -class Information
+                Add-WindowsPackage -PackagePath "$global:workdir\updates\Windows 10\2XXX_prereq" -Path $WPFMISMountTextBox.Text -ErrorAction Stop | Out-Null
+                Update-Log -data 'SSU applied successfully' -class Information
+
+            } catch {
+                Update-Log -data "Couldn't apply the SSU update" -class error
+                Update-Log -data $_.Exception.Message -Class Error
+                return 1
+            }
+        } else {
+            Update-Log -Data "Image doesn't require the prereq SSU" -Class Information
         }
+
+        Update-Log -data 'SSU remdiation complete' -Class Information
+        return 0
     }
 }

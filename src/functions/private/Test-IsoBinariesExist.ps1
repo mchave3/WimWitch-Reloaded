@@ -3,9 +3,7 @@
     Test if required ISO creation binaries exist.
 
 .DESCRIPTION
-    This function checks if the required binaries for ISO creation (oscdimg.exe)
-    exist in the system. It validates the presence and accessibility of these
-    tools.
+    This function tests if the required ISO creation binaries exist in the imports folder.
 
 .NOTES
     Name:        Test-IsoBinariesExist.ps1
@@ -31,37 +29,16 @@ function Test-IsoBinariesExist {
     )
 
     process {
-        try {
-            Update-Log -Data 'Checking for required ISO creation binaries...' -Class Information
-            
-            $oscdimgPath = "$env:SystemRoot\system32\oscdimg.exe"
-            $bootDataPath = "$env:SystemRoot\boot\etfsboot.com"
-            $efiBootDataPath = "$env:SystemRoot\boot\efisys.bin"
-            
-            $missingFiles = @()
-            
-            if (-not (Test-Path -Path $oscdimgPath)) {
-                $missingFiles += "oscdimg.exe"
-            }
-            
-            if (-not (Test-Path -Path $bootDataPath)) {
-                $missingFiles += "etfsboot.com"
-            }
-            
-            if (-not (Test-Path -Path $efiBootDataPath)) {
-                $missingFiles += "efisys.bin"
-            }
-            
-            if ($missingFiles.Count -gt 0) {
-                throw "Missing required files: $($missingFiles -join ', ')"
-            }
-            
-            Update-Log -Data 'All required ISO creation binaries found' -Class Information
-            return $true
-        }
-        catch {
-            Update-Log -Data 'Missing required ISO creation binaries' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+        $buildnum = Get-WinVersionNumber
+        $OSType = get-Windowstype
+
+        $ISOFiles = $global:workdir + '\imports\iso\' + $OSType + '\' + $buildnum + '\'
+
+        Test-Path -Path $ISOFiles\*
+        if ((Test-Path -Path $ISOFiles\*) -eq $false) {
+            $text = 'ISO Binaries are not present for ' + $OSType + ' ' + $buildnum
+            Update-Log -Data $text -Class Warning
+            Update-Log -data 'Import ISO Binaries from an ISO or disable ISO/Upgrade Package creation' -Class Warning
             return $false
         }
     }

@@ -3,8 +3,7 @@
     Remove ISO mount points.
 
 .DESCRIPTION
-    This function removes ISO mount points and cleans up associated resources.
-    It handles both successful and failed dismount scenarios.
+    This function removes ISO mount points.
 
 .NOTES
     Name:        Invoke-RemoveISOMount.ps1
@@ -31,32 +30,11 @@ function Invoke-RemoveISOMount {
     )
 
     process {
-        try {
-            Update-Log -Data "Removing ISO mount point: $inputObject" -Class Information
-            
-            if (Test-Path -Path $inputObject) {
-                # Get mounted image info
-                $mountedImages = Get-WindowsImage -Mounted
-                
-                foreach ($image in $mountedImages) {
-                    if ($image.Path -eq $inputObject) {
-                        # Attempt to dismount
-                        Dismount-WindowsImage -Path $image.Path -Discard
-                        Update-Log -Data "Dismounted image at: $($image.Path)" -Class Information
-                    }
-                }
-                
-                # Remove mount directory
-                Remove-Item -Path $inputObject -Force -Recurse
-                Update-Log -Data "Removed mount directory: $inputObject" -Class Information
-            }
-            else {
-                Update-Log -Data "Mount point not found: $inputObject" -Class Warning
-            }
+        DO {
+            Dismount-DiskImage -InputObject $inputObject
         }
-        catch {
-            Update-Log -Data "Failed to remove ISO mount point: $inputObject" -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-        }
+        while (Dismount-DiskImage -InputObject $inputObject)
+        #He's dead Jim!
+        Update-Log -data 'Dismount complete' -class Information
     }
 }

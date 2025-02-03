@@ -3,8 +3,7 @@
     Display a text notification.
 
 .DESCRIPTION
-    This function displays a text notification in the UI. It can be used to
-    show important messages, warnings, or information to the user.
+    This function is used to display a text notification.
 
 .NOTES
     Name:        Invoke-TextNotification.ps1
@@ -30,13 +29,7 @@ function Invoke-TextNotification {
     )
 
     process {
-        try {
-            $WPFNotificationText.Text = "Processing... Please wait."
-            Update-Log -Data 'Text notification displayed' -Class Information
-        }
-        catch {
-            Update-Log -Data 'Failed to display text notification' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-        }
+        Update-Log -data '*********************************' -class Comment
+        Update-Log -data '*********************************' -class Comment
     }
 }

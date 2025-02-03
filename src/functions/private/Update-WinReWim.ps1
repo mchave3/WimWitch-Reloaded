@@ -3,8 +3,7 @@
     Update Windows RE WIM file.
 
 .DESCRIPTION
-    This function updates the Windows Recovery Environment (WinRE) WIM file
-    with the latest changes and configurations.
+    This function updates the Windows Recovery Environment (WinRE) WIM file with the latest changes and configurations.
 
 .NOTES
     Name:        Update-WinReWim.ps1
@@ -31,6 +30,14 @@ function Update-WinReWim {
 
     process {
         try {
+
+    #create mount point in staging
+    #copy winre from mounted offline image
+    #change attribute of winre.wim
+    #mount staged winre.wim
+    #update, dismount
+    #copy wim back to mounted offline image
+
             Update-Log -Data 'Starting WinRE WIM update process...' -Class Information
             
             $mountPath = $WPFMISMountTextBox.Text
