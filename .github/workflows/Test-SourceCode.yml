@@ -1,0 +1,23 @@
+name: 🔍 Test-SourceCode
+
+run-name: "🔍 Test-SourceCode"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Test-PSModule:
+    name: Test-PSModule
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@main
+
+      - name: Initialize environment
+        uses: PSModule/Initialize-PSModule@main
+
+      - name: Test-PSModule
+        uses: PSModule/Test-PSModule@main
+        with:
+          Path: src
+          TestType: SourceCode
