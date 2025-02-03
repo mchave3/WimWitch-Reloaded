@@ -3,9 +3,7 @@
     Execute Windows updates on the mounted image.
 
 .DESCRIPTION
-    This function applies selected Windows updates to the mounted Windows image.
-    It handles different update sources (ConfigMgr, OSDSUS) and manages potential
-    errors during the update process.
+    This function will execute Windows updates on the mounted image.
 
 .NOTES
     Name:        Invoke-MISUpdates.ps1
@@ -31,33 +29,14 @@ function Invoke-MISUpdates {
     )
 
     process {
-        try {
-            Update-Log -Data 'Starting update process...' -Class Information
-            
-            switch ($WPFUSCBSelectCatalogSource.SelectedItem) {
-                'ConfigMgr' {
-                    Update-Log -Data 'Using ConfigMgr as update source' -Class Information
-                    $WinOS = Get-WindowsType
-                    $Ver = Get-WinVersionNumber
-                    Invoke-MEMCMUpdatecatalog -prod $WinOS -ver $Ver
-                }
-                'OSDSUS' {
-                    Update-Log -Data 'Using OSDSUS as update source' -Class Information
-                    # Add OSDSUS specific update logic here
-                }
-                'None' {
-                    Update-Log -Data 'No update source selected' -Class Warning
-                }
-                default {
-                    Update-Log -Data "Unknown update source: $($WPFUSCBSelectCatalogSource.SelectedItem)" -Class Warning
-                }
-            }
+        $OS = get-Windowstype
+        $ver = Get-WinVersionNumber
 
-            Update-Log -Data 'Update process completed' -Class Information
-        }
-        catch {
-            Update-Log -Data 'Failed to apply updates' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-        }
+        if ($ver -eq '2009') { $ver = '20H2' }
+
+        Invoke-MEMCMUpdateSupersedence -prod $OS -Ver $ver
+        Invoke-MEMCMUpdatecatalog -prod $OS -ver $ver
+
+        #fucking 2009 to 20h2
     }
 }

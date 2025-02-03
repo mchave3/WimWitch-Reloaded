@@ -3,8 +3,7 @@
     Updates an existing ConfigMgr image package.
 
 .DESCRIPTION
-    This function updates an existing image package in Configuration Manager with the new
-    image file and redistributes the content to the selected distribution points.
+    This function updates an existing ConfigMgr image package.
 
 .NOTES
     Name:        Update-CMImage.ps1
@@ -30,41 +29,19 @@ function Update-CMImage {
     )
 
     process {
-        try {
-            Set-Location $CMDrive
-            Update-Log -Data 'Updating existing image in ConfigMgr...' -Class Information
+        #set-ConfigMgrConnection
+        Set-Location $CMDrive
+        $wmi = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage -ComputerName $global:SiteServer) | Where-Object { $_.PackageID -eq $WPFCMTBPackageID.text }
 
-            $packageID = $WPFCMComboBox.SelectedItem.ToString()
-            $newImagePath = $WPFMISFolderTextBox.Text
-            
-            # Update image package path
-            Set-CMOperatingSystemImage -Id $packageID -Path $newImagePath
-            Update-Log -Data 'Image path updated successfully' -Class Information
-            
-            # Set image properties
-            Set-ImageProperties -PackageID $packageID
-            
-            # Update content on DPs
-            if ($WPFCMLBDPs.Items.Count -gt 0) {
-                Update-Log -Data 'Starting content update distribution...' -Class Information
-                foreach ($dp in $WPFCMLBDPs.Items) {
-                    try {
-                        Update-CMDistributionPoint -Id $packageID -DeploymentTypeName $dp
-                        Update-Log -Data "Content updated on $dp successfully" -Class Information
-                    }
-                    catch {
-                        Update-Log -Data "Failed to update content on $dp" -Class Error
-                        Update-Log -Data $_.Exception.Message -Class Error
-                    }
-                }
-            }
-        }
-        catch {
-            Update-Log -Data 'Failed to update image in ConfigMgr' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-        }
-        finally {
-            Set-Location $PSScriptRoot
-        }
+        Update-Log -Data 'Updating images on the Distribution Points...'
+        $WMI.RefreshPkgSource() | Out-Null
+
+        Update-Log -Data 'Refreshing image proprties from the WIM' -Class Information
+        $WMI.ReloadImageProperties() | Out-Null
+
+        Set-ImageProperties -PackageID $WPFCMTBPackageID.Text
+        Save-Configuration -CM -filename $WPFCMTBPackageID.Text
+
+        Set-Location $global:workdir
     }
 }

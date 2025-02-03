@@ -3,8 +3,7 @@
     Select a source folder for importing objects.
 
 .DESCRIPTION
-    This function opens a folder browser dialog to allow the user to select
-    a source folder for importing various objects (Language Packs, FODs, etc.).
+    This function opens a folder browser dialog to allow the user to select a source folder for importing various objects (Language Packs, FODs, etc.).
 
 .NOTES
     Name:        Select-ImportOtherPath.ps1

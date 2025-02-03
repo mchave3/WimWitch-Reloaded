@@ -3,9 +3,7 @@
     Select registry files to import.
 
 .DESCRIPTION
-    This function opens a file dialog to allow the user to select one or more
-    registry files (.reg) to import into the mounted Windows image. It validates
-    the selected files and updates the UI accordingly.
+    This function opens a file dialog to allow the user to select one or more registry files (.reg) to import into the mounted Windows image. It validates the selected files and updates the UI accordingly.
 
 .NOTES
     Name:        Select-RegFiles.ps1
@@ -31,35 +29,26 @@ function Select-RegFiles {
     )
 
     process {
-        try {
-            Update-Log -Data 'Opening file selection dialog for registry files...' -Class Information
-            
-            Add-Type -AssemblyName System.Windows.Forms
-            $FileBrowser = New-Object System.Windows.Forms.OpenFileDialog
-            $FileBrowser.Filter = "Registry Files (*.reg)|*.reg|All Files (*.*)|*.*"
-            $FileBrowser.Title = "Select Registry Files"
-            $FileBrowser.Multiselect = $true
-            
-            if ($FileBrowser.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-                foreach ($file in $FileBrowser.FileNames) {
-                    if (Test-Path -Path $file) {
-                        $WPFCustomLBRegistry.Items.Add($file)
-                        Update-Log -Data "Added registry file: $file" -Class Information
-                    }
-                }
-                
-                # Enable apply button if files are selected
-                if ($WPFCustomLBRegistry.Items.Count -gt 0) {
-                    $WPFCustomBRegistry.IsEnabled = $true
-                }
-            }
-            else {
-                Update-Log -Data 'File selection cancelled by user' -Class Information
-            }
+        $Regfiles = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+            InitialDirectory = [Environment]::GetFolderPath('Desktop')
+            Multiselect      = $true # Multiple files can be chosen
+            Filter           = 'REG (*.reg)|'
         }
-        catch {
-            Update-Log -Data 'Failed to select registry files' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+        $null = $Regfiles.ShowDialog()
+    
+        $filepaths = $regfiles.FileNames
+        Update-Log -data 'Importing REG files...' -class information
+        foreach ($filepath in $filepaths) {
+            if ($filepath -notlike '*.reg') {
+                Update-Log -Data $filepath -Class Warning
+                Update-Log -Data 'Ignoring this file as it is not a .REG file....' -Class Warning
+                return
+            }
+            Update-Log -Data $filepath -Class Information
+            $WPFCustomLBRegistry.Items.Add($filepath)
         }
+        Update-Log -data 'REG file importation complete' -class information
+    
+        #Fix this shit, then you can release her.
     }
 }

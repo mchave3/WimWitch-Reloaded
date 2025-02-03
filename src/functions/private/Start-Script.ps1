@@ -3,8 +3,7 @@
     Run a PowerShell script with supplied parameters.
 
 .DESCRIPTION
-    This function executes a PowerShell script with the provided parameters
-    and handles any errors that occur during execution.
+    This function executes a PowerShell script with the provided parameters and handles any errors that occur during execution.
 
 .NOTES
     Name:        Start-Script.ps1

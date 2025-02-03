@@ -3,8 +3,7 @@
     Creates a new ConfigMgr image package.
 
 .DESCRIPTION
-    This function creates a new image package in Configuration Manager with the specified
-    properties and distributes it to the selected distribution points.
+    This function creates a new ConfigMgr image package based on the selected WIM file.
 
 .NOTES
     Name:        New-CMImagePackage.ps1
@@ -30,49 +29,42 @@ function New-CMImagePackage {
     )
 
     process {
-        try {
-            Set-Location $CMDrive
-            Update-Log -Data 'Creating new image package in ConfigMgr...' -Class Information
+        #set-ConfigMgrConnection
+        Set-Location $CMDrive
+        $Path = $WPFMISWimFolderTextBox.text + '\' + $WPFMISWimNameTextBox.text
 
-            $packageName = $WPFCMTBImageName.Text
-            $packagePath = $WPFMISFolderTextBox.Text
-            $packageDescription = $WPFCMTBImageDescription.Text
-            
-            # Create new package
-            $newPackage = New-CMOperatingSystemImage -Name $packageName -Path $packagePath -Description $packageDescription
-            
-            if ($null -ne $newPackage) {
-                Update-Log -Data 'Image package created successfully' -Class Information
-                $packageID = $newPackage.PackageID
-                
-                # Set image properties
-                Set-ImageProperties -PackageID $packageID
-                
-                # Distribute content if DPs are selected
-                if ($WPFCMLBDPs.Items.Count -gt 0) {
-                    Update-Log -Data 'Starting content distribution...' -Class Information
-                    foreach ($dp in $WPFCMLBDPs.Items) {
-                        try {
-                            Start-CMContentDistribution -OperatingSystemImageId $packageID -DistributionPointName $dp
-                            Update-Log -Data "Content distributed to $dp successfully" -Class Information
-                        }
-                        catch {
-                            Update-Log -Data "Failed to distribute content to $dp" -Class Error
-                            Update-Log -Data $_.Exception.Message -Class Error
-                        }
-                    }
-                }
+        try {
+            New-CMOperatingSystemImage -Name $WPFCMTBImageName.text -Path $Path -ErrorAction Stop
+            Update-Log -data 'Image was created. Check ConfigMgr console' -Class Information
+        } catch {
+            Update-Log -data 'Failed to create the image' -Class Error
+            Update-Log -data $_.Exception.Message -Class Error
+        }
+
+        $PackageID = (Get-CMOperatingSystemImage -Name $WPFCMTBImageName.text).PackageID
+        Update-Log -Data "The Package ID of the new image is $PackageID" -Class Information
+
+        Set-ImageProperties -PackageID $PackageID
+
+        Update-Log -Data 'Retriveing Distribution Point information...' -Class Information
+        $DPs = $WPFCMLBDPs.Items
+
+        foreach ($DP in $DPs) {
+            # Hello! This line was written on 3/3/2020.
+            $DP = $DP -replace '\\', ''
+
+            Update-Log -Data 'Distributiong image package content...' -Class Information
+            if ($WPFCMCBDPDPG.SelectedItem -eq 'Distribution Points') {
+                Start-CMContentDistribution -OperatingSystemImageId $PackageID -DistributionPointName $DP
             }
-            else {
-                throw "Failed to create image package"
+            if ($WPFCMCBDPDPG.SelectedItem -eq 'Distribution Point Groups') {
+                Start-CMContentDistribution -OperatingSystemImageId $PackageID -DistributionPointGroupName $DP
             }
+
+            Update-Log -Data 'Content has been distributed.' -Class Information
         }
-        catch {
-            Update-Log -Data 'Failed to create new image package in ConfigMgr' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-        }
-        finally {
-            Set-Location $PSScriptRoot
-        }
+
+        Save-Configuration -CM $PackageID
+        Set-Location $global:workdir
     }
 }

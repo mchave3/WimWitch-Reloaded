@@ -3,8 +3,7 @@
     Update the options in the Updates tab based on selections.
 
 .DESCRIPTION
-    This function manages the enabled/disabled state of various controls
-    in the Updates tab based on the selected catalog source and other options.
+    This function manages the enabled/disabled state of various controls in the Updates tab based on the selected catalog source and other options.
 
 .NOTES
     Name:        Invoke-UpdateTabOptions.ps1
@@ -30,52 +29,45 @@ function Invoke-UpdateTabOptions {
     )
 
     process {
-        if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'None') {
-            $WPFUpdateOSDBUpdateButton.IsEnabled = $false
-            $WPFUpdatesW10CatButton.IsEnabled = $false
-            $WPFUpdatesS2019CatButton.IsEnabled = $false
-            $WPFUpdatesW11CatButton.IsEnabled = $false
-            $WPFUpdatesClearSelectionButton.IsEnabled = $false
-            $WPFUpdatesDownloadNewSelectionButton.IsEnabled = $false
-            $WPFUpdatesDownloadNewSelectionButton.IsEnabled = $false
-            $WPFUpdatesSelectAllButton.IsEnabled = $false
-            $WPFUpdateOSDBUpdateButton.IsEnabled = $false
-            $WPFUpdatesW10CatButton.IsEnabled = $false
-            $WPFUpdatesS2019CatButton.IsEnabled = $false
-            $WPFUpdatesW11CatButton.IsEnabled = $false
-            $WPFUpdatesDownloadNewSelectionButton.IsEnabled = $false
-            $WPFUpdatesSelectAllButton.IsEnabled = $false
-            $WPFUpdatesClearSelectionButton.IsEnabled = $false
-        }
+        if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'None' ) {
 
+            $WPFUpdateOSDBUpdateButton.IsEnabled = $false
+            $WPFUpdatesDownloadNewButton.IsEnabled = $false
+            $WPFUpdatesW10Main.IsEnabled = $false
+            $WPFUpdatesS2019.IsEnabled = $false
+            $WPFUpdatesS2016.IsEnabled = $false
+    
+            $WPFMISCBCheckForUpdates.IsEnabled = $false
+            $WPFMISCBCheckForUpdates.IsChecked = $false
+    
+        }
+    
         if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'OSDSUS') {
-            $WPFUpdateOSDBUpdateButton.IsEnabled = $false
-            $WPFUpdatesW10CatButton.IsEnabled = $true
-            $WPFUpdatesS2019CatButton.IsEnabled = $true
-            $WPFUpdatesW11CatButton.IsEnabled = $true
-            $WPFUpdatesDownloadNewSelectionButton.IsEnabled = $true
-            $WPFUpdatesSelectAllButton.IsEnabled = $true
-            $WPFUpdatesClearSelectionButton.IsEnabled = $true
+            $WPFUpdateOSDBUpdateButton.IsEnabled = $true
+            $WPFUpdatesDownloadNewButton.IsEnabled = $true
+            $WPFUpdatesW10Main.IsEnabled = $true
+            $WPFUpdatesS2019.IsEnabled = $true
+            $WPFUpdatesS2016.IsEnabled = $true
+    
+            $WPFMISCBCheckForUpdates.IsEnabled = $false
+            $WPFMISCBCheckForUpdates.IsChecked = $false
+            Update-Log -data 'OSDSUS selected as update catalog' -class Information
+            Invoke-OSDCheck
+    
         }
-
+    
         if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'ConfigMgr') {
             $WPFUpdateOSDBUpdateButton.IsEnabled = $false
-            $WPFUpdatesW10CatButton.IsEnabled = $true
-            $WPFUpdatesS2019CatButton.IsEnabled = $true
-            $WPFUpdatesW11CatButton.IsEnabled = $true
-            $WPFUpdatesDownloadNewSelectionButton.IsEnabled = $true
-            $WPFUpdatesSelectAllButton.IsEnabled = $true
-            $WPFUpdatesClearSelectionButton.IsEnabled = $true
-        }
-
-        if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'OSDBuilder') {
-            $WPFUpdateOSDBUpdateButton.IsEnabled = $true
-            $WPFUpdatesW10CatButton.IsEnabled = $false
-            $WPFUpdatesS2019CatButton.IsEnabled = $false
-            $WPFUpdatesW11CatButton.IsEnabled = $false
-            $WPFUpdatesDownloadNewSelectionButton.IsEnabled = $false
-            $WPFUpdatesSelectAllButton.IsEnabled = $false
-            $WPFUpdatesClearSelectionButton.IsEnabled = $false
+            $WPFUpdatesDownloadNewButton.IsEnabled = $true
+            $WPFUpdatesW10Main.IsEnabled = $true
+            $WPFUpdatesS2019.IsEnabled = $true
+            $WPFUpdatesS2016.IsEnabled = $true
+            $WPFMISCBCheckForUpdates.IsEnabled = $true
+            #        $MEMCMsiteinfo = Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SMS\Identification"
+    
+            #   $WPFCMTBSiteServer.text = $MEMCMsiteinfo.'Site Server'
+            #   $WPFCMTBSitecode.text = $MEMCMsiteinfo.'Site Code'
+            Update-Log -data 'ConfigMgr is selected as the update catalog' -Class Information
         }
     }
 }

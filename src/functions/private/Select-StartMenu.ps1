@@ -3,9 +3,7 @@
     Select start menu layout file.
 
 .DESCRIPTION
-    This function opens a file dialog to allow the user to select an XML file
-    containing a custom start menu layout. It validates the selected file
-    and updates the UI accordingly.
+    This function opens a file dialog to allow the user to select an XML file containing a custom start menu layout. It validates the selected file and updates the UI accordingly.
 
 .NOTES
     Name:        Select-StartMenu.ps1
@@ -31,30 +29,40 @@ function Select-StartMenu {
     )
 
     process {
-        try {
-            Update-Log -Data 'Opening file selection dialog for start menu layout...' -Class Information
-            
-            Add-Type -AssemblyName System.Windows.Forms
-            $FileBrowser = New-Object System.Windows.Forms.OpenFileDialog
-            $FileBrowser.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*"
-            $FileBrowser.Title = "Select Start Menu Layout File"
-            
-            if ($FileBrowser.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-                $WPFCustomStartMenuTextBox.Text = $FileBrowser.FileName
-                Update-Log -Data "Selected start menu layout file: $($FileBrowser.FileName)" -Class Information
-                
-                # Enable apply button if file is selected
-                if ($WPFCustomStartMenuTextBox.Text.Length -gt 0) {
-                    $WPFCustomBStartMenu.IsEnabled = $true
-                }
-            }
-            else {
-                Update-Log -Data 'File selection cancelled by user' -Class Information
+        $OS = Get-WindowsType
+
+        if ($OS -ne 'Windows 11') {
+            $Sourcexml = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+                InitialDirectory = [Environment]::GetFolderPath('Desktop')
+                Filter           = 'XML (*.xml)|'
             }
         }
-        catch {
-            Update-Log -Data 'Failed to select start menu layout file' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+
+        if ($OS -eq 'Windows 11') {
+            $Sourcexml = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+                InitialDirectory = [Environment]::GetFolderPath('Desktop')
+                Filter           = 'JSON (*.JSON)|'
+            }
         }
+
+        $null = $Sourcexml.ShowDialog()
+        $WPFCustomTBStartMenu.text = $Sourcexml.FileName
+
+        if ($OS -ne 'Windows 11') {
+            if ($Sourcexml.FileName -notlike '*.xml') {
+                Update-Log -Data 'A XML file not selected. Please select a valid file to continue.' -Class Warning
+                return
+            }
+        }
+
+        if ($OS -eq 'Windows 11') {
+            if ($Sourcexml.FileName -notlike '*.json') {
+                Update-Log -Data 'A JSON file not selected. Please select a valid file to continue.' -Class Warning
+                return
+            }
+        }
+
+        $text = $WPFCustomTBStartMenu.text + ' selected as the start menu file'
+        Update-Log -Data $text -class Information
     }
 }

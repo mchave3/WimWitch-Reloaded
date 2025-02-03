@@ -3,9 +3,7 @@
     Select default application associations file.
 
 .DESCRIPTION
-    This function opens a file dialog to allow the user to select an XML file
-    containing default application associations. It validates the selected file
-    and updates the UI accordingly.
+    This function opens a file dialog to allow the user to select an XML file containing default application associations. It validates the selected file and updates the UI accordingly.
 
 .NOTES
     Name:        Select-DefaultApplicationAssociations.ps1
@@ -31,25 +29,19 @@ function Select-DefaultApplicationAssociations {
     )
 
     process {
-        try {
-            Update-Log -Data 'Opening file selection dialog for default app associations...' -Class Information
-            
-            Add-Type -AssemblyName System.Windows.Forms
-            $FileBrowser = New-Object System.Windows.Forms.OpenFileDialog
-            $FileBrowser.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*"
-            $FileBrowser.Title = "Select Default App Associations File"
-            
-            if ($FileBrowser.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-                $WPFCustomDefaultAppTextBox.Text = $FileBrowser.FileName
-                Update-Log -Data "Selected default app associations file: $($FileBrowser.FileName)" -Class Information
-            }
-            else {
-                Update-Log -Data 'File selection cancelled by user' -Class Information
-            }
+        $Sourcexml = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+            InitialDirectory = [Environment]::GetFolderPath('Desktop')
+            Filter           = 'XML (*.xml)|'
         }
-        catch {
-            Update-Log -Data 'Failed to select default application associations file' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+        $null = $Sourcexml.ShowDialog()
+        $WPFCustomTBDefaultApp.text = $Sourcexml.FileName
+    
+    
+        if ($Sourcexml.FileName -notlike '*.xml') {
+            Update-Log -Data 'A XML file not selected. Please select a valid file to continue.' -Class Warning
+            return
         }
+        $text = $WPFCustomTBDefaultApp.text + ' selected as the default application XML'
+        Update-Log -Data $text -class Information
     }
 }

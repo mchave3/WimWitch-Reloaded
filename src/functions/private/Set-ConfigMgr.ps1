@@ -1,11 +1,9 @@
 <#
 .SYNOPSIS
-    Configure ConfigMgr settings.
+    Manually set the ConfigMgr site information in the GUI.
 
 .DESCRIPTION
-    This function configures the necessary settings for Configuration Manager integration,
-    including paths and environment variables. It ensures proper connection to the
-    ConfigMgr site and sets up the required environment.
+    This function is used to set the ConfigMgr site information in the GUI.
 
 .NOTES
     Name:        Set-ConfigMgr.ps1
@@ -32,33 +30,45 @@ function Set-ConfigMgr {
 
     process {
         try {
-            Update-Log -Data 'Setting up ConfigMgr connection...' -Class Information
-
-            # Get ConfigMgr installation path
-            $ConfigMgrInstallPath = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\SMS\Setup").UI_Installation_Directory
-
-            # Set environment variables
-            $env:SMS_ADMIN_UI_PATH = $ConfigMgrInstallPath + "\bin\i386"
-            $env:SMS_ADMIN_UI_PATH_X64 = $ConfigMgrInstallPath + "\bin\x64"
-            
-            # Import ConfigMgr module
-            Import-CMModule
-            
-            # Set location to ConfigMgr drive
-            if (Test-Path -Path "$($global:SiteCode):") {
-                Set-Location "$($global:SiteCode):"
-                Update-Log -Data 'Successfully connected to ConfigMgr' -Class Information
+            # $MEMCMsiteinfo = Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SMS\Identification" -ErrorAction Stop
+    
+            # $WPFCMTBSiteServer.text = $MEMCMsiteinfo.'Site Server'
+            # $WPFCMTBSitecode.text = $MEMCMsiteinfo.'Site Code'
+    
+            #$WPFCMTBSiteServer.text = "nt-tpmemcm.notorious.local"
+            #$WPFCMTBSitecode.text = "NTP"
+    
+            $global:SiteCode = $WPFCMTBSitecode.text
+            $global:SiteServer = $WPFCMTBSiteServer.Text
+            $global:CMDrive = $WPFCMTBSitecode.text + ':'
+    
+            Update-Log -Data 'ConfigMgr detected and properties set' -Class Information
+            Update-Log -Data 'ConfigMgr feature enabled' -Class Information
+            $sitecodetext = 'Site Code - ' + $WPFCMTBSitecode.text
+            Update-Log -Data $sitecodetext -Class Information
+            $siteservertext = 'Site Server - ' + $WPFCMTBSiteServer.text
+            Update-Log -Data $siteservertext -Class Information
+    
+            $CMConfig = @{
+                SiteCode   = $WPFCMTBSitecode.text
+                SiteServer = $WPFCMTBSiteServer.text
             }
-            else {
-                throw "ConfigMgr drive $($global:SiteCode): not found"
+            Update-Log -data 'Saving ConfigMgr site information...'
+            $CMConfig | Export-Clixml -Path $global:workdir\ConfigMgr\SiteInfo.xml -ErrorAction Stop
+    
+            if ($CM -eq 'New') {
+                $WPFCMCBImageType.SelectedIndex = 1
+                Enable-ConfigMgrOptions
             }
+    
+            return 0
         }
+    
         catch {
-            Update-Log -Data 'Failed to set up ConfigMgr connection' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-        }
-        finally {
-            Set-Location $PSScriptRoot
+            Update-Log -Data 'ConfigMgr not detected' -Class Information
+            $WPFCMTBSiteServer.text = 'Not Detected'
+            $WPFCMTBSitecode.text = 'Not Detected'
+            return 1
         }
     }
 }

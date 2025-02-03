@@ -3,9 +3,7 @@
     Install default application associations.
 
 .DESCRIPTION
-    This function applies default application associations to the mounted Windows
-    image using the specified XML file. It uses DISM to import the associations
-    and handles any errors that occur during the process.
+    This function applies default application associations to the mounted Windows image using the specified XML file. It uses DISM to import the associations and handles any errors that occur during the process.
 
 .NOTES
     Name:        Install-DefaultApplicationAssociations.ps1

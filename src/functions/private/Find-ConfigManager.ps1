@@ -1,10 +1,9 @@
 <#
 .SYNOPSIS
-    Find and validate ConfigMgr installation.
+    Detect and set ConfigMgr Site Code and Site Server.
 
 .DESCRIPTION
-    This function checks for the presence of ConfigMgr installation by looking
-    for registry entries and validating the installation path.
+    This function will check if ConfigMgr is installed on the machine and set the Site Code and Site Server accordingly.
 
 .NOTES
     Name:        Find-ConfigManager.ps1
@@ -30,67 +29,67 @@ function Find-ConfigManager {
     )
 
     process {
-        if ((Test-Path -Path HKLM:\SOFTWARE\Microsoft\SMS\Identification) -eq $true) {
+        If ((Test-Path -Path HKLM:\SOFTWARE\Microsoft\SMS\Identification) -eq $true) {
             Update-Log -Data 'Site Information found in Registry' -Class Information
             try {
-                $global:SiteCode = Get-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\SMS\Identification -ErrorAction Stop |
-                    Select-Object -ExpandProperty Site
-                Update-Log -Data "Site Code: $global:SiteCode" -Class Information
+    
+                $MEMCMsiteinfo = Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SMS\Identification' -ErrorAction Stop
+    
+                $WPFCMTBSiteServer.text = $MEMCMsiteinfo.'Site Server'
+                $WPFCMTBSitecode.text = $MEMCMsiteinfo.'Site Code'
+    
+                #$WPFCMTBSiteServer.text = "nt-tpmemcm.notorious.local"
+                #$WPFCMTBSitecode.text = "NTP"
+    
+                $global:SiteCode = $WPFCMTBSitecode.text
+                $global:SiteServer = $WPFCMTBSiteServer.Text
+                $global:CMDrive = $WPFCMTBSitecode.text + ':'
+    
+                Update-Log -Data 'ConfigMgr detected and properties set' -Class Information
+                Update-Log -Data 'ConfigMgr feature enabled' -Class Information
+                $sitecodetext = 'Site Code - ' + $WPFCMTBSitecode.text
+                Update-Log -Data $sitecodetext -Class Information
+                $siteservertext = 'Site Server - ' + $WPFCMTBSiteServer.text
+                Update-Log -Data $siteservertext -Class Information
+                if ($CM -eq 'New') {
+                    $WPFCMCBImageType.SelectedIndex = 1
+                    Enable-ConfigMgrOptions
+                }
+    
+                return 0
+            } catch {
+                Update-Log -Data 'ConfigMgr not detected' -Class Information
+                $WPFCMTBSiteServer.text = 'Not Detected'
+                $WPFCMTBSitecode.text = 'Not Detected'
+                return 1
             }
-            catch {
-                Update-Log -Data 'Could not get site code from registry' -Class Error
-                Update-Log -data $_.Exception.Message -Class Error
-                return $false
-            }
-
-            try {
-                $global:SiteServer = Get-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\SMS\Identification -ErrorAction Stop |
-                    Select-Object -ExpandProperty Server
-                Update-Log -Data "Site Server: $global:SiteServer" -Class Information
-            }
-            catch {
-                Update-Log -Data 'Could not get site server from registry' -Class Error
-                Update-Log -data $_.Exception.Message -Class Error
-                return $false
-            }
-
-            try {
-                $global:ProviderLocation = Get-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\SMS\Identification -ErrorAction Stop |
-                    Select-Object -ExpandProperty Location
-                Update-Log -Data "Provider Location: $global:ProviderLocation" -Class Information
-            }
-            catch {
-                Update-Log -Data 'Could not get provider location from registry' -Class Error
-                Update-Log -data $_.Exception.Message -Class Error
-                return $false
-            }
-
-            try {
-                $global:CMModulePath = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -ErrorAction Stop |
-                    Select-Object -ExpandProperty PSModulePath
-                Update-Log -Data "PowerShell Module Path: $global:CMModulePath" -Class Information
-            }
-            catch {
-                Update-Log -Data 'Could not get PowerShell module path from registry' -Class Error
-                Update-Log -data $_.Exception.Message -Class Error
-                return $false
-            }
-
-            try {
-                $global:CMDrive = $global:SiteCode + ':'
-                Update-Log -Data "ConfigMgr Drive: $global:CMDrive" -Class Information
-            }
-            catch {
-                Update-Log -Data 'Could not create ConfigMgr drive path' -Class Error
-                Update-Log -data $_.Exception.Message -Class Error
-                return $false
-            }
-
-            return $true
         }
-        else {
-            Update-Log -Data 'ConfigMgr not found on this system' -Class Warning
-            return $false
+    
+        if ((Test-Path -Path $global:workdir\ConfigMgr\SiteInfo.XML) -eq $true) {
+            Update-Log -data 'ConfigMgr Site info XML found' -class Information
+    
+            $settings = Import-Clixml -Path $global:workdir\ConfigMgr\SiteInfo.xml -ErrorAction Stop
+    
+            $WPFCMTBSitecode.text = $settings.SiteCode
+            $WPFCMTBSiteServer.text = $settings.SiteServer
+    
+            Update-Log -Data 'ConfigMgr detected and properties set' -Class Information
+            Update-Log -Data 'ConfigMgr feature enabled' -Class Information
+            $sitecodetext = 'Site Code - ' + $WPFCMTBSitecode.text
+            Update-Log -Data $sitecodetext -Class Information
+            $siteservertext = 'Site Server - ' + $WPFCMTBSiteServer.text
+            Update-Log -Data $siteservertext -Class Information
+    
+            $global:SiteCode = $WPFCMTBSitecode.text
+            $global:SiteServer = $WPFCMTBSiteServer.Text
+            $global:CMDrive = $WPFCMTBSitecode.text + ':'
+    
+            return 0
         }
+    
+        Update-Log -Data 'ConfigMgr not detected' -Class Information
+        $WPFCMTBSiteServer.text = 'Not Detected'
+        $WPFCMTBSitecode.text = 'Not Detected'
+        Return 1
     }
 }

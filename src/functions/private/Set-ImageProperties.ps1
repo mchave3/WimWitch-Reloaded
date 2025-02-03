@@ -1,10 +1,9 @@
 <#
 .SYNOPSIS
-    Set properties for a ConfigMgr image package.
+    Update image version, properties and binary differential replication settings.
 
 .DESCRIPTION
-    This function sets various properties for a ConfigMgr image package,
-    including description, version, and other metadata.
+    This function will update image version, properties and binary differential replication settings.
 
 .NOTES
     Name:        Set-ImageProperties.ps1
@@ -31,26 +30,67 @@ function Set-ImageProperties {
     )
 
     process {
+        #write-host $PackageID
+        #set-ConfigMgrConnection
         Set-Location $CMDrive
 
-        try {
-            $ImagePackage = Get-CMOperatingSystemImage -Id $PackageID
-            
-            if ($WPFCMTBDescription.Text.Length -gt 0) {
-                $ImagePackage.Description = $WPFCMTBDescription.Text
-            }
-            
-            if ($WPFCMTBImageVer.Text.Length -gt 0) {
-                $ImagePackage.ImageOSVersion = $WPFCMTBImageVer.Text
-            }
-            
-            $ImagePackage.Put() | Out-Null
-            
-            Update-Log -Data 'Image properties updated successfully' -Class Information
+        #Version Text Box
+        if ($WPFCMCBImageVerAuto.IsChecked -eq $true) {
+            $string = 'Built ' + (Get-Date -DisplayHint Date)
+            Update-Log -Data "Updating image version to $string" -Class Information
+            Set-CMOperatingSystemImage -Id $PackageID -Version $string
         }
-        catch {
-            Update-Log -Data 'Failed to update image properties' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+
+        if ($WPFCMCBImageVerAuto.IsChecked -eq $false) {
+
+            if ($null -ne $WPFCMTBImageVer.text) {
+                Update-Log -Data 'Updating version of the image...' -Class Information
+                Set-CMOperatingSystemImage -Id $PackageID -Version $WPFCMTBImageVer.text
+            }
+        }
+
+        #Description Text Box
+        if ($WPFCMCBDescriptionAuto.IsChecked -eq $true) {
+            $string = 'This image contains the following customizations: '
+            if ($WPFUpdatesEnableCheckBox.IsChecked -eq $true) { $string = $string + 'Software Updates, ' }
+            if ($WPFCustomCBLangPacks.IsChecked -eq $true) { $string = $string + 'Language Packs, ' }
+            if ($WPFCustomCBLEP.IsChecked -eq $true) { $string = $string + 'Local Experience Packs, ' }
+            if ($WPFCustomCBFOD.IsChecked -eq $true) { $string = $string + 'Features on Demand, ' }
+            if ($WPFMISDotNetCheckBox.IsChecked -eq $true) { $string = $string + '.Net 3.5, ' }
+            if ($WPFMISOneDriveCheckBox.IsChecked -eq $true) { $string = $string + 'OneDrive Consumer, ' }
+            if ($WPFAppxCheckBox.IsChecked -eq $true) { $string = $string + 'APPX Removal, ' }
+            if ($WPFDriverCheckBox.IsChecked -eq $true) { $string = $string + 'Drivers, ' }
+            if ($WPFJSONEnableCheckBox.IsChecked -eq $true) { $string = $string + 'Autopilot, ' }
+            if ($WPFCustomCBRunScript.IsChecked -eq $true) { $string = $string + 'Custom Script, ' }
+            Update-Log -data 'Setting image description...' -Class Information
+            Set-CMOperatingSystemImage -Id $PackageID -Description $string
+        }
+
+        if ($WPFCMCBDescriptionAuto.IsChecked -eq $false) {
+
+            if ($null -ne $WPFCMTBDescription.Text) {
+                Update-Log -Data 'Updating description of the image...' -Class Information
+                Set-CMOperatingSystemImage -Id $PackageID -Description $WPFCMTBDescription.Text
+            }
+        }
+
+        #Check Box properties
+        #Binary Differnential Replication
+        if ($WPFCMCBBinDirRep.IsChecked -eq $true) {
+            Update-Log -Data 'Enabling Binary Differential Replication' -Class Information
+            Set-CMOperatingSystemImage -Id $PackageID -EnableBinaryDeltaReplication $true
+        } else {
+            Update-Log -Data 'Disabling Binary Differential Replication' -Class Information
+            Set-CMOperatingSystemImage -Id $PackageID -EnableBinaryDeltaReplication $false
+        }
+
+        #Package Share
+        if ($WPFCMCBDeploymentShare.IsChecked -eq $true) {
+            Update-Log -Data 'Enabling Package Share' -Class Information
+            Set-CMOperatingSystemImage -Id $PackageID -CopyToPackageShareOnDistributionPoint $true
+        } else {
+            Update-Log -Data 'Disabling Package Share' -Class Information
+            Set-CMOperatingSystemImage -Id $PackageID -CopyToPackageShareOnDistributionPoint $false
         }
     }
 }

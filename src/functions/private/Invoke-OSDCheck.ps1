@@ -1,11 +1,9 @@
 <#
 .SYNOPSIS
-    Check OSD installation and version.
+    Run the OSDSUS and OSDUpdate checks to determine if an update is available.
 
 .DESCRIPTION
-    This function verifies if OSD is installed and if the installed version is
-    compatible with current requirements. It performs version comparison and
-    logs the results.
+    This function will run the OSDSUS and OSDUpdate checks to determine if an update is available.
 
 .NOTES
     Name:        Invoke-OSDCheck.ps1
@@ -31,26 +29,11 @@ function Invoke-OSDCheck {
     )
 
     process {
-        try {
-            Update-Log -Data 'Checking OSD installation...' -Class Information
-            
-            $OSDInstalled = Get-OSDBInstallation
-            if ($OSDInstalled) {
-                Update-Log -Data 'OSD is installed' -Class Information
-                
-                $CurrentVersion = Get-OSDBCurrentVer
-                Update-Log -Data "Current OSD version: $CurrentVersion" -Class Information
-                
-                # Compare versions if needed
-                # Add version comparison logic here
-            }
-            else {
-                Update-Log -Data 'OSD is not installed' -Class Warning
-            }
-        }
-        catch {
-            Update-Log -Data 'Failed to check OSD installation' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
-        }
+        Get-OSDBInstallation #Sets OSDUpate version info
+        Get-OSDBCurrentVer #Discovers current version of OSDUpdate
+        Compare-OSDBuilderVer #determines if an update of OSDUpdate can be applied
+        get-osdsusinstallation #Sets OSDSUS version info
+        Get-OSDSUSCurrentVer #Discovers current version of OSDSUS
+        Compare-OSDSUSVer #determines if an update of OSDSUS can be applied
     }
 }

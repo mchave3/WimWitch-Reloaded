@@ -3,9 +3,7 @@
     Import the ConfigMgr PowerShell module.
 
 .DESCRIPTION
-    This function imports the Configuration Manager PowerShell module using the
-    ConfigMgr installation path. It handles module import errors and ensures
-    proper module loading.
+    This function is used to import the ConfigMgr PowerShell module.
 
 .NOTES
     Name:        Import-CMModule.ps1
@@ -32,23 +30,17 @@ function Import-CMModule {
 
     process {
         try {
-            Update-Log -Data 'Importing ConfigMgr module...' -Class Information
-
-            # Get ConfigMgr Module path
-            $ModulePath = $env:SMS_ADMIN_UI_PATH + "\..\ConfigurationManager.psd1"
-            
-            if (Test-Path -Path $ModulePath) {
-                # Import the ConfigMgr module
-                Import-Module $ModulePath -Force
-                Update-Log -Data 'ConfigMgr module imported successfully' -Class Information
-            }
-            else {
-                throw "ConfigMgr module not found at path: $ModulePath"
-            }
+            $path = (($env:SMS_ADMIN_UI_PATH -replace 'i386', '') + 'ConfigurationManager.psd1')
+    
+            #           $path = "C:\Program Files (x86)\Microsoft Endpoint Manager\AdminConsole\bin\ConfigurationManager.psd1"
+            Import-Module $path -ErrorAction Stop
+            Update-Log -Data 'ConfigMgr PowerShell module imported' -Class Information
+            return 0
         }
+    
         catch {
-            Update-Log -Data 'Failed to import ConfigMgr module' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+            Update-Log -Data 'Could not import CM PowerShell module.' -Class Warning
+            return 1
         }
     }
 }

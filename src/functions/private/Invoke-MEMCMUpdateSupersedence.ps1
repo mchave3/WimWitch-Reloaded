@@ -3,9 +3,7 @@
     Check for update supersedence against ConfigMgr.
 
 .DESCRIPTION
-    This function checks for update supersedence in ConfigMgr based on the provided
-    product and version parameters. It handles different Windows versions and
-    manages the supersedence checking process.
+    This function will check for update supersedence against ConfigMgr.
 
 .NOTES
     Name:        Invoke-MEMCMUpdateSupersedence.ps1
@@ -35,35 +33,67 @@ function Invoke-MEMCMUpdateSupersedence {
     )
 
     process {
+        #set-ConfigMgrConnection
         Set-Location $CMDrive
         $Arch = 'x64'
 
-        if ($prod -eq 'Windows Server') {
-            $updates = Get-CMSoftwareUpdate -Fast -Name "* Server $Ver *$arch*" |
-                Where-Object { ($_.IsSuperseded -eq $true) -or ($_.IsExpired -eq $true) }
+        if (($prod -eq 'Windows 10') -and (($ver -ge '1903') -or ($ver -eq '20H2') -or ($ver -eq '21H1') -or ($ver -eq '21H2')  )) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'" }
+        if (($prod -eq 'Windows 10') -and ($ver -le '1809')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10'" }
+        if (($prod -eq 'Windows Server') -and ($ver = '1607')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2016'" }
+        if (($prod -eq 'Windows Server') -and ($ver -eq '1809')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'" }
+        if (($prod -eq 'Windows Server') -and ($ver -eq '21H2')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'" }
+
+        Update-Log -data 'Checking files for supersedense...' -Class Information
+
+        if ((Test-Path -Path "$global:workdir\updates\$Prod\$ver\") -eq $False) {
+            Update-Log -Data 'Folder doesnt exist. Skipping supersedence check...' -Class Warning
+            return
         }
 
-        if ($prod -eq 'Windows 10') {
-            $updates = Get-CMSoftwareUpdate -Fast -Name "*Windows 10*$Ver*$arch*" |
-                Where-Object { ($_.IsSuperseded -eq $true) -or ($_.IsExpired -eq $true) }
-        }
+        #For every folder under updates\prod\ver
+        $FolderFirstLevels = Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\"
+        foreach ($FolderFirstLevel in $FolderFirstLevels) {
 
-        if ($prod -eq 'Windows 11') {
-            $updates = Get-CMSoftwareUpdate -Fast -Name "*Windows 11*$Ver*$arch*" |
-                Where-Object { ($_.IsSuperseded -eq $true) -or ($_.IsExpired -eq $true) }
-        }
+            #For every folder under updates\prod\ver\class
+            $FolderSecondLevels = Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel"
+            foreach ($FolderSecondLevel in $FolderSecondLevels) {
 
-        foreach ($update in $updates) {
-            if ((($update.localizeddisplayname -notlike 'Feature update*') -and 
-                 ($update.localizeddisplayname -notlike 'Upgrade to Windows 11*')) -and 
-                ($update.localizeddisplayname -notlike '*Language Pack*') -and 
-                ($update.localizeddisplayname -notlike '*editions),*')) {
-                
-                Update-Log -Data 'The following update is superseded:' -Class Information
-                Update-Log -data $update.localizeddisplayname -Class Information
-                
-                $WPFUpdatesSupersededList.Items.Add($update.LocalizedDisplayName)
+                #for every cab under updates\prod\ver\class\update
+                $UpdateCabs = (Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel")
+                foreach ($UpdateCab in $UpdateCabs) {
+                    Update-Log -data "Checking update file name $UpdateCab" -Class Information
+                    $UpdateItem = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.LocalizedDisplayName -eq $FolderSecondLevel) }
+
+                    if ($UpdateItem.IsSuperseded -eq $false) {
+
+                        Update-Log -data "Update $FolderSecondLevel is current" -Class Information
+                    } else {
+                        Update-Log -Data "Update $UpdateCab is superseded. Deleting file..." -Class Warning
+                        Remove-Item -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel\$UpdateCab"
+                    }
+                }
             }
         }
+
+        Update-Log -Data 'Cleaning folders...' -Class Information
+        $FolderFirstLevels = Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\"
+        foreach ($FolderFirstLevel in $FolderFirstLevels) {
+
+            #For every folder under updates\prod\ver\class
+            $FolderSecondLevels = Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel"
+            foreach ($FolderSecondLevel in $FolderSecondLevels) {
+
+                #for every cab under updates\prod\ver\class\update
+                $UpdateCabs = (Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel")
+
+                if ($null -eq $UpdateCabs) {
+                    Update-Log -Data "$FolderSecondLevel is empty. Deleting...." -Class Warning
+                    Remove-Item -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
+                }
+            }
+        }
+
+        Set-Location $global:workdir
+        Update-Log -data 'Supersedence check complete' -class Information
     }
 }

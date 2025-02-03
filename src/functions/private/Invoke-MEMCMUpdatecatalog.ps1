@@ -1,11 +1,9 @@
 <#
 .SYNOPSIS
-    Check for updates against ConfigMgr.
+    Check for updates against ConfigMgr and download them to the working directory.
 
 .DESCRIPTION
-    This function queries ConfigMgr for available updates based on the provided
-    product and version parameters. It filters out certain types of updates
-    and handles the update checking process.
+    This function will check for updates against ConfigMgr and download them to the working directory.
 
 .NOTES
     Name:        Invoke-MEMCMUpdatecatalog.ps1
@@ -35,35 +33,67 @@ function Invoke-MEMCMUpdatecatalog {
     )
 
     process {
+        #set-ConfigMgrConnection
         Set-Location $CMDrive
         $Arch = 'x64'
 
-        if ($prod -eq 'Windows Server') {
-            $updates = Get-CMSoftwareUpdate -Fast -Name "* Server $ver *$arch*" |
-                Where-Object { ($_.IsSuperseded -eq $false) -and ($_.IsExpired -eq $false) }
+        if ($prod -eq 'Windows 10') {
+            #        if (($ver -ge '1903') -or ($ver -eq "21H1")){$WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'"}
+            #        if (($ver -ge '1903') -or ($ver -eq "21H1") -or ($ver -eq "20H2") -or ($ver -eq "21H2") -or ($ver -eq "22H2")){$WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'"}
+            #here
+            if (($ver -ge '1903') -or ($ver -like '2*')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'" }
+
+            if ($ver -le '1809') { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10'" }
+
+            $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($ver)*$($Arch)*") } )
         }
 
-        if ($prod -eq 'Windows 10') {
-            $updates = Get-CMSoftwareUpdate -Fast -Name "*Windows 10*$ver*$arch*" |
-                Where-Object { ($_.IsSuperseded -eq $false) -and ($_.IsExpired -eq $false) }
+
+        if (($prod -like '*Windows Server*') -and ($ver -eq '1607')) {
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2016'"
+            $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -notlike '* Next *') -and ($_.LocalizedDisplayName -notlike '*(1703)*') -and ($_.LocalizedDisplayName -notlike '*(1709)*') -and ($_.LocalizedDisplayName -notlike '*(1803)*') })
+        }
+
+        if (($prod -like '*Windows Server*') -and ($ver -eq '1809')) {
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'"
+            $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($Arch)*") } )
+        }
+
+        if (($prod -like '*Windows Server*') -and ($ver -eq '21H2')) {
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'"
+            $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($Arch)*") } )
         }
 
         if ($prod -eq 'Windows 11') {
-            $updates = Get-CMSoftwareUpdate -Fast -Name "*Windows 11*$ver*$arch*" |
-                Where-Object { ($_.IsSuperseded -eq $false) -and ($_.IsExpired -eq $false) }
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 11'"
+            #$Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($Arch)*") } )
+            if ($ver -eq '21H2') { $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*Windows 11 for $($Arch)*") } ) }
+            else { $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($ver)*$($Arch)*") } ) }
+        }
+
+        if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True) {
+
+            if ($prod -eq 'Windows 10') { $Updates = $Updates + (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter "LocalizedCategoryInstanceNames = 'Windows 10 Dynamic Update'" -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($ver)*$($Arch)*") } ) }
+            if ($prod -eq 'Windows 11') { $Updates = $Updates + (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter "LocalizedCategoryInstanceNames = 'Windows 11 Dynamic Update'" -ErrorAction Stop | Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$prod*") -and ($_.LocalizedDisplayName -like "*$arch*") } ) }
+        }
+
+        if ($null -eq $updates) {
+            Update-Log -data 'No updates found. Product is likely not synchronized. Continuing with build...' -class Warning
+            Set-Location $global:workdir
+            return
         }
 
         foreach ($update in $updates) {
-            if ((($update.localizeddisplayname -notlike 'Feature update*') -and 
-                 ($update.localizeddisplayname -notlike 'Upgrade to Windows 11*')) -and 
-                ($update.localizeddisplayname -notlike '*Language Pack*') -and 
-                ($update.localizeddisplayname -notlike '*editions),*')) {
-                
+            if ((($update.localizeddisplayname -notlike 'Feature update*') -and ($update.localizeddisplayname -notlike 'Upgrade to Windows 11*' )) -and ($update.localizeddisplayname -notlike '*Language Pack*') -and ($update.localizeddisplayname -notlike '*editions),*')) {
                 Update-Log -Data 'Checking the following update:' -Class Information
                 Update-Log -data $update.localizeddisplayname -Class Information
-                
-                $WPFUpdatesListBox.Items.Add($update.LocalizedDisplayName)
+                #write-host "Display Name"
+                #write-host $update.LocalizedDisplayName
+                #            if ($ver -eq  "20H2"){$ver = "2009"} #Another 20H2 naming work around
+                Invoke-MSUpdateItemDownload -FilePath "$global:workdir\updates\$Prod\$ver\" -UpdateName $update.LocalizedDisplayName
             }
         }
+
+        Set-Location $global:workdir
     }
 }

@@ -3,9 +3,7 @@
     Select ConfigMgr distribution points.
 
 .DESCRIPTION
-    This function allows users to select ConfigMgr distribution points for image
-    package distribution. It retrieves available distribution points from the
-    ConfigMgr site and adds them to the selection list.
+    This function allows you to select ConfigMgr distribution points or distribution point groups.
 
 .NOTES
     Name:        Select-DistributionPoints.ps1
@@ -31,16 +29,18 @@ function Select-DistributionPoints {
     )
 
     process {
-        try {
-            $DPs = Get-CMDistributionPoint -SiteCode $global:SiteCode
-            foreach ($DP in $DPs) {
-                $WPFCMLBDPs.Items.Add($DP.NetworkOSPath)
-            }
-            Update-Log -Data 'Distribution points retrieved successfully' -Class Information
+        #set-ConfigMgrConnection
+        Set-Location $CMDrive
+
+        if ($WPFCMCBDPDPG.SelectedItem -eq 'Distribution Points') {
+
+            $SelectedDPs = (Get-CMDistributionPoint -SiteCode $global:sitecode).NetworkOSPath | Out-GridView -Title 'Select Distribution Points' -PassThru
+            foreach ($SelectedDP in $SelectedDPs) { $WPFCMLBDPs.Items.Add($SelectedDP) }
         }
-        catch {
-            Update-Log -Data 'Failed to retrieve distribution points' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+        if ($WPFCMCBDPDPG.SelectedItem -eq 'Distribution Point Groups') {
+            $SelectedDPs = (Get-CMDistributionPointGroup).Name | Out-GridView -Title 'Select Distribution Point Groups' -PassThru
+            foreach ($SelectedDP in $SelectedDPs) { $WPFCMLBDPs.Items.Add($SelectedDP) }
         }
+        Set-Location $global:workdir
     }
 }
