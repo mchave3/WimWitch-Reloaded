@@ -5,10 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell: Launch Build Script",
+            "name": "PowerShell: Build Module",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${workspaceFolder}/scripts/build.ps1",
+            "script": "${workspaceFolder}/scripts/Build_module.ps1",
+            "cwd": "${workspaceFolder}",
+            "args": []
+        },
+        {
+            "name": "PowerShell: Invoke Module",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/scripts/Invoke_module.ps1",
+            "cwd": "${workspaceFolder}",
+            "args": []
+        },
+        {
+            "name": "PowerShell: Build and Invoke",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "& ${workspaceFolder}/scripts/Build_module.ps1; if ($?) { & ${workspaceFolder}/scripts/Invoke_module.ps1 }",
             "cwd": "${workspaceFolder}"
         }
     ]
