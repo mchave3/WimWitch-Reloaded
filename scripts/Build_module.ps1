@@ -30,10 +30,7 @@ function Write-Log {
         'Stage'   { 'Cyan' }
     }
     
-    # Add file logging
-    $logMessage = "[$timestamp] $prefix $Message"
-    Add-Content -Path $logPath -Value $logMessage
-    Write-Host $logMessage -ForegroundColor $color
+    Write-Host "[$timestamp] $prefix $Message" -ForegroundColor $color
 }
 
 # Configuration with hardcoded values

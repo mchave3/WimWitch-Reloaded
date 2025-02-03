@@ -1,7 +1,10 @@
+# Invoke the module WimWitch-Reloaded
 [CmdletBinding()]
 param (
     [switch]$Force
 )
+
+Clear-Host
 
 function Write-Log {
     param(
