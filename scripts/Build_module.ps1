@@ -40,6 +40,7 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $sourceDir = Join-Path $projectRoot "src\functions"
 $outputDir = Join-Path $projectRoot "outputs"
 $binariesDir = Join-Path $outputDir "binaries"
+$moduleOutput = Join-Path $outputDir $moduleName  # Add this line to define moduleOutput
 
 # Remove configuration loading section since we're using hardcoded values
 
