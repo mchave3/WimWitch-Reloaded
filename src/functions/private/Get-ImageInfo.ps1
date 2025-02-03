@@ -1,12 +1,13 @@
 <#
 .SYNOPSIS
-    Brief description of the script purpose
+    Get information about an existing ConfigMgr image package.
 
 .DESCRIPTION
-    Detailed description of what the script/function does
+    This function retrieves information about a ConfigMgr image package
+    using its package ID.
 
 .NOTES
-    Name:        ScriptName.ps1
+    Name:        Get-ImageInfo.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,15 +21,18 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Example of how to use this script/function
+    Get-ImageInfo -PackID "ABC00001"
 #>
-function FunctionName {
+function Get-ImageInfo {
     [CmdletBinding()]
     param(
-
+        [Parameter(Mandatory = $true)]
+        [string]$PackID
     )
 
     process {
-        
+        Set-Location $CMDrive
+        $ImageInfo = Get-CMOperatingSystemImage -Id $PackID
+        return $ImageInfo
     }
 }

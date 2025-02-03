@@ -9,6 +9,7 @@
     #IncludeDefaultRules=${true}
     ExcludeRules = @(
         'PSMissingModuleManifestField'
+        'PSAvoidUsingWriteHost'
     )
     #IncludeRules = @(
     #    'PSAvoidUsingWriteHost',

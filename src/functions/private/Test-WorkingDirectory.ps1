@@ -47,7 +47,7 @@ function Test-WorkingDirectory {
     
         $count = $null
         Set-Location -Path $global:workdir
-        Write-Output "WIMWitchFK working directory selected: $global:workdir"
+        Write-Output "WimWitch Reloaded working directory selected: $global:workdir"
         Write-Output 'Checking working directory for required folders...'
         foreach ($subfolder in $subfolders) {
             if ((Test-Path -Path .\$subfolder) -eq $true) { $count = $count + 1 }
