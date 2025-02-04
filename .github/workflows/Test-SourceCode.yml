@@ -2,6 +2,9 @@ name: 🔍 Test-SourceCode
 
 run-name: "🔍 Test-SourceCode"
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
 
