@@ -3,7 +3,8 @@
     Copy ISO media files to the staging area.
 
 .DESCRIPTION
-    This function copies ISO media files to the staging area, preparing them for ISO creation. It handles different Windows versions and their specific requirements.
+    This function copies ISO media files to the staging area, preparing them for ISO creation. 
+    It handles different Windows versions and their specific requirements.
 
 .NOTES
     Name:        Copy-StageIsoMedia.ps1

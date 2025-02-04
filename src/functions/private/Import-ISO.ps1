@@ -5,9 +5,10 @@
 .DESCRIPTION
     This function is used to import an ISO file into WimWitch. 
     It will mount the ISO, check for the install.wim or install.esd file, and then copy the file to the staging folder. 
-    If the user has selected to import the WIM file, it will then rename the file to the user's desired name and move it to the imports folder. 
-    If the user has selected to import the .Net binaries, it will copy the .Net binaries to the imports folder. 
-    If the user has selected to import the ISO files, it will copy the boot, efi, sources, and support folders, as well as the autorun.inf, bootmgr, bootmgr.efi, and setup.exe files to the imports folder.
+    If the user has selected to import the WIM file, it will then rename the file to the user's desired name and move it 
+    to the imports folder. If the user has selected to import the .Net binaries, it will copy the .Net binaries to the 
+    imports folder. If the user has selected to import the ISO files, it will copy the boot, efi, sources, and support 
+    folders, as well as the autorun.inf, bootmgr, bootmgr.efi, and setup.exe files to the imports folder.
 
 .NOTES
     Name:        Import-ISO.ps1
@@ -41,7 +42,8 @@ function Import-ISO {
         if ($WPFImportWIMCheckBox.IsChecked -eq $true) {
             Update-Log -data 'Checking to see if the destination WIM file exists...' -Class Information
             #check to see if the new name for the imported WIM is valid
-            if (($WPFImportNewNameTextBox.Text -eq '') -or ($WPFImportNewNameTextBox.Text -eq 'Name for the imported WIM')) {
+            if (($WPFImportNewNameTextBox.Text -eq '') -or 
+                ($WPFImportNewNameTextBox.Text -eq 'Name for the imported WIM')) {
                 Update-Log -Data 'Enter a valid file name for the imported WIM and then try again' -Class Error
                 return
             }
@@ -97,9 +99,11 @@ function Import-ISO {
     
         try {
             if ($installWimFound) {
-                $windowsver = Get-WindowsImage -ImagePath (Join-Path $iso '\sources\install.wim') -Index 1 -ErrorAction Stop
+                $windowsver = Get-WindowsImage -ImagePath (Join-Path $iso '\sources\install.wim') `
+                    -Index 1 -ErrorAction Stop
             } elseif ($installEsdFound) {
-                $windowsver = Get-WindowsImage -ImagePath (Join-Path $iso '\sources\install.esd') -Index 1 -ErrorAction Stop
+                $windowsver = Get-WindowsImage -ImagePath (Join-Path $iso '\sources\install.esd') `
+                    -Index 1 -ErrorAction Stop
             }
     
     
@@ -156,7 +160,8 @@ function Import-ISO {
                 foreach ($index in $indexesFound) {
                     try {
                         Update-Log -Data "Converting index $($index.ImageIndex) - $($index.ImageName)" -Class Information
-                        Export-WindowsImage -SourceImagePath $sourceEsdFile -SourceIndex $($index.ImageIndex) -DestinationImagePath (Join-Path $global:workdir '\staging\install.wim') -CompressionType fast -ErrorAction Stop
+                        Export-WindowsImage -SourceImagePath $sourceEsdFile -SourceIndex $($index.ImageIndex) `
+                            -DestinationImagePath (Join-Path $global:workdir '\staging\install.wim') -CompressionType fast -ErrorAction Stop
                     } catch {
                         Update-Log -Data "Converting index $($index.ImageIndex) failed - skipping..." -Class Error
                         continue
@@ -198,9 +203,17 @@ function Import-ISO {
         if ($WPFImportDotNetCheckBox.IsChecked -eq $true) {
     
     
-            If (($windowsver.imagename -like '*Windows 10*') -or (($windowsver.imagename -like '*server') -and ($windowsver.version -lt 10.0.20248.0))) { $Path = "$global:workdir\Imports\DotNet\$version" }
-            If (($windowsver.Imagename -like '*server*') -and ($windowsver.version -gt 10.0.20348.0)) { $Path = "$global:workdir\Imports\Dotnet\Windows Server\$version" }
-            If ($windowsver.imagename -like '*Windows 11*') { $Path = "$global:workdir\Imports\Dotnet\Windows 11\$version" }
+            If (($windowsver.imagename -like '*Windows 10*') -or 
+                (($windowsver.imagename -like '*server') -and ($windowsver.version -lt 10.0.20248.0))) { 
+                $Path = "$global:workdir\Imports\DotNet\$version" 
+            }
+            If (($windowsver.Imagename -like '*server*') -and 
+                ($windowsver.version -gt 10.0.20348.0)) { 
+                $Path = "$global:workdir\Imports\Dotnet\Windows Server\$version" 
+            }
+            If ($windowsver.imagename -like '*Windows 11*') { 
+                $Path = "$global:workdir\Imports\Dotnet\Windows 11\$version" 
+            }
     
     
             if ((Test-Path -Path $Path) -eq $false) {
@@ -269,7 +282,8 @@ function Import-ISO {
             Invoke-RemoveISOMount -inputObject $isomount
         } catch {
             Update-Log -Data "Couldn't dismount the ISO. WIM Witch uses a file mount option that does not" -Class Error
-            Update-Log -Data 'provision a drive letter. Use the Dismount-DiskImage command to manaully dismount.' -Class Error
+            Update-Log -Data 'provision a drive letter. Use the Dismount-DiskImage command to manaully dismount.' `
+                -Class Error
         }
         Update-Log -data 'Importing complete' -class Information
     }

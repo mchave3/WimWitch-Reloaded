@@ -34,7 +34,9 @@ function Deploy-Updates {
     )
 
     process {
-        if (($class -eq 'AdobeSU') -and ($WPFSourceWIMImgDesTextBox.text -like 'Windows Server 20*') -and ($WPFSourceWIMImgDesTextBox.text -notlike '*(Desktop Experience)')) {
+        if ($class -eq 'AdobeSU' -and 
+            $WPFSourceWIMImgDesTextBox.text -like 'Windows Server 20*' -and 
+            $WPFSourceWIMImgDesTextBox.text -notlike '*(Desktop Experience)') {
             Update-Log -Data 'Skipping Adobe updates for Server Core build' -Class Information
             return
         }
@@ -90,8 +92,8 @@ function Deploy-Updates {
                     foreach ($DynUpdate in $DynUpdates) {
     
                         $text = $compound + '\' + $DynUpdate
-                        #write-host $text
-                        Start-Process -FilePath c:\windows\system32\expand.exe -args @("`"$text`"", '-F:*', "`"$mediafolder`"") -Wait
+                        $expandArgs = @("`"$text`"", '-F:*', "`"$mediafolder`"")
+                        Start-Process -FilePath c:\windows\system32\expand.exe -ArgumentList $expandArgs -Wait
                     }
                 } elseif ($IsPE -eq $true) { Add-WindowsPackage -Path ($global:workdir + '\staging\mount') -PackagePath $compound -ErrorAction stop | Out-Null }
                 else {

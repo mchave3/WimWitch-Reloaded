@@ -63,15 +63,21 @@ function Get-WWAutopilotProfile {
         }
     
         $AutopilotInstalledVer = (Get-Module -Name windowsautopilotintune).Version
-        Update-Log -Data "The currently installed version of the WindowsAutopilotIntune module is $AutopilotInstalledVer" -Class Information
+        Update-Log -Data "The currently installed version of the WindowsAutopilotIntune module is $AutopilotInstalledVer" `
+            -Class Information
         $AutopilotLatestVersion = (Find-Module -Name windowsautopilotintune).version
-        Update-Log -data "The latest available version of the WindowsAutopilotIntune module is $AutopilotLatestVersion" -Class Information
+        Update-Log -data "The latest available version of the WindowsAutopilotIntune module is $AutopilotLatestVersion" `
+            -Class Information
     
         if ($AutopilotInstalledVer -eq $AutopilotLatestVersion) {
             Update-Log -data 'WindowsAutopilotIntune module is current. Continuing...' -Class Information
         } else {
             Update-Log -data 'WindowsAutopilotIntune module is out of date. Prompting the user to upgrade...'
-            $UpgradeAutopilot = ([System.Windows.MessageBox]::Show("Would you like to update the WindowsAutopilotIntune module to version $AutopilotLatestVersion now?", 'Update Autopilot Module?', 'YesNo', 'warning'))
+            $UpgradeAutopilot = ([System.Windows.MessageBox]::Show(
+                "Would you like to update the WindowsAutopilotIntune module to version $AutopilotLatestVersion now?",
+                'Update Autopilot Module?',
+                'YesNo',
+                'warning'))
         }
     
         if ($UpgradeAutopilot -eq 'Yes') {
@@ -91,7 +97,10 @@ function Get-WWAutopilotProfile {
         Update-Log -data 'Connected to Intune' -Class Information
     
         Update-Log -data 'Retrieving profile...' -Class Information
-        Get-AutoPilotProfile | Out-GridView -Title 'Select Autopilot profile' -PassThru | ConvertTo-AutoPilotConfigurationJSON | Out-File $path\AutopilotConfigurationFile.json -Encoding ASCII
+        Get-AutoPilotProfile | 
+            Out-GridView -Title 'Select Autopilot profile' -PassThru | 
+            ConvertTo-AutoPilotConfigurationJSON | 
+            Out-File $path\AutopilotConfigurationFile.json -Encoding ASCII
         $text = $path + '\AutopilotConfigurationFile.json'
         Update-Log -data "Profile successfully created at $text" -Class Information
     }

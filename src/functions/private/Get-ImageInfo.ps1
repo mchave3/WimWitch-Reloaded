@@ -32,7 +32,9 @@ function Get-ImageInfo {
     process {
         #set-ConfigMgrConnection
         Set-Location $CMDrive
-        $image = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage -ComputerName $global:SiteServer) | Where-Object { ($_.PackageID -eq $PackID) }
+        $image = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
+            -Class SMS_ImagePackage -ComputerName $global:SiteServer) | 
+            Where-Object { ($_.PackageID -eq $PackID) }
 
         $WPFCMTBImageName.text = $image.name
         $WPFCMTBWinBuildNum.text = $image.ImageOSversion
@@ -57,7 +59,9 @@ function Get-ImageInfo {
 
         $Package = $packageID.PackageID
         $DPs = Get-CMDistributionPoint
-        $NALPaths = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -ComputerName $global:SiteServer -Query "SELECT * FROM SMS_DistributionPoint WHERE PackageID='$Package'")
+        $NALPaths = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
+            -ComputerName $global:SiteServer `
+            -Query "SELECT * FROM SMS_DistributionPoint WHERE PackageID='$Package'"
 
         Update-Log -Data 'Retrieving Distrbution Point Information' -Class Information
         foreach ($NALPath in $NALPaths) {
