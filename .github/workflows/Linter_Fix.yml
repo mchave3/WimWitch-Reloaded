@@ -30,6 +30,10 @@ jobs:
           VALIDATE_JSCPD: false
           VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_YAML_PRETTIER: false
+          VALIDATE_JSON: false
+          VALIDATE_JSON_PRETTIER: false
+          VALIDATE_MARKDOWN: false
+          VALIDATE_NATURAL_LANGUAGE: false
           FIX_POWERSHELL: true
 
       - name: 📝 Commit and push linting fixes
