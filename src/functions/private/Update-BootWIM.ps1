@@ -32,7 +32,10 @@ function Update-BootWIM {
         #create mount point in staging
         try {
             Update-Log -Data 'Creating mount point in staging folder...'
-            New-Item -Path $global:workdir\staging -Name 'mount' -ItemType Directory -ErrorAction Stop
+            New-Item -Path $global:workdir\staging `
+                    -Name 'mount' `
+                    -ItemType Directory `
+                    -ErrorAction Stop
             Update-Log -Data 'Staging folder mount point created successfully' -Class Information
         } catch {
             Update-Log -data 'Failed to create the staging folder mount point' -Class Error
@@ -52,7 +55,11 @@ function Update-BootWIM {
             try {
                 $text = 'Mounting PE image number ' + $BootImage.ImageIndex
                 Update-Log -data $text -Class Information
-                Mount-WindowsImage -ImagePath $global:workdir\staging\media\sources\boot.wim -Path $global:workdir\staging\mount -Index $BootImage.ImageIndex -ErrorAction Stop
+                Mount-WindowsImage `
+                    -ImagePath $global:workdir\staging\media\sources\boot.wim `
+                    -Path $global:workdir\staging\mount `
+                    -Index $BootImage.ImageIndex `
+                    -ErrorAction Stop
             } catch {
                 Update-Log -Data 'Could not mount the boot.wim' -Class Error
                 Update-Log -data $_.Exception.Message -class Error
@@ -76,7 +83,11 @@ function Update-BootWIM {
             #Export the WinPE Image
             Try {
                 Update-Log -data 'Exporting WinPE image index...' -Class Information
-                Export-WindowsImage -SourceImagePath $global:workdir\staging\media\sources\boot.wim -SourceIndex $BootImage.ImageIndex -DestinationImagePath $global:workdir\staging\tempboot.wim -ErrorAction Stop
+                Export-WindowsImage `
+                    -SourceImagePath $global:workdir\staging\media\sources\boot.wim `
+                    -SourceIndex $BootImage.ImageIndex `
+                    -DestinationImagePath $global:workdir\staging\tempboot.wim `
+                    -ErrorAction Stop
             } catch {
                 Update-Log -Data 'Failed to export WinPE image' -Class Error
                 Update-Log -data $_.Exception.Message -class Error

@@ -34,11 +34,21 @@ function Invoke-ArchitectureCheck {
     
             #The following If statment was pilfered from Michael Niehaus
             if (Test-Path "$($env:WINDIR)\SysNative\WindowsPowerShell\v1.0\powershell.exe") {
+                $psPath = "$($env:WINDIR)\SysNative\WindowsPowerShell\v1.0\powershell.exe"
+                $baseParams = "-ExecutionPolicy bypass -NoProfile -File `"$PSCommandPath`""
     
-                if (($auto -eq $false) -and ($CM -eq 'None')) { & "$($env:WINDIR)\SysNative\WindowsPowerShell\v1.0\powershell.exe" -ExecutionPolicy bypass -NoProfile -File "$PSCommandPath" }
-                if (($auto -eq $true) -and ($null -ne $autofile)) { & "$($env:WINDIR)\SysNative\WindowsPowerShell\v1.0\powershell.exe" -ExecutionPolicy bypass -NoProfile -File "$PSCommandPath" -auto -autofile $autofile }
-                if (($CM -eq 'Edit') -and ($null -ne $autofile)) { & "$($env:WINDIR)\SysNative\WindowsPowerShell\v1.0\powershell.exe" -ExecutionPolicy bypass -NoProfile -File "$PSCommandPath" -CM Edit -autofile $autofile }
-                if ($CM -eq 'New') { & "$($env:WINDIR)\SysNative\WindowsPowerShell\v1.0\powershell.exe" -ExecutionPolicy bypass -NoProfile -File "$PSCommandPath" -CM New }
+                if (($auto -eq $false) -and ($CM -eq 'None')) { 
+                    & $psPath $baseParams 
+                }
+                if (($auto -eq $true) -and ($null -ne $autofile)) { 
+                    & $psPath $baseParams -auto -autofile $autofile 
+                }
+                if (($CM -eq 'Edit') -and ($null -ne $autofile)) { 
+                    & $psPath $baseParams -CM Edit -autofile $autofile 
+                }
+                if ($CM -eq 'New') { 
+                    & $psPath $baseParams -CM New 
+                }
     
                 Exit $lastexitcode
             }

@@ -31,7 +31,10 @@ function Update-CMImage {
     process {
         #set-ConfigMgrConnection
         Set-Location $CMDrive
-        $wmi = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage -ComputerName $global:SiteServer) | Where-Object { $_.PackageID -eq $WPFCMTBPackageID.text }
+        $wmi = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
+                -Class SMS_ImagePackage `
+                -ComputerName $global:SiteServer) | 
+                Where-Object { $_.PackageID -eq $WPFCMTBPackageID.text }
 
         Update-Log -Data 'Updating images on the Distribution Points...'
         $WMI.RefreshPkgSource() | Out-Null

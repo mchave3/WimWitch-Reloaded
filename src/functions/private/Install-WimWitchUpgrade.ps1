@@ -4,8 +4,10 @@
 
 .DESCRIPTION
     This function will prompt the user to upgrade WIM Witch. 
-    If the user chooses to upgrade, the script will backup the current version of WIM Witch, save the current version of WIM Witch to the working directory, and exit WIM Witch. 
-    The user will need to restart WIM Witch to apply the upgrade. If the user chooses not to upgrade, the script will log the decision and continue to start WIM Witch.
+    If the user chooses to upgrade, the script will backup the current version of WIM Witch, save the current
+    version of WIM Witch to the working directory, and exit WIM Witch. 
+    The user will need to restart WIM Witch to apply the upgrade. If the user chooses not to upgrade, the script
+    will log the decision and continue to start WIM Witch.
 
 .NOTES
     Name:        Install-WimWitchUpgrade.ps1

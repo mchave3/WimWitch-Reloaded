@@ -1704,22 +1704,39 @@ function Select-FeaturesOnDemand {
             'WMI-SNMP-Provider.Client~~~~0.0.1.0',
             'XPS.Viewer~~~~0.0.1.0')
 
-        If ($Winver -eq '2004') { $items = ($Win10_2004_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru) }
-        If ($Winver -eq '1909') { $items = ($Win10_1909_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru) }
-        If ($Winver -eq '1903') { $items = ($Win10_1903_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru) }
+        If ($Winver -eq '2004') { 
+            $items = ($Win10_2004_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru) 
+        }
+        If ($Winver -eq '1909') { 
+            $items = ($Win10_1909_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru)
+        }
+        If ($Winver -eq '1903') { 
+            $items = ($Win10_1903_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru)
+        }
         If ($Winver -eq '1809') {
-            if ($WinOS -eq 'Windows 10') { $items = ($Win10_1809_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru) }
-            if ($WinOS -eq 'Windows Server') { $items = ($Win10_1809_server_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru) }
+            if ($WinOS -eq 'Windows 10') { 
+                $items = ($Win10_1809_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru)
+            }
+            if ($WinOS -eq 'Windows Server') { 
+                $items = ($Win10_1809_server_FODs | Out-GridView -Title 'Select Features On Demand' -PassThru) 
+            }
         }
 
-        #(Get-ChildItem -path $LPSourceFolder | Select-Object -Property Name | Out-GridView -title "Select Local Experience Packs" -PassThru)
+        #(Get-ChildItem -path $LPSourceFolder | Select-Object -Property Name | 
+        #Out-GridView -title "Select Local Experience Packs" -PassThru)
 
         if ($WinOS -eq 'Windows 11') {
-            $items = (Get-ChildItem -Path "$global:workdir\imports\fods\Windows 11\$winver" | Select-Object -Property Name | Out-GridView -Title 'Select Featres' -PassThru)
-            foreach ($item in $items) { $WPFCustomLBFOD.Items.Add($item.name) }
+            $items = (Get-ChildItem -Path "$global:workdir\imports\fods\Windows 11\$winver" | 
+                Select-Object -Property Name | 
+                Out-GridView -Title 'Select Featres' -PassThru)
+            foreach ($item in $items) { 
+                $WPFCustomLBFOD.Items.Add($item.name)
+            }
         } 
         else {
-            foreach ($item in $items) { $WPFCustomLBFOD.Items.Add($item) }
+            foreach ($item in $items) {
+                $WPFCustomLBFOD.Items.Add($item)
+            }
         }
     }
 }

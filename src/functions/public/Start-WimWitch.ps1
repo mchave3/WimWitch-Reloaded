@@ -80,7 +80,9 @@ function Start-WimWitch {
 
     process {
         # Retrieve available versions
-        $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } | Sort-Object Version -Descending | Select-Object -First 1
+        $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } | 
+            Sort-Object Version -Descending | 
+            Select-Object -First 1
 
         # Check version and include pre-release if available
         if ($module) {
@@ -109,261 +111,547 @@ function Start-WimWitch {
         WindowState="Normal"
         ResizeMode="CanMinimize">
     <Grid>
-        <TabControl x:Name="TabControl" Margin="-3,-1,3,1" Background="#FFACACAC" BorderBrush="#FF610536" >
+        <TabControl x:Name="TabControl" Margin="-3,-1,3,1" Background="#FFACACAC" 
+            BorderBrush="#FF610536" >
             <TabItem Header="Import WIM + .Net" Height="20" MinWidth="100">
                 <Grid>
-                    <TextBox x:Name="ImportISOTextBox" HorizontalAlignment="Left" Height="42" Margin="26,85,0,0" Text="ISO to import from..." VerticalAlignment="Top" Width="500" IsEnabled="False" HorizontalScrollBarVisibility="Visible"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,56,0,0" TextWrapping="Wrap" Text="Select a Windows ISO:" VerticalAlignment="Top" Height="26" Width="353"/>
-                    <Button x:Name="ImportImportSelectButton" Content="Select" HorizontalAlignment="Left" Margin="553,85,0,0" VerticalAlignment="Top" Width="75"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,149,0,0" TextWrapping="Wrap" Text="Select the item(s) to import:" VerticalAlignment="Top" Width="263"/>
-                    <CheckBox x:Name="ImportWIMCheckBox" Content="Install.wim" HorizontalAlignment="Left" Margin="44,171,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="ImportDotNetCheckBox" Content=".Net Binaries" HorizontalAlignment="Left" Margin="44,191,0,0" VerticalAlignment="Top"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,240,0,0" TextWrapping="Wrap" Text="New name for the imported WIM:" VerticalAlignment="Top" Width="311"/>
-                    <TextBox x:Name="ImportNewNameTextBox" HorizontalAlignment="Left" Height="23" Margin="26,261,0,0" TextWrapping="Wrap" Text="Name for the imported WIM" VerticalAlignment="Top" Width="500" IsEnabled="False"/>
-                    <Button x:Name="ImportImportButton" Content="Import" HorizontalAlignment="Left" Margin="553,261,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <CheckBox x:Name="ImportISOCheckBox" Content="ISO / Upgrade Package Files" HorizontalAlignment="Left" Margin="44,212,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="ImportBDJ" Content="Tell Me a Dad Joke" HorizontalAlignment="Left" Margin="639,383,0,0" VerticalAlignment="Top" Width="109" Visibility="Hidden"/>
+                    <TextBox x:Name="ImportISOTextBox" HorizontalAlignment="Left" Height="42" 
+                        Margin="26,85,0,0" Text="ISO to import from..." 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False" 
+                        HorizontalScrollBarVisibility="Visible"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,56,0,0" TextWrapping="Wrap" 
+                        Text="Select a Windows ISO:" VerticalAlignment="Top" Height="26" Width="353"/>
+                    <Button x:Name="ImportImportSelectButton" Content="Select" HorizontalAlignment="Left" 
+                        Margin="553,85,0,0" VerticalAlignment="Top" Width="75"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,149,0,0" TextWrapping="Wrap" 
+                        Text="Select the item(s) to import:" VerticalAlignment="Top" Width="263"/>
+                    <CheckBox x:Name="ImportWIMCheckBox" Content="Install.wim" HorizontalAlignment="Left" 
+                        Margin="44,171,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="ImportDotNetCheckBox" Content=".Net Binaries" HorizontalAlignment="Left" 
+                        Margin="44,191,0,0" VerticalAlignment="Top"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,240,0,0" TextWrapping="Wrap" 
+                        Text="New name for the imported WIM:" VerticalAlignment="Top" Width="311"/>
+                    <TextBox x:Name="ImportNewNameTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="26,261,0,0" TextWrapping="Wrap" Text="Name for the imported WIM" 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False"/>
+                    <Button x:Name="ImportImportButton" Content="Import" HorizontalAlignment="Left" 
+                        Margin="553,261,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+                    <CheckBox x:Name="ImportISOCheckBox" Content="ISO / Upgrade Package Files" 
+                        HorizontalAlignment="Left" Margin="44,212,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="ImportBDJ" Content="Tell Me a Dad Joke" HorizontalAlignment="Left" 
+                        Margin="639,383,0,0" VerticalAlignment="Top" Width="109" Visibility="Hidden"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Import LP+FOD" Margin="0" MinWidth="100">
                 <Grid>
-                    <TextBox x:Name="ImportOtherTBPath" HorizontalAlignment="Left" Height="23" Margin="49,92,0,0" TextWrapping="Wrap" Text="path to source" VerticalAlignment="Top" Width="339" IsEnabled="False"/>
-                    <Button x:Name="ImportOtherBSelectPath" Content="Select" HorizontalAlignment="Left" Margin="413,94,0,0" VerticalAlignment="Top" Width="75"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="49,130,0,0" TextWrapping="Wrap" Text="Selected items" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="ImportOtherCBWinOS" HorizontalAlignment="Left" Margin="228,51,0,0" VerticalAlignment="Top" Width="120"/>
-                    <ComboBox x:Name="ImportOtherCBWinVer" HorizontalAlignment="Left" Margin="371,50,0,0" VerticalAlignment="Top" Width="120"/>
-                    <Button x:Name="ImportOtherBImport" Content="Import" HorizontalAlignment="Left" Margin="417,317,0,0" VerticalAlignment="Top" Width="75"/>
-                    <ComboBox x:Name="ImportOtherCBType" HorizontalAlignment="Left" Margin="51,51,0,0" VerticalAlignment="Top" Width="160"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="51,26,0,0" TextWrapping="Wrap" Text="Object Type" VerticalAlignment="Top"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="230,32,0,0" TextWrapping="Wrap" Text="Windows OS" VerticalAlignment="Top"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="372,31,0,0" TextWrapping="Wrap" Text="Version" VerticalAlignment="Top"/>
-                    <ListBox x:Name="ImportOtherLBList" HorizontalAlignment="Left" Height="149" Margin="49,151,0,0" VerticalAlignment="Top" Width="442"/>
+                    <TextBox x:Name="ImportOtherTBPath" HorizontalAlignment="Left" Height="23" 
+                        Margin="49,92,0,0" TextWrapping="Wrap" Text="path to source" 
+                        VerticalAlignment="Top" Width="339" IsEnabled="False"/>
+                    <Button x:Name="ImportOtherBSelectPath" Content="Select" HorizontalAlignment="Left" 
+                        Margin="413,94,0,0" VerticalAlignment="Top" Width="75"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="49,130,0,0" TextWrapping="Wrap" 
+                        Text="Selected items" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="ImportOtherCBWinOS" HorizontalAlignment="Left" Margin="228,51,0,0" 
+                        VerticalAlignment="Top" Width="120"/>
+                    <ComboBox x:Name="ImportOtherCBWinVer" HorizontalAlignment="Left" Margin="371,50,0,0" 
+                        VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="ImportOtherBImport" Content="Import" HorizontalAlignment="Left" 
+                        Margin="417,317,0,0" VerticalAlignment="Top" Width="75"/>
+                    <ComboBox x:Name="ImportOtherCBType" HorizontalAlignment="Left" Margin="51,51,0,0" 
+                        VerticalAlignment="Top" Width="160"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="51,26,0,0" TextWrapping="Wrap" 
+                        Text="Object Type" VerticalAlignment="Top"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="230,32,0,0" TextWrapping="Wrap" 
+                        Text="Windows OS" VerticalAlignment="Top"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="372,31,0,0" TextWrapping="Wrap" 
+                        Text="Version" VerticalAlignment="Top"/>
+                    <ListBox x:Name="ImportOtherLBList" HorizontalAlignment="Left" Height="149" 
+                        Margin="49,151,0,0" VerticalAlignment="Top" Width="442"/>
 
                 </Grid>
 
             </TabItem>
             <TabItem x:Name="CustomTab" Header="Pause + Scripts" MinWidth="100">
                 <Grid>
-                    <TextBox x:Name="CustomTBFile" HorizontalAlignment="Left" Height="23" Margin="49,157,0,0" TextWrapping="Wrap" Text="PowerShell Script" VerticalAlignment="Top" Width="501" IsEnabled="False"/>
-                    <TextBox x:Name="CustomTBParameters" HorizontalAlignment="Left" Height="23" Margin="49,207,0,0" TextWrapping="Wrap" Text="Parameters" VerticalAlignment="Top" Width="501" IsEnabled="False"/>
-                    <Button x:Name="CustomBSelectPath" Content="Select" HorizontalAlignment="Left" Margin="566,158,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <CheckBox x:Name="CustomCBRunScript" Content="Run Script" HorizontalAlignment="Left" Margin="49,102,0,0" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="CustomCBScriptTiming" HorizontalAlignment="Left" Margin="163,102,0,0" VerticalAlignment="Top" Width="172" IsEnabled="False"/>
-                    <CheckBox x:Name="MISCBPauseMount" Content="Pause after mounting" HorizontalAlignment="Left" Margin="49,42,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="MISCBPauseDismount" Content="Pause before dismounting" HorizontalAlignment="Left" Margin="49,71,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="CustomTBFile" HorizontalAlignment="Left" Height="23" 
+                        Margin="49,157,0,0" TextWrapping="Wrap" Text="PowerShell Script" 
+                        VerticalAlignment="Top" Width="501" IsEnabled="False"/>
+                    <TextBox x:Name="CustomTBParameters" HorizontalAlignment="Left" Height="23" 
+                        Margin="49,207,0,0" TextWrapping="Wrap" Text="Parameters" 
+                        VerticalAlignment="Top" Width="501" IsEnabled="False"/>
+                    <Button x:Name="CustomBSelectPath" Content="Select" HorizontalAlignment="Left" 
+                        Margin="566,158,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+                    <CheckBox x:Name="CustomCBRunScript" Content="Run Script" HorizontalAlignment="Left" 
+                        Margin="49,102,0,0" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="CustomCBScriptTiming" HorizontalAlignment="Left" Margin="163,102,0,0" 
+                        VerticalAlignment="Top" Width="172" IsEnabled="False"/>
+                    <CheckBox x:Name="MISCBPauseMount" Content="Pause after mounting" 
+                        HorizontalAlignment="Left" Margin="49,42,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="MISCBPauseDismount" Content="Pause before dismounting" 
+                        HorizontalAlignment="Left" Margin="49,71,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Drivers" Height="20" MinWidth="100">
                 <Grid>
-                    <TextBox x:Name="DriverDir1TextBox" HorizontalAlignment="Left" Height="25" Margin="26,144,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" VerticalAlignment="Top" Width="500" IsEnabled="False"/>
-                    <Label x:Name="DirverDirLabel" Content="Driver Source" HorizontalAlignment="Left" Height="25" Margin="26,114,0,0" VerticalAlignment="Top" Width="100"/>
-                    <Button x:Name="DriverDir1Button" Content="Select" HorizontalAlignment="Left" Height="25" Margin="562,144,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,20,0,0" TextWrapping="Wrap" Text="Select the path to the driver source(s) that contains the drivers that will be injected." VerticalAlignment="Top" Height="42" Width="353"/>
-                    <CheckBox x:Name="DriverCheckBox" Content="Enable Driver Injection" HorizontalAlignment="Left" Margin="26,80,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="DriverDir2TextBox" HorizontalAlignment="Left" Height="25" Margin="26,189,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" VerticalAlignment="Top" Width="500" IsEnabled="False"/>
-                    <Button x:Name="DriverDir2Button" Content="Select" HorizontalAlignment="Left" Height="25" Margin="562,189,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <TextBox x:Name="DriverDir3TextBox" HorizontalAlignment="Left" Height="25" Margin="26,234,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" VerticalAlignment="Top" Width="500" IsEnabled="False"/>
-                    <Button x:Name="DriverDir3Button" Content="Select" HorizontalAlignment="Left" Height="25" Margin="562,234,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <TextBox x:Name="DriverDir4TextBox" HorizontalAlignment="Left" Height="25" Margin="26,281,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" VerticalAlignment="Top" Width="500" IsEnabled="False"/>
-                    <Button x:Name="DriverDir4Button" Content="Select" HorizontalAlignment="Left" Height="25" Margin="562,281,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <TextBox x:Name="DriverDir5TextBox" HorizontalAlignment="Left" Height="25" Margin="26,328,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" VerticalAlignment="Top" Width="500" IsEnabled="False"/>
-                    <Button x:Name="DriverDir5Button" Content="Select" HorizontalAlignment="Left" Height="25" Margin="562,328,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+                    <TextBox x:Name="DriverDir1TextBox" HorizontalAlignment="Left" Height="25" 
+                        Margin="26,144,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False"/>
+                    <Label x:Name="DirverDirLabel" Content="Driver Source" HorizontalAlignment="Left" 
+                        Height="25" Margin="26,114,0,0" VerticalAlignment="Top" Width="100"/>
+                    <Button x:Name="DriverDir1Button" Content="Select" HorizontalAlignment="Left" 
+                        Height="25" Margin="562,144,0,0" VerticalAlignment="Top" Width="75" 
+                        IsEnabled="False"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,20,0,0" TextWrapping="Wrap" 
+                        Text="Select the path to the driver source(s) that contains the drivers that will be injected." 
+                        VerticalAlignment="Top" Height="42" Width="353"/>
+                    <CheckBox x:Name="DriverCheckBox" Content="Enable Driver Injection" 
+                        HorizontalAlignment="Left" Margin="26,80,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="DriverDir2TextBox" HorizontalAlignment="Left" Height="25" 
+                        Margin="26,189,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False"/>
+                    <Button x:Name="DriverDir2Button" Content="Select" HorizontalAlignment="Left" 
+                        Height="25" Margin="562,189,0,0" VerticalAlignment="Top" Width="75" 
+                        IsEnabled="False"/>
+                    <TextBox x:Name="DriverDir3TextBox" HorizontalAlignment="Left" Height="25" 
+                        Margin="26,234,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False"/>
+                    <Button x:Name="DriverDir3Button" Content="Select" HorizontalAlignment="Left" 
+                        Height="25" Margin="562,234,0,0" VerticalAlignment="Top" Width="75" 
+                        IsEnabled="False"/>
+                    <TextBox x:Name="DriverDir4TextBox" HorizontalAlignment="Left" Height="25" 
+                        Margin="26,281,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False"/>
+                    <Button x:Name="DriverDir4Button" Content="Select" HorizontalAlignment="Left" 
+                        Height="25" Margin="562,281,0,0" VerticalAlignment="Top" Width="75" 
+                        IsEnabled="False"/>
+                    <TextBox x:Name="DriverDir5TextBox" HorizontalAlignment="Left" Height="25" 
+                        Margin="26,328,0,0" TextWrapping="Wrap" Text="Select Driver Source Folder" 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False"/>
+                    <Button x:Name="DriverDir5Button" Content="Select" HorizontalAlignment="Left" 
+                        Height="25" Margin="562,328,0,0" VerticalAlignment="Top" Width="75" 
+                        IsEnabled="False"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="AutopilotTab" Header="Autopilot" MinWidth="100">
                 <Grid>
-                    <TextBox x:Name="JSONTextBox" HorizontalAlignment="Left" Height="25" Margin="26,130,0,0" TextWrapping="Wrap" Text="Select JSON File" VerticalAlignment="Top" Width="500" IsEnabled="False"/>
-                    <Label x:Name="JSONLabel" Content="Source JSON" HorizontalAlignment="Left" Height="25" Margin="26,104,0,0" VerticalAlignment="Top" Width="100"/>
-                    <Button x:Name="JSONButton" Content="Select" HorizontalAlignment="Left" Height="25" Margin="451,165,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,20,0,0" TextWrapping="Wrap" Text="Select a JSON file for use in deploying Autopilot systems. The file will be copied to processing folder during the build" VerticalAlignment="Top" Height="42" Width="353"/>
-                    <CheckBox x:Name="JSONEnableCheckBox" Content="Enable Autopilot " HorizontalAlignment="Left" Margin="26,80,0,0" VerticalAlignment="Top" ClickMode="Press"/>
-                    <TextBox x:Name="ZtdCorrelationId" HorizontalAlignment="Left" Height="23" Margin="129,176,0,0" TextWrapping="Wrap" Text="Select JSON File..." VerticalAlignment="Top" Width="236" IsEnabled="False"/>
-                    <TextBox x:Name="CloudAssignedTenantDomain" HorizontalAlignment="Left" Height="23" Margin="129,204,0,0" TextWrapping="Wrap" Text="Select JSON File..." VerticalAlignment="Top" Width="236" IsEnabled="False"/>
-                    <TextBox x:Name="Comment_File" HorizontalAlignment="Left" Height="23" Margin="129,232,0,0" TextWrapping="Wrap" Text="Select JSON File..." VerticalAlignment="Top" Width="236" IsEnabled="False"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="24,178,0,0" TextWrapping="Wrap" Text="ZTD ID#" VerticalAlignment="Top"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="24,204,0,0" TextWrapping="Wrap" Text="Tenant Name" VerticalAlignment="Top"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="24,233,0,0" TextWrapping="Wrap" Text="Deployment Profile" VerticalAlignment="Top"/>
-                    <TextBox x:Name="JSONTextBoxSavePath" HorizontalAlignment="Left" Height="23" Margin="26,345,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="499" IsEnabled="False"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,275,0,0" TextWrapping="Wrap" Text="To download a new Autopilot profile from Intune, click select to choose the folder to save the file to. Then click Retrieve Profile." VerticalAlignment="Top" Height="48" Width="331"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="27,328,0,0" TextWrapping="Wrap" Text="Path to save file:" VerticalAlignment="Top"/>
-                    <Button x:Name="JSONButtonSavePath" Content="Select" HorizontalAlignment="Left" Margin="450,373,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button x:Name="JSONButtonRetrieve" Content="Retrieve Profile" HorizontalAlignment="Left" Margin="382,275,0,0" VerticalAlignment="Top" Width="130"/>
+                    <TextBox x:Name="JSONTextBox" HorizontalAlignment="Left" Height="25" 
+                        Margin="26,130,0,0" TextWrapping="Wrap" Text="Select JSON File" 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False"/>
+                    <Label x:Name="JSONLabel" Content="Source JSON" HorizontalAlignment="Left" 
+                        Height="25" Margin="26,104,0,0" VerticalAlignment="Top" Width="100"/>
+                    <Button x:Name="JSONButton" Content="Select" HorizontalAlignment="Left" 
+                        Height="25" Margin="451,165,0,0" VerticalAlignment="Top" Width="75" 
+                        IsEnabled="False"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,20,0,0" TextWrapping="Wrap" 
+                        Text="Select a JSON file for use in deploying Autopilot systems. The file will be copied to processing folder during the build" 
+                        VerticalAlignment="Top" Height="42" Width="353"/>
+                    <CheckBox x:Name="JSONEnableCheckBox" Content="Enable Autopilot " 
+                        HorizontalAlignment="Left" Margin="26,80,0,0" VerticalAlignment="Top" 
+                        ClickMode="Press"/>
+                    <TextBox x:Name="ZtdCorrelationId" HorizontalAlignment="Left" Height="23" 
+                        Margin="129,176,0,0" TextWrapping="Wrap" Text="Select JSON File..." 
+                        VerticalAlignment="Top" Width="236" IsEnabled="False"/>
+                    <TextBox x:Name="CloudAssignedTenantDomain" HorizontalAlignment="Left" 
+                        Height="23" Margin="129,204,0,0" TextWrapping="Wrap" Text="Select JSON File..." 
+                        VerticalAlignment="Top" Width="236" IsEnabled="False"/>
+                    <TextBox x:Name="Comment_File" HorizontalAlignment="Left" Height="23" 
+                        Margin="129,232,0,0" TextWrapping="Wrap" Text="Select JSON File..." 
+                        VerticalAlignment="Top" Width="236" IsEnabled="False"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="24,178,0,0" TextWrapping="Wrap" 
+                        Text="ZTD ID#" VerticalAlignment="Top"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="24,204,0,0" TextWrapping="Wrap" 
+                        Text="Tenant Name" VerticalAlignment="Top"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="24,233,0,0" TextWrapping="Wrap" 
+                        Text="Deployment Profile" VerticalAlignment="Top"/>
+                    <TextBox x:Name="JSONTextBoxSavePath" HorizontalAlignment="Left" Height="23" 
+                        Margin="26,345,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" 
+                        Width="499" IsEnabled="False"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,275,0,0" TextWrapping="Wrap" 
+                        Text="To download a new Autopilot profile from Intune, click select to choose the folder to save the file to. Then click Retrieve Profile." 
+                        VerticalAlignment="Top" Height="48" Width="331"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="27,328,0,0" TextWrapping="Wrap" 
+                        Text="Path to save file:" VerticalAlignment="Top"/>
+                    <Button x:Name="JSONButtonSavePath" Content="Select" HorizontalAlignment="Left" 
+                        Margin="450,373,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button x:Name="JSONButtonRetrieve" Content="Retrieve Profile" 
+                        HorizontalAlignment="Left" Margin="382,275,0,0" VerticalAlignment="Top" 
+                        Width="130"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Save/Load" Height="20" MinWidth="102">
                 <Grid>
-                    <TextBox x:Name="SLSaveFileName" HorizontalAlignment="Left" Height="25" Margin="26,85,0,0" TextWrapping="Wrap" Text="Name for saved configuration..." VerticalAlignment="Top" Width="500"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,38,0,0" TextWrapping="Wrap" Text="Provide a name for the saved configuration" VerticalAlignment="Top" Height="42" Width="353"/>
-                    <Button x:Name="SLSaveButton" Content="Save" HorizontalAlignment="Left" Margin="451,127,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="1" Margin="0,216,0,0" VerticalAlignment="Top" Width="785"/>
-                    <TextBox x:Name="SLLoadTextBox" HorizontalAlignment="Left" Height="23" Margin="26,308,0,0" TextWrapping="Wrap" Text="Select configuration file to load" VerticalAlignment="Top" Width="500"/>
-                    <Button x:Name="SLLoadButton" Content="Load" HorizontalAlignment="Left" Margin="451,351,0,0" VerticalAlignment="Top" Width="75"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,279,0,0" TextWrapping="Wrap" Text="Select configuration file to load" VerticalAlignment="Top" Width="353"/>
+                    <TextBox x:Name="SLSaveFileName" HorizontalAlignment="Left" Height="25" 
+                        Margin="26,85,0,0" TextWrapping="Wrap" Text="Name for saved configuration..." 
+                        VerticalAlignment="Top" Width="500"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,38,0,0" TextWrapping="Wrap" 
+                        Text="Provide a name for the saved configuration" VerticalAlignment="Top" 
+                        Height="42" Width="353"/>
+                    <Button x:Name="SLSaveButton" Content="Save" HorizontalAlignment="Left" 
+                        Margin="451,127,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" 
+                        Height="1" Margin="0,216,0,0" VerticalAlignment="Top" Width="785"/>
+                    <TextBox x:Name="SLLoadTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="26,308,0,0" TextWrapping="Wrap" Text="Select configuration file to load" 
+                        VerticalAlignment="Top" Width="500"/>
+                    <Button x:Name="SLLoadButton" Content="Load" HorizontalAlignment="Left" 
+                        Margin="451,351,0,0" VerticalAlignment="Top" Width="75"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,279,0,0" TextWrapping="Wrap" 
+                        Text="Select configuration file to load" VerticalAlignment="Top" Width="353"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Source WIM" Margin="0" MinWidth="100">
                 <Grid>
-                    <TextBox x:Name="SourceWIMSelectWIMTextBox" HorizontalAlignment="Left" Height="25" Margin="26,98,0,0" TextWrapping="Wrap" Text="Select WIM File" VerticalAlignment="Top" Width="500" IsEnabled="False" Grid.ColumnSpan="2"/>
-                    <Label Content="Source Wim " HorizontalAlignment="Left" Height="25" Margin="26,70,0,0" VerticalAlignment="Top" Width="100"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,20,0,0" TextWrapping="Wrap" Text="Select the WIM file, and then Edition, that will serve as the base for the custom WIM." VerticalAlignment="Top" Height="42" Width="353" Grid.ColumnSpan="2"/>
-                    <Button x:Name="SourceWIMSelectButton" Content="Select" HorizontalAlignment="Left" Height="25" Margin="450,153,0,0" VerticalAlignment="Top" Width="75"/>
-                    <TextBox x:Name="SourceWIMImgDesTextBox" HorizontalAlignment="Left" Height="23" Margin="94,155,0,0" TextWrapping="Wrap" Text="ImageDescription" VerticalAlignment="Top" Width="339" IsEnabled="False"/>
-                    <TextBox x:Name="SourceWimArchTextBox" HorizontalAlignment="Left" Height="23" Margin="94,183,0,0" TextWrapping="Wrap" Text="Architecture" VerticalAlignment="Top" Width="225" IsEnabled="False"/>
-                    <TextBox x:Name="SourceWimVerTextBox" HorizontalAlignment="Left" Height="23" Margin="94,211,0,0" TextWrapping="Wrap" Text="Build" VerticalAlignment="Top" Width="225" IsEnabled="False"/>
-                    <TextBox x:Name="SourceWimSPBuildTextBox" HorizontalAlignment="Left" Height="23" Margin="94,239,0,0" TextWrapping="Wrap" Text="SPBuild" VerticalAlignment="Top" Width="225" IsEnabled="False"/>
-                    <TextBox x:Name="SourceWimLangTextBox" HorizontalAlignment="Left" Height="23" Margin="94,267,0,0" TextWrapping="Wrap" Text="Languages" VerticalAlignment="Top" Width="225" IsEnabled="False"/>
-                    <Label Content="Edition" HorizontalAlignment="Left" Height="30" Margin="22,151,0,0" VerticalAlignment="Top" Width="68"/>
-                    <Label Content="Arch" HorizontalAlignment="Left" Height="30" Margin="22,183,0,0" VerticalAlignment="Top" Width="68"/>
-                    <Label Content="Build" HorizontalAlignment="Left" Height="30" Margin="22,211,0,0" VerticalAlignment="Top" Width="68"/>
-                    <Label Content="Patch Level" HorizontalAlignment="Left" Height="30" Margin="22,239,0,0" VerticalAlignment="Top" Width="68"/>
-                    <Label Content="Languages" HorizontalAlignment="Left" Height="30" Margin="22,267,0,0" VerticalAlignment="Top" Width="68"/>
-                    <TextBox x:Name="SourceWimIndexTextBox" HorizontalAlignment="Left" Height="23" Margin="94,297,0,0" TextWrapping="Wrap" Text="Index" VerticalAlignment="Top" Width="225" IsEnabled="False"/>
-                    <Label Content="Index" HorizontalAlignment="Left" Height="30" Margin="22,297,0,0" VerticalAlignment="Top" Width="68"/>
-                    <TextBox x:Name="SourceWimTBVersionNum" HorizontalAlignment="Left" Height="23" Margin="94,325,0,0" TextWrapping="Wrap" Text="Version Number" VerticalAlignment="Top" Width="225" IsEnabled="False"/>
-                    <Label Content="Version" HorizontalAlignment="Left" Height="30" Margin="22,321,0,0" VerticalAlignment="Top" Width="68"/>
+                    <TextBox x:Name="SourceWIMSelectWIMTextBox" HorizontalAlignment="Left" 
+                        Height="25" Margin="26,98,0,0" TextWrapping="Wrap" Text="Select WIM File" 
+                        VerticalAlignment="Top" Width="500" IsEnabled="False" Grid.ColumnSpan="2"/>
+                    <Label Content="Source Wim " HorizontalAlignment="Left" Height="25" 
+                        Margin="26,70,0,0" VerticalAlignment="Top" Width="100"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,20,0,0" TextWrapping="Wrap" 
+                        Text="Select the WIM file, and then Edition, that will serve as the base for the custom WIM." 
+                        VerticalAlignment="Top" Height="42" Width="353" Grid.ColumnSpan="2"/>
+                    <Button x:Name="SourceWIMSelectButton" Content="Select" HorizontalAlignment="Left" 
+                        Height="25" Margin="450,153,0,0" VerticalAlignment="Top" Width="75"/>
+                    <TextBox x:Name="SourceWIMImgDesTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="94,155,0,0" TextWrapping="Wrap" Text="ImageDescription" 
+                        VerticalAlignment="Top" Width="339" IsEnabled="False"/>
+                    <TextBox x:Name="SourceWimArchTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="94,183,0,0" TextWrapping="Wrap" Text="Architecture" 
+                        VerticalAlignment="Top" Width="225" IsEnabled="False"/>
+                    <TextBox x:Name="SourceWimVerTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="94,211,0,0" TextWrapping="Wrap" Text="Build" VerticalAlignment="Top" 
+                        Width="225" IsEnabled="False"/>
+                    <TextBox x:Name="SourceWimSPBuildTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="94,239,0,0" TextWrapping="Wrap" Text="SPBuild" VerticalAlignment="Top" 
+                        Width="225" IsEnabled="False"/>
+                    <TextBox x:Name="SourceWimLangTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="94,267,0,0" TextWrapping="Wrap" Text="Languages" 
+                        VerticalAlignment="Top" Width="225" IsEnabled="False"/>
+                    <Label Content="Edition" HorizontalAlignment="Left" Height="30" Margin="22,151,0,0" 
+                        VerticalAlignment="Top" Width="68"/>
+                    <Label Content="Arch" HorizontalAlignment="Left" Height="30" Margin="22,183,0,0" 
+                        VerticalAlignment="Top" Width="68"/>
+                    <Label Content="Build" HorizontalAlignment="Left" Height="30" Margin="22,211,0,0" 
+                        VerticalAlignment="Top" Width="68"/>
+                    <Label Content="Patch Level" HorizontalAlignment="Left" Height="30" 
+                        Margin="22,239,0,0" VerticalAlignment="Top" Width="68"/>
+                    <Label Content="Languages" HorizontalAlignment="Left" Height="30" 
+                        Margin="22,267,0,0" VerticalAlignment="Top" Width="68"/>
+                    <TextBox x:Name="SourceWimIndexTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="94,297,0,0" TextWrapping="Wrap" Text="Index" VerticalAlignment="Top" 
+                        Width="225" IsEnabled="False"/>
+                    <Label Content="Index" HorizontalAlignment="Left" Height="30" Margin="22,297,0,0" 
+                        VerticalAlignment="Top" Width="68"/>
+                    <TextBox x:Name="SourceWimTBVersionNum" HorizontalAlignment="Left" Height="23" 
+                        Margin="94,325,0,0" TextWrapping="Wrap" Text="Version Number" 
+                        VerticalAlignment="Top" Width="225" IsEnabled="False"/>
+                    <Label Content="Version" HorizontalAlignment="Left" Height="30" Margin="22,321,0,0" 
+                        VerticalAlignment="Top" Width="68"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Update Catalog" Height="20" MinWidth="100" Margin="-2,0,-2,0" VerticalAlignment="Top">
+            <TabItem Header="Update Catalog" Height="20" MinWidth="100" Margin="-2,0,-2,0" 
+                VerticalAlignment="Top">
                 <Grid>
-                    <ComboBox x:Name="USCBSelectCatalogSource"  HorizontalAlignment="Left" Margin="26,48,0,0" VerticalAlignment="Top" Width="160" />
-                    <TextBlock HorizontalAlignment="Left" Margin="91,275,0,0" TextWrapping="Wrap" Text="Installed version " VerticalAlignment="Top"/>
-                    <TextBox x:Name="UpdatesOSDBVersion" HorizontalAlignment="Left" Height="23" Margin="91,297,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
-                    <Button x:Name="UpdateOSDBUpdateButton" Content="Install / Update" HorizontalAlignment="Left" Margin="218,362,0,0" VerticalAlignment="Top" Width="120"/>
-                    <TextBlock HorizontalAlignment="Left" Height="42" Margin="31,85,0,0" TextWrapping="Wrap" Text="Select which versions of Windows to download current patches for. Downloading will also purge superseded updates." VerticalAlignment="Top" Width="335"/>
-                    <CheckBox x:Name="UpdatesW10_1903" Content="1903" HorizontalAlignment="Left" Margin="67,183,0,0" VerticalAlignment="Top" IsEnabled="False" Visibility="Hidden"/>
-                    <CheckBox x:Name="UpdatesW10_1809" Content="1809" HorizontalAlignment="Left" Margin="282,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesW10_1803" Content="1803" HorizontalAlignment="Left" Margin="194,182,0,0" VerticalAlignment="Top" IsEnabled="False" Visibility="Hidden"/>
-                    <CheckBox x:Name="UpdatesW10_1709" Content="1709" HorizontalAlignment="Left" Margin="251,182,0,0" VerticalAlignment="Top" IsEnabled="False" Visibility="Hidden"/>
-                    <Button x:Name="UpdatesDownloadNewButton" Content="Download" HorizontalAlignment="Left" Margin="291,239,0,0" VerticalAlignment="Top" Width="75"/>
-                    <TextBox x:Name="UpdatesOSDBCurrentVerTextBox" HorizontalAlignment="Left" Height="23" Margin="218,296,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="218,275,0,0" TextWrapping="Wrap" Text="Current Version" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="UpdatesOSDBOutOfDateTextBlock" HorizontalAlignment="Left" Margin="417,364,0,0" TextWrapping="Wrap" Text="A software update module is out of date. Please click the &quot;Install / Update&quot; button to update it." VerticalAlignment="Top" RenderTransformOrigin="0.493,0.524" Width="321" Visibility="Hidden"  />
-                    <TextBlock x:Name="UpdatesOSDBSupercededExistTextBlock" HorizontalAlignment="Left" Margin="417,328,0,0" TextWrapping="Wrap" Text="Superceded updates discovered. Please select the versions of Windows 10 you are supporting and click &quot;Update&quot;" VerticalAlignment="Top" Width="375" Visibility="Hidden" />
-                    <TextBlock x:Name="UpdatesOSDBClosePowerShellTextBlock" HorizontalAlignment="Left" Margin="417,292,0,0" TextWrapping="Wrap" Text="Please close all PowerShell windows, including WIM Witch, then relaunch app to continue" VerticalAlignment="Top" RenderTransformOrigin="0.493,0.524" Width="321" Visibility="Hidden"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="24,297,0,0" TextWrapping="Wrap" Text="OSDUpdate" VerticalAlignment="Top"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="26,334,0,0" TextWrapping="Wrap" Text="OSDSUS" VerticalAlignment="Top"/>
-                    <TextBox x:Name="UpdatesOSDSUSVersion" HorizontalAlignment="Left" Height="23" Margin="91,330,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
-                    <TextBox x:Name="UpdatesOSDSUSCurrentVerTextBox" HorizontalAlignment="Left" Height="23" Margin="218,330,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesW10Main" Content="Windows 10" HorizontalAlignment="Left" Margin="46,172,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="UpdatesS2016" Content="Windows Server 2016" HorizontalAlignment="Left" Margin="44,251,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="UpdatesS2019" Content="Windows Server 2019" HorizontalAlignment="Left" Margin="44,232,0,0" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="UpdatesOSDBClosePowerShellTextBlock_Copy" HorizontalAlignment="Left" Margin="26,27,0,0" TextWrapping="Wrap" Text="Select Update Catalog Source" VerticalAlignment="Top" RenderTransformOrigin="0.493,0.524" Width="321"/>
-                    <ListBox x:Name="UpdatesOSDListBox" HorizontalAlignment="Left" Height="107" Margin="391,275,0,0" VerticalAlignment="Top" Width="347"/>
-                    <CheckBox x:Name="UpdatesW10_2004" Content="2004" HorizontalAlignment="Left" Margin="193,175,0,0" VerticalAlignment="Top" IsEnabled="False" Visibility="Hidden"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="391,35,0,0" TextWrapping="Wrap" Text="Download Additional Update Types" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="UpdatesCBEnableOptional" Content="Optional Updates" HorizontalAlignment="Left" Margin="421,55,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="UpdatesCBEnableDynamic" Content="Dynamic Updates" HorizontalAlignment="Left" Margin="421,77,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="UpdatesW10_20H2" Content="20H2" HorizontalAlignment="Left" Margin="225,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesW10_21h1" Content="21H1" HorizontalAlignment="Left" Margin="169,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesW11Main" Content="Windows 11" HorizontalAlignment="Left" Margin="46,135,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="UpdatesS2022" Content="Windows Server 2022" HorizontalAlignment="Left" Margin="44,215,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="UpdatesW10_21h2" Content="21H2" HorizontalAlignment="Left" Margin="112,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesW11_22h2" Content="22H2" HorizontalAlignment="Left" Margin="112,152,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesW11_21h2" Content="21H2" HorizontalAlignment="Left" Margin="168,153,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesW10_22h2" Content="22H2" HorizontalAlignment="Left" Margin="58,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesW11_23h2" Content="23H2" HorizontalAlignment="Left" Margin="58,152,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <ComboBox x:Name="USCBSelectCatalogSource"  HorizontalAlignment="Left" 
+                        Margin="26,48,0,0" VerticalAlignment="Top" Width="160" />
+                    <TextBlock HorizontalAlignment="Left" Margin="91,275,0,0" TextWrapping="Wrap" 
+                        Text="Installed version " VerticalAlignment="Top"/>
+                    <TextBox x:Name="UpdatesOSDBVersion" HorizontalAlignment="Left" Height="23" 
+                        Margin="91,297,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" 
+                        IsEnabled="False"/>
+                    <Button x:Name="UpdateOSDBUpdateButton" Content="Install / Update" 
+                        HorizontalAlignment="Left" Margin="218,362,0,0" VerticalAlignment="Top" 
+                        Width="120"/>
+                    <TextBlock HorizontalAlignment="Left" Height="42" Margin="31,85,0,0" 
+                        TextWrapping="Wrap" Text="Select which versions of Windows to download current patches for. Downloading will also purge superseded updates." 
+                        VerticalAlignment="Top" Width="335"/>
+                    <CheckBox x:Name="UpdatesW10_1903" Content="1903" HorizontalAlignment="Left" 
+                        Margin="67,183,0,0" VerticalAlignment="Top" IsEnabled="False" Visibility="Hidden"/>
+                    <CheckBox x:Name="UpdatesW10_1809" Content="1809" HorizontalAlignment="Left" 
+                        Margin="282,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesW10_1803" Content="1803" HorizontalAlignment="Left" 
+                        Margin="194,182,0,0" VerticalAlignment="Top" IsEnabled="False" 
+                        Visibility="Hidden"/>
+                    <CheckBox x:Name="UpdatesW10_1709" Content="1709" HorizontalAlignment="Left" 
+                        Margin="251,182,0,0" VerticalAlignment="Top" IsEnabled="False" 
+                        Visibility="Hidden"/>
+                    <Button x:Name="UpdatesDownloadNewButton" Content="Download" 
+                        HorizontalAlignment="Left" Margin="291,239,0,0" VerticalAlignment="Top" 
+                        Width="75"/>
+                    <TextBox x:Name="UpdatesOSDBCurrentVerTextBox" HorizontalAlignment="Left" 
+                        Height="23" Margin="218,296,0,0" TextWrapping="Wrap" VerticalAlignment="Top" 
+                        Width="120" IsEnabled="False"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="218,275,0,0" TextWrapping="Wrap" 
+                        Text="Current Version" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="UpdatesOSDBOutOfDateTextBlock" HorizontalAlignment="Left" 
+                        Margin="417,364,0,0" TextWrapping="Wrap" Text="A software update module is out of date. Please click the &quot;Install / Update&quot; button to update it." 
+                        VerticalAlignment="Top" RenderTransformOrigin="0.493,0.524" Width="321" 
+                        Visibility="Hidden"  />
+                    <TextBlock x:Name="UpdatesOSDBSupercededExistTextBlock" HorizontalAlignment="Left" 
+                        Margin="417,328,0,0" TextWrapping="Wrap" Text="Superceded updates discovered. Please select the versions of Windows 10 you are supporting and click &quot;Update&quot;" 
+                        VerticalAlignment="Top" Width="375" Visibility="Hidden" />
+                    <TextBlock x:Name="UpdatesOSDBClosePowerShellTextBlock" HorizontalAlignment="Left" 
+                        Margin="417,292,0,0" TextWrapping="Wrap" Text="Please close all PowerShell windows, including WIM Witch, then relaunch app to continue" 
+                        VerticalAlignment="Top" RenderTransformOrigin="0.493,0.524" Width="321" 
+                        Visibility="Hidden"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="24,297,0,0" TextWrapping="Wrap" 
+                        Text="OSDUpdate" VerticalAlignment="Top"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="26,334,0,0" TextWrapping="Wrap" 
+                        Text="OSDSUS" VerticalAlignment="Top"/>
+                    <TextBox x:Name="UpdatesOSDSUSVersion" HorizontalAlignment="Left" Height="23" 
+                        Margin="91,330,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" 
+                        IsEnabled="False"/>
+                    <TextBox x:Name="UpdatesOSDSUSCurrentVerTextBox" HorizontalAlignment="Left" 
+                        Height="23" Margin="218,330,0,0" TextWrapping="Wrap" VerticalAlignment="Top" 
+                        Width="120" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesW10Main" Content="Windows 10" HorizontalAlignment="Left" 
+                        Margin="46,172,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="UpdatesS2016" Content="Windows Server 2016" 
+                        HorizontalAlignment="Left" Margin="44,251,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="UpdatesS2019" Content="Windows Server 2019" 
+                        HorizontalAlignment="Left" Margin="44,232,0,0" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="UpdatesOSDBClosePowerShellTextBlock_Copy" 
+                        HorizontalAlignment="Left" Margin="26,27,0,0" TextWrapping="Wrap" 
+                        Text="Select Update Catalog Source" VerticalAlignment="Top" 
+                        RenderTransformOrigin="0.493,0.524" Width="321"/>
+                    <ListBox x:Name="UpdatesOSDListBox" HorizontalAlignment="Left" Height="107" 
+                        Margin="391,275,0,0" VerticalAlignment="Top" Width="347"/>
+                    <CheckBox x:Name="UpdatesW10_2004" Content="2004" HorizontalAlignment="Left" 
+                        Margin="193,175,0,0" VerticalAlignment="Top" IsEnabled="False" 
+                        Visibility="Hidden"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="391,35,0,0" TextWrapping="Wrap" 
+                        Text="Download Additional Update Types" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="UpdatesCBEnableOptional" Content="Optional Updates" 
+                        HorizontalAlignment="Left" Margin="421,55,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="UpdatesCBEnableDynamic" Content="Dynamic Updates" 
+                        HorizontalAlignment="Left" Margin="421,77,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="UpdatesW10_20H2" Content="20H2" HorizontalAlignment="Left" 
+                        Margin="225,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesW10_21h1" Content="21H1" HorizontalAlignment="Left" 
+                        Margin="169,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesW11Main" Content="Windows 11" HorizontalAlignment="Left" 
+                        Margin="46,135,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="UpdatesS2022" Content="Windows Server 2022" 
+                        HorizontalAlignment="Left" Margin="44,215,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="UpdatesW10_21h2" Content="21H2" HorizontalAlignment="Left" 
+                        Margin="112,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesW11_22h2" Content="22H2" HorizontalAlignment="Left" 
+                        Margin="112,152,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesW11_21h2" Content="21H2" HorizontalAlignment="Left" 
+                        Margin="168,153,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesW10_22h2" Content="22H2" HorizontalAlignment="Left" 
+                        Margin="58,190,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesW11_23h2" Content="23H2" HorizontalAlignment="Left" 
+                        Margin="58,152,0,0" VerticalAlignment="Top" IsEnabled="False"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Customizations" Height="20" MinWidth="100">
                 <Grid>
-                    <CheckBox x:Name="CustomCBLangPacks" Content="Inject Language Packs" HorizontalAlignment="Left" Margin="29,37,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="CustomBLangPacksSelect" Content="Select" HorizontalAlignment="Left" Margin="251,27,0,0" VerticalAlignment="Top" Width="132" IsEnabled="False"/>
-                    <ListBox x:Name="CustomLBLangPacks" HorizontalAlignment="Left" Height="135" Margin="29,74,0,0" VerticalAlignment="Top" Width="355"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="32,55,0,0" TextWrapping="Wrap" Text="Selected LP's" VerticalAlignment="Top" Width="206"/>
-                    <CheckBox x:Name="CustomCBFOD" Content="Inject Features on Demand" HorizontalAlignment="Left" Margin="419,126,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="CustomBFODSelect" Content="Select" HorizontalAlignment="Left" Margin="625,120,0,0" VerticalAlignment="Top" Width="133" IsEnabled="False"/>
-                    <ListBox x:Name="CustomLBFOD" HorizontalAlignment="Left" Height="224" Margin="419,171,0,0" VerticalAlignment="Top" Width="340"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="421,147,0,0" TextWrapping="Wrap" Text="Select from imported Features" VerticalAlignment="Top" Width="206"/>
-                    <CheckBox x:Name="CustomCBLEP" Content="Inject Local Experience Packs" HorizontalAlignment="Left" Margin="32,217,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="CustomBLEPSelect" Content="Select" HorizontalAlignment="Left" Margin="251,212,0,0" VerticalAlignment="Top" Width="132" IsEnabled="False"/>
-                    <ListBox x:Name="CustomLBLEP" HorizontalAlignment="Left" Height="137" Margin="29,258,0,0" VerticalAlignment="Top" Width="355"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="32,237,0,0" TextWrapping="Wrap" Text="Selected LXP's" VerticalAlignment="Top" Width="206"/>
-                    <CheckBox x:Name="MISDotNetCheckBox" Content="Inject .Net 3.5" HorizontalAlignment="Left" Margin="418,49,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="MISOneDriveCheckBox" Content="Update OneDrive client" HorizontalAlignment="Left" Margin="418,74,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="UpdatesEnableCheckBox" Content="Enable Updates" HorizontalAlignment="Left" Margin="580,49,0,0" VerticalAlignment="Top" ClickMode="Press"/>
-                    <Button x:Name="CustomBLangPacksRemove" Content="Remove" HorizontalAlignment="Left" Margin="251,49,0,0" VerticalAlignment="Top" Width="132" IsEnabled="False"/>
-                    <Button x:Name="CustomBLEPSRemove" Content="Remove" HorizontalAlignment="Left" Margin="251,235,0,0" VerticalAlignment="Top" Width="132" IsEnabled="False"/>
-                    <Button x:Name="CustomBFODRemove" Content="Remove" HorizontalAlignment="Left" Margin="625,144,0,0" VerticalAlignment="Top" Width="133" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdatesOptionalEnableCheckBox" Content="Include Optional" HorizontalAlignment="Left" Margin="596,65,0,0" VerticalAlignment="Top" ClickMode="Press" IsEnabled="False"/>
+                    <CheckBox x:Name="CustomCBLangPacks" Content="Inject Language Packs" 
+                        HorizontalAlignment="Left" Margin="29,37,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="CustomBLangPacksSelect" Content="Select" HorizontalAlignment="Left" 
+                        Margin="251,27,0,0" VerticalAlignment="Top" Width="132" IsEnabled="False"/>
+                    <ListBox x:Name="CustomLBLangPacks" HorizontalAlignment="Left" Height="135" 
+                        Margin="29,74,0,0" VerticalAlignment="Top" Width="355"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="32,55,0,0" TextWrapping="Wrap" 
+                        Text="Selected LP's" VerticalAlignment="Top" Width="206"/>
+                    <CheckBox x:Name="CustomCBFOD" Content="Inject Features on Demand" 
+                        HorizontalAlignment="Left" Margin="419,126,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="CustomBFODSelect" Content="Select" HorizontalAlignment="Left" 
+                        Margin="625,120,0,0" VerticalAlignment="Top" Width="133" IsEnabled="False"/>
+                    <ListBox x:Name="CustomLBFOD" HorizontalAlignment="Left" Height="224" 
+                        Margin="419,171,0,0" VerticalAlignment="Top" Width="340"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="421,147,0,0" TextWrapping="Wrap" 
+                        Text="Select from imported Features" VerticalAlignment="Top" Width="206"/>
+                    <CheckBox x:Name="CustomCBLEP" Content="Inject Local Experience Packs" 
+                        HorizontalAlignment="Left" Margin="32,217,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="CustomBLEPSelect" Content="Select" HorizontalAlignment="Left" 
+                        Margin="251,212,0,0" VerticalAlignment="Top" Width="132" IsEnabled="False"/>
+                    <ListBox x:Name="CustomLBLEP" HorizontalAlignment="Left" Height="137" 
+                        Margin="29,258,0,0" VerticalAlignment="Top" Width="355"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="32,237,0,0" TextWrapping="Wrap" 
+                        Text="Selected LXP's" VerticalAlignment="Top" Width="206"/>
+                    <CheckBox x:Name="MISDotNetCheckBox" Content="Inject .Net 3.5" 
+                        HorizontalAlignment="Left" Margin="418,49,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="MISOneDriveCheckBox" Content="Update OneDrive client" 
+                        HorizontalAlignment="Left" Margin="418,74,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="UpdatesEnableCheckBox" Content="Enable Updates" 
+                        HorizontalAlignment="Left" Margin="580,49,0,0" VerticalAlignment="Top" 
+                        ClickMode="Press"/>
+                    <Button x:Name="CustomBLangPacksRemove" Content="Remove" HorizontalAlignment="Left" 
+                        Margin="251,49,0,0" VerticalAlignment="Top" Width="132" IsEnabled="False"/>
+                    <Button x:Name="CustomBLEPSRemove" Content="Remove" HorizontalAlignment="Left" 
+                        Margin="251,235,0,0" VerticalAlignment="Top" Width="132" IsEnabled="False"/>
+                    <Button x:Name="CustomBFODRemove" Content="Remove" HorizontalAlignment="Left" 
+                        Margin="625,144,0,0" VerticalAlignment="Top" Width="133" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdatesOptionalEnableCheckBox" Content="Include Optional" 
+                        HorizontalAlignment="Left" Margin="596,65,0,0" VerticalAlignment="Top" 
+                        ClickMode="Press" IsEnabled="False"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Other Custom" Height="20" MinWidth="100">
                 <Grid>
-                    <ListBox x:Name="CustomLBRegistry" HorizontalAlignment="Left" Height="100" Margin="31,247,0,0" VerticalAlignment="Top" Width="440" IsEnabled="False"/>
-                    <Button x:Name="CustomBRegistryAdd" Content="Add" HorizontalAlignment="Left" Margin="296,362,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <Button x:Name="CustomBRegistryRemove" Content="Remove" HorizontalAlignment="Left" Margin="391,362,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <CheckBox x:Name="CustomCBEnableRegistry" Content="Enable Registry Files" HorizontalAlignment="Left" Margin="31,227,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="CustomTBStartMenu" HorizontalAlignment="Left" Height="23" Margin="31,174,0,0" TextWrapping="Wrap" Text="Select Start Menu XML" VerticalAlignment="Top" Width="440" IsEnabled="False"/>
-                    <Button x:Name="CustomBStartMenu" Content="Select" HorizontalAlignment="Left" Margin="396,202,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <CheckBox x:Name="CustomCBEnableStart" Content="Enable Start Menu Layout" HorizontalAlignment="Left" Margin="30,152,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="CustomTBDefaultApp" HorizontalAlignment="Left" Height="23" Margin="31,92,0,0" TextWrapping="Wrap" Text="Select Default App XML" VerticalAlignment="Top" Width="440" IsEnabled="False"/>
-                    <Button x:Name="CustomBDefaultApp" Content="Select" HorizontalAlignment="Left" Margin="396,120,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
-                    <CheckBox x:Name="CustomCBEnableApp" Content="Enable Default App Association" HorizontalAlignment="Left" Margin="30,70,0,0" VerticalAlignment="Top"/>
+                    <ListBox x:Name="CustomLBRegistry" HorizontalAlignment="Left" Height="100" 
+                        Margin="31,247,0,0" VerticalAlignment="Top" Width="440" IsEnabled="False"/>
+                    <Button x:Name="CustomBRegistryAdd" Content="Add" HorizontalAlignment="Left" 
+                        Margin="296,362,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+                    <Button x:Name="CustomBRegistryRemove" Content="Remove" HorizontalAlignment="Left" 
+                        Margin="391,362,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+                    <CheckBox x:Name="CustomCBEnableRegistry" Content="Enable Registry Files" 
+                        HorizontalAlignment="Left" Margin="31,227,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="CustomTBStartMenu" HorizontalAlignment="Left" Height="23" 
+                        Margin="31,174,0,0" TextWrapping="Wrap" Text="Select Start Menu XML" 
+                        VerticalAlignment="Top" Width="440" IsEnabled="False"/>
+                    <Button x:Name="CustomBStartMenu" Content="Select" HorizontalAlignment="Left" 
+                        Margin="396,202,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+                    <CheckBox x:Name="CustomCBEnableStart" Content="Enable Start Menu Layout" 
+                        HorizontalAlignment="Left" Margin="30,152,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="CustomTBDefaultApp" HorizontalAlignment="Left" Height="23" 
+                        Margin="31,92,0,0" TextWrapping="Wrap" Text="Select Default App XML" 
+                        VerticalAlignment="Top" Width="440" IsEnabled="False"/>
+                    <Button x:Name="CustomBDefaultApp" Content="Select" HorizontalAlignment="Left" 
+                        Margin="396,120,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False"/>
+                    <CheckBox x:Name="CustomCBEnableApp" Content="Enable Default App Association" 
+                        HorizontalAlignment="Left" Margin="30,70,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="AppTab" Header ="App Removal" Height="20" MinWidth="100">
                 <Grid>
-                    <TextBox x:Name="AppxTextBox" TextWrapping="Wrap" Text="Select the apps to remove..." Margin="21,85,252.2,22.8" VerticalScrollBarVisibility="Visible"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="21,65,0,0" TextWrapping="Wrap" Text="Selected app packages to remove:" VerticalAlignment="Top" Height="15" Width="194"/>
-                    <CheckBox x:Name="AppxCheckBox" Content="Enable app removal" HorizontalAlignment="Left" Margin="21,33,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="AppxButton" Content="Select" HorizontalAlignment="Left" Margin="202,33,0,0" VerticalAlignment="Top" Width="75"/>
+                    <TextBox x:Name="AppxTextBox" TextWrapping="Wrap" Text="Select the apps to remove..." 
+                        Margin="21,85,252.2,22.8" VerticalScrollBarVisibility="Visible"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="21,65,0,0" TextWrapping="Wrap" 
+                        Text="Selected app packages to remove:" VerticalAlignment="Top" Height="15" 
+                        Width="194"/>
+                    <CheckBox x:Name="AppxCheckBox" Content="Enable app removal" 
+                        HorizontalAlignment="Left" Margin="21,33,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="AppxButton" Content="Select" HorizontalAlignment="Left" 
+                        Margin="202,33,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
             <TabItem Header="ConfigMgr" Height="20" MinWidth="102">
                 <Grid>
-                    <ComboBox x:Name="CMCBImageType" HorizontalAlignment="Left" Margin="39,37,0,0" VerticalAlignment="Top" Width="165"/>
-                    <TextBox x:Name="CMTBPackageID" HorizontalAlignment="Left" Height="23" Margin="39,80,0,0" TextWrapping="Wrap" Text="Package ID" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="CMTBImageName" HorizontalAlignment="Left" Height="23" Margin="39,111,0,0" TextWrapping="Wrap" Text="Image Name" VerticalAlignment="Top" Width="290"/>
-                    <ListBox x:Name="CMLBDPs" HorizontalAlignment="Left" Height="100" Margin="444,262,0,0" VerticalAlignment="Top" Width="285"/>
-                    <TextBox x:Name="CMTBWinBuildNum" HorizontalAlignment="Left" Height="23" Margin="40,142,0,0" TextWrapping="Wrap" Text="Window Build Number" VerticalAlignment="Top" Width="290"/>
-                    <TextBox x:Name="CMTBImageVer" HorizontalAlignment="Left" Height="23" Margin="41,187,0,0" TextWrapping="Wrap" Text="Image Version" VerticalAlignment="Top" Width="290"/>
-                    <TextBox x:Name="CMTBDescription" HorizontalAlignment="Left" Height="91" Margin="41,216,0,0" TextWrapping="Wrap" Text="Description" VerticalAlignment="Top" Width="290"/>
-                    <CheckBox x:Name="CMCBBinDirRep" Content="Enable Binary Differential Replication" HorizontalAlignment="Left" Margin="39,313,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="CMBSelectImage" Content="Select Image" HorizontalAlignment="Left" Margin="230,80,0,0" VerticalAlignment="Top" Width="99"/>
-                    <TextBox x:Name="CMTBSitecode" HorizontalAlignment="Left" Height="23" Margin="444,112,0,0" TextWrapping="Wrap" Text="Site Code" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="CMTBSiteServer" HorizontalAlignment="Left" Height="23" Margin="444,153,0,0" TextWrapping="Wrap" Text="Site Server" VerticalAlignment="Top" Width="228"/>
-                    <Button x:Name="CMBAddDP" Content="Add" HorizontalAlignment="Left" Margin="444,370,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button x:Name="CMBRemoveDP" Content="Remove" HorizontalAlignment="Left" Margin="532,370,0,0" VerticalAlignment="Top" Width="75"/>
-                    <ComboBox x:Name="CMCBDPDPG" HorizontalAlignment="Left" Margin="444,234,0,0" VerticalAlignment="Top" Width="228"/>
-                    <CheckBox x:Name="CMCBDeploymentShare" Content="Enable Package Share" HorizontalAlignment="Left" Margin="39,333,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="CMCBImageVerAuto" Content="Auto Fill" HorizontalAlignment="Left" Margin="336,187,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="CMCBDescriptionAuto" Content="Auto Fill" HorizontalAlignment="Left" Margin="336,217,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="CMBInstallExtensions" Content="Install" HorizontalAlignment="Left" Margin="444,55,0,0" VerticalAlignment="Top" Width="75"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="445,36,0,0" TextWrapping="Wrap" Text="Click to install CM Console Extension" VerticalAlignment="Top"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="445,94,0,0" TextWrapping="Wrap" Text="Site Code" VerticalAlignment="Top"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="445,136,0,0" TextWrapping="Wrap" Text="Site Server" VerticalAlignment="Top"/>
-                    <Button x:Name="CMBSetCM" Content="Set" HorizontalAlignment="Left" Margin="444,180,0,0" VerticalAlignment="Top" Width="75"/>
+                    <ComboBox x:Name="CMCBImageType" HorizontalAlignment="Left" Margin="39,37,0,0" 
+                        VerticalAlignment="Top" Width="165"/>
+                    <TextBox x:Name="CMTBPackageID" HorizontalAlignment="Left" Height="23" 
+                        Margin="39,80,0,0" TextWrapping="Wrap" Text="Package ID" VerticalAlignment="Top" 
+                        Width="120"/>
+                    <TextBox x:Name="CMTBImageName" HorizontalAlignment="Left" Height="23" 
+                        Margin="39,111,0,0" TextWrapping="Wrap" Text="Image Name" VerticalAlignment="Top" 
+                        Width="290"/>
+                    <ListBox x:Name="CMLBDPs" HorizontalAlignment="Left" Height="100" 
+                        Margin="444,262,0,0" VerticalAlignment="Top" Width="285"/>
+                    <TextBox x:Name="CMTBWinBuildNum" HorizontalAlignment="Left" Height="23" 
+                        Margin="40,142,0,0" TextWrapping="Wrap" Text="Window Build Number" 
+                        VerticalAlignment="Top" Width="290"/>
+                    <TextBox x:Name="CMTBImageVer" HorizontalAlignment="Left" Height="23" 
+                        Margin="41,187,0,0" TextWrapping="Wrap" Text="Image Version" 
+                        VerticalAlignment="Top" Width="290"/>
+                    <TextBox x:Name="CMTBDescription" HorizontalAlignment="Left" Height="91" 
+                        Margin="41,216,0,0" TextWrapping="Wrap" Text="Description" 
+                        VerticalAlignment="Top" Width="290"/>
+                    <CheckBox x:Name="CMCBBinDirRep" Content="Enable Binary Differential Replication" 
+                        HorizontalAlignment="Left" Margin="39,313,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="CMBSelectImage" Content="Select Image" HorizontalAlignment="Left" 
+                        Margin="230,80,0,0" VerticalAlignment="Top" Width="99"/>
+                    <TextBox x:Name="CMTBSitecode" HorizontalAlignment="Left" Height="23" 
+                        Margin="444,112,0,0" TextWrapping="Wrap" Text="Site Code" VerticalAlignment="Top" 
+                        Width="120"/>
+                    <TextBox x:Name="CMTBSiteServer" HorizontalAlignment="Left" Height="23" 
+                        Margin="444,153,0,0" TextWrapping="Wrap" Text="Site Server" 
+                        VerticalAlignment="Top" Width="228"/>
+                    <Button x:Name="CMBAddDP" Content="Add" HorizontalAlignment="Left" 
+                        Margin="444,370,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button x:Name="CMBRemoveDP" Content="Remove" HorizontalAlignment="Left" 
+                        Margin="532,370,0,0" VerticalAlignment="Top" Width="75"/>
+                    <ComboBox x:Name="CMCBDPDPG" HorizontalAlignment="Left" Margin="444,234,0,0" 
+                        VerticalAlignment="Top" Width="228"/>
+                    <CheckBox x:Name="CMCBDeploymentShare" Content="Enable Package Share" 
+                        HorizontalAlignment="Left" Margin="39,333,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="CMCBImageVerAuto" Content="Auto Fill" HorizontalAlignment="Left" 
+                        Margin="336,187,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="CMCBDescriptionAuto" Content="Auto Fill" 
+                        HorizontalAlignment="Left" Margin="336,217,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="CMBInstallExtensions" Content="Install" HorizontalAlignment="Left" 
+                        Margin="444,55,0,0" VerticalAlignment="Top" Width="75"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="445,36,0,0" TextWrapping="Wrap" 
+                        Text="Click to install CM Console Extension" VerticalAlignment="Top"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="445,94,0,0" TextWrapping="Wrap" 
+                        Text="Site Code" VerticalAlignment="Top"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="445,136,0,0" TextWrapping="Wrap" 
+                        Text="Site Server" VerticalAlignment="Top"/>
+                    <Button x:Name="CMBSetCM" Content="Set" HorizontalAlignment="Left" 
+                        Margin="444,180,0,0" VerticalAlignment="Top" Width="75"/>
 
                 </Grid>
             </TabItem>
             <TabItem Header="Make It So" Height="20" MinWidth="100">
                 <Grid>
-                    <CheckBox x:Name="MISCBCheckForUpdates" Margin="544,19,15,376" Content="Check for updates when running" />
-                    <Button x:Name="MISFolderButton" Content="Select" HorizontalAlignment="Left" Margin="444,144,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.39,-2.647"/>
-                    <TextBox x:Name="MISWimNameTextBox" HorizontalAlignment="Left" Height="25" Margin="20,85,0,0" TextWrapping="Wrap" Text="Enter Target WIM Name" VerticalAlignment="Top" Width="500"/>
-                    <TextBox x:Name="MISDriverTextBox" HorizontalAlignment="Left" Height="23" Margin="658,345,0,0" TextWrapping="Wrap" Text="Driver Y/N" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
-                    <Label Content="Driver injection?" HorizontalAlignment="Left" Height="30" Margin="551,343,0,0" VerticalAlignment="Top" Width="101"/>
-                    <TextBox x:Name="MISJSONTextBox" HorizontalAlignment="Left" Height="23" Margin="658,374,0,0" TextWrapping="Wrap" Text="JSON Select Y/N" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
-                    <Label Content="JSON injection?" HorizontalAlignment="Left" Margin="551,372,0,0" VerticalAlignment="Top" Width="102"/>
-                    <TextBox x:Name="MISWimFolderTextBox" HorizontalAlignment="Left" Height="23" Margin="20,115,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="500"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="20,20,0,0" TextWrapping="Wrap" Text="Enter a name, and select a destination folder, for the  image to be created. Once complete, and build parameters verified, click &quot;Make it so!&quot; to start the build." VerticalAlignment="Top" Height="60" Width="353"/>
-                    <Button x:Name="MISMakeItSoButton" Content="Make it so!" HorizontalAlignment="Left" Margin="400,20,0,0" VerticalAlignment="Top" Width="120" Height="29" FontSize="16"/>
-                    <TextBox x:Name="MISMountTextBox" HorizontalAlignment="Left" Height="25" Margin="19,191,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="500" IsEnabled="False"/>
-                    <Label Content="Mount Path" HorizontalAlignment="Left" Margin="19,166,0,0" VerticalAlignment="Top" Height="25" Width="100"/>
-                    <Button x:Name="MISMountSelectButton" Content="Select" HorizontalAlignment="Left" Margin="444,221,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
-                    <Label Content="Update injection?" HorizontalAlignment="Left" Margin="551,311,0,0" VerticalAlignment="Top" Width="109"/>
-                    <TextBox x:Name="MISUpdatesTextBox" HorizontalAlignment="Left" Height="23" Margin="658,314,0,0" TextWrapping="Wrap" Text="Updates Y/N" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.171,0.142" IsEnabled="False"/>
-                    <Label Content="App removal?" HorizontalAlignment="Left" Margin="551,280,0,0" VerticalAlignment="Top" Width="109"/>
-                    <TextBox x:Name="MISAppxTextBox" HorizontalAlignment="Left" Height="23" Margin="658,283,0,0" TextWrapping="Wrap" Text="Updates Y/N" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.171,0.142" IsEnabled="False"/>
-                    <CheckBox x:Name="MISCBDynamicUpdates" Margin="544,40,15,355" Content="Apply Dynamic Update" IsEnabled="False" />
-                    <CheckBox x:Name="MISCBBootWIM" Margin="544,62,15,337" Content="Update Boot.WIM" IsEnabled="False" />
-                    <TextBox x:Name="MISTBISOFileName" HorizontalAlignment="Left" Height="23" Margin="21,268,0,0" TextWrapping="Wrap" Text="ISO File Name" VerticalAlignment="Top" Width="498" IsEnabled="False"/>
-                    <TextBox x:Name="MISTBFilePath" HorizontalAlignment="Left" Height="23" Margin="21,296,0,0" TextWrapping="Wrap" Text="ISO File Path" VerticalAlignment="Top" Width="498" IsEnabled="False"/>
-                    <CheckBox x:Name="MISCBISO" Content="Create ISO" HorizontalAlignment="Left" Margin="21,248,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="MISCBNoWIM" Margin="544,85,15,312" Content="Do Not Create Stand Alone WIM" IsEnabled="False"/>
-                    <TextBox x:Name="MISTBUpgradePackage" HorizontalAlignment="Left" Height="23" Margin="23,368,0,0" TextWrapping="Wrap" Text="Upgrade Package Path" VerticalAlignment="Top" Width="494" IsEnabled="False"/>
-                    <CheckBox x:Name="MISCBUpgradePackage" Content="Upgrade Package Path" HorizontalAlignment="Left" Margin="22,347,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="MISISOSelectButton" Content="Select" HorizontalAlignment="Left" Margin="444,324,0,0" VerticalAlignment="Top" Width="75" Height="25" IsEnabled="False"/>
+                    <CheckBox x:Name="MISCBCheckForUpdates" Margin="544,19,15,376" 
+                        Content="Check for updates when running" />
+                    <Button x:Name="MISFolderButton" Content="Select" HorizontalAlignment="Left" 
+                        Margin="444,144,0,0" VerticalAlignment="Top" Width="75" 
+                        RenderTransformOrigin="0.39,-2.647"/>
+                    <TextBox x:Name="MISWimNameTextBox" HorizontalAlignment="Left" Height="25" 
+                        Margin="20,85,0,0" TextWrapping="Wrap" Text="Enter Target WIM Name" 
+                        VerticalAlignment="Top" Width="500"/>
+                    <TextBox x:Name="MISDriverTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="658,345,0,0" TextWrapping="Wrap" Text="Driver Y/N" 
+                        VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+                    <Label Content="Driver injection?" HorizontalAlignment="Left" Height="30" 
+                        Margin="551,343,0,0" VerticalAlignment="Top" Width="101"/>
+                    <TextBox x:Name="MISJSONTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="658,374,0,0" TextWrapping="Wrap" Text="JSON Select Y/N" 
+                        VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+                    <Label Content="JSON injection?" HorizontalAlignment="Left" Margin="551,372,0,0" 
+                        VerticalAlignment="Top" Width="102"/>
+                    <TextBox x:Name="MISWimFolderTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="20,115,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" 
+                        Width="500"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="20,20,0,0" TextWrapping="Wrap" 
+                        Text="Enter a name, and select a destination folder, for the  image to be created. Once complete, and build parameters verified, click &quot;Make it so!&quot; to start the build." 
+                        VerticalAlignment="Top" Height="60" Width="353"/>
+                    <Button x:Name="MISMakeItSoButton" Content="Make it so!" HorizontalAlignment="Left" 
+                        Margin="400,20,0,0" VerticalAlignment="Top" Width="120" Height="29" FontSize="16"/>
+                    <TextBox x:Name="MISMountTextBox" HorizontalAlignment="Left" Height="25" 
+                        Margin="19,191,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" 
+                        Width="500" IsEnabled="False"/>
+                    <Label Content="Mount Path" HorizontalAlignment="Left" Margin="19,166,0,0" 
+                        VerticalAlignment="Top" Height="25" Width="100"/>
+                    <Button x:Name="MISMountSelectButton" Content="Select" HorizontalAlignment="Left" 
+                        Margin="444,221,0,0" VerticalAlignment="Top" Width="75" Height="25"/>
+                    <Label Content="Update injection?" HorizontalAlignment="Left" 
+                        Margin="551,311,0,0" VerticalAlignment="Top" Width="109"/>
+                    <TextBox x:Name="MISUpdatesTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="658,314,0,0" TextWrapping="Wrap" Text="Updates Y/N" 
+                        VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.171,0.142" 
+                        IsEnabled="False"/>
+                    <Label Content="App removal?" HorizontalAlignment="Left" Margin="551,280,0,0" 
+                        VerticalAlignment="Top" Width="109"/>
+                    <TextBox x:Name="MISAppxTextBox" HorizontalAlignment="Left" Height="23" 
+                        Margin="658,283,0,0" TextWrapping="Wrap" Text="Updates Y/N" 
+                        VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.171,0.142" 
+                        IsEnabled="False"/>
+                    <CheckBox x:Name="MISCBDynamicUpdates" Margin="544,40,15,355" 
+                        Content="Apply Dynamic Update" IsEnabled="False" />
+                    <CheckBox x:Name="MISCBBootWIM" Margin="544,62,15,337" Content="Update Boot.WIM" 
+                        IsEnabled="False" />
+                    <TextBox x:Name="MISTBISOFileName" HorizontalAlignment="Left" Height="23" 
+                        Margin="21,268,0,0" TextWrapping="Wrap" Text="ISO File Name" 
+                        VerticalAlignment="Top" Width="498" IsEnabled="False"/>
+                    <TextBox x:Name="MISTBFilePath" HorizontalAlignment="Left" Height="23" 
+                        Margin="21,296,0,0" TextWrapping="Wrap" Text="ISO File Path" 
+                        VerticalAlignment="Top" Width="498" IsEnabled="False"/>
+                    <CheckBox x:Name="MISCBISO" Content="Create ISO" HorizontalAlignment="Left" 
+                        Margin="21,248,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="MISCBNoWIM" Margin="544,85,15,312" 
+                        Content="Do Not Create Stand Alone WIM" IsEnabled="False"/>
+                    <TextBox x:Name="MISTBUpgradePackage" HorizontalAlignment="Left" Height="23" 
+                        Margin="23,368,0,0" TextWrapping="Wrap" Text="Upgrade Package Path" 
+                        VerticalAlignment="Top" Width="494" IsEnabled="False"/>
+                    <CheckBox x:Name="MISCBUpgradePackage" Content="Upgrade Package Path" 
+                        HorizontalAlignment="Left" Margin="22,347,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="MISISOSelectButton" Content="Select" HorizontalAlignment="Left" 
+                        Margin="444,324,0,0" VerticalAlignment="Top" Width="75" Height="25" 
+                        IsEnabled="False"/>
                 </Grid>
             </TabItem>
         </TabControl>

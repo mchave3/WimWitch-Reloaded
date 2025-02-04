@@ -3,7 +3,8 @@
     Select registry files to import.
 
 .DESCRIPTION
-    This function opens a file dialog to allow the user to select one or more registry files (.reg) to import into the mounted Windows image. It validates the selected files and updates the UI accordingly.
+    This function opens a file dialog to allow the user to select one or more registry files (.reg) to import into
+    the mounted Windows image. It validates the selected files and updates the UI accordingly.
 
 .NOTES
     Name:        Select-RegFiles.ps1

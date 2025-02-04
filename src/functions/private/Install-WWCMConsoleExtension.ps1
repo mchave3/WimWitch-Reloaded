@@ -30,33 +30,38 @@ function Install-WWCMConsoleExtension {
 
     process {
         $UpdateWWXML = @"
-<ActionDescription Class ="Executable" DisplayName="Update with WIM Witch" MnemonicDisplayName="Update with WIM Witch" Description="Click to update the image with WIM Witch">
+<ActionDescription Class ="Executable" DisplayName="Update with WIM Witch" MnemonicDisplayName="Update with WIM Witch" 
+    Description="Click to update the image with WIM Witch">
 	<ShowOn>
 		<string>ContextMenu</string>
 		<string>DefaultHomeTab</string>
 	</ShowOn>
 	<Executable>
 		<FilePath>$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe</FilePath>
-		<Parameters> -ExecutionPolicy Bypass -File "$PSCommandPath" -auto -autofile "$global:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
+		<Parameters> -ExecutionPolicy Bypass -File "$PSCommandPath" -auto -autofile 
+            "$global:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
 	</Executable>
 </ActionDescription>
 "@
 
         $EditWWXML = @"
-<ActionDescription Class ="Executable" DisplayName="Edit WIM Witch Image Config" MnemonicDisplayName="Edit WIM Witch Image Config" Description="Click to edit the WIM Witch image configuration">
+<ActionDescription Class ="Executable" DisplayName="Edit WIM Witch Image Config" 
+    MnemonicDisplayName="Edit WIM Witch Image Config" Description="Click to edit the WIM Witch image configuration">
 	<ShowOn>
 		<string>ContextMenu</string>
 		<string>DefaultHomeTab</string>
 	</ShowOn>
 	<Executable>
 		<FilePath>$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe</FilePath>
-		<Parameters> -ExecutionPolicy Bypass -File "$PSCommandPath" -CM "Edit" -autofile "$global:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
+		<Parameters> -ExecutionPolicy Bypass -File "$PSCommandPath" -CM "Edit" -autofile 
+            "$global:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
 	</Executable>
 </ActionDescription>
 "@
 
         $NewWWXML = @"
-<ActionDescription Class ="Executable" DisplayName="New WIM Witch Image" MnemonicDisplayName="New WIM Witch Image" Description="Click to create a new WIM Witch image">
+<ActionDescription Class ="Executable" DisplayName="New WIM Witch Image" 
+    MnemonicDisplayName="New WIM Witch Image" Description="Click to create a new WIM Witch image">
 	<ShowOn>
 		<string>ContextMenu</string>
 		<string>DefaultHomeTab</string>
@@ -78,7 +83,9 @@ function Install-WWCMConsoleExtension {
 
         Update-Log -Data 'Creating folders if needed...' -Class Information
 
-        if ((Test-Path -Path (Join-Path -Path $path -ChildPath $ConsoleFolderImage)) -eq $false) { New-Item -Path $path -Name $ConsoleFolderImage -ItemType 'directory' | Out-Null }
+        if ((Test-Path -Path (Join-Path -Path $path -ChildPath $ConsoleFolderImage)) -eq $false) { 
+            New-Item -Path $path -Name $ConsoleFolderImage -ItemType 'directory' | Out-Null 
+        }
 
         Update-Log -data 'Creating extension files...' -Class Information
 
@@ -87,7 +94,9 @@ function Install-WWCMConsoleExtension {
 
         Update-Log -Data 'Creating folders if needed...' -Class Information
 
-        if ((Test-Path -Path (Join-Path -Path $path -ChildPath $ConsoleFolderRoot)) -eq $false) { New-Item -Path $path -Name $ConsoleFolderRoot -ItemType 'directory' | Out-Null }
+        if ((Test-Path -Path (Join-Path -Path $path -ChildPath $ConsoleFolderRoot)) -eq $false) { 
+            New-Item -Path $path -Name $ConsoleFolderRoot -ItemType 'directory' | Out-Null 
+        }
         Update-Log -data 'Creating extension files...' -Class Information
 
         $NewWWXML | Out-File ((Join-Path -Path $path -ChildPath $ConsoleFolderRoot) + '\NewWWImage.xml') -Force

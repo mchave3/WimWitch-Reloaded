@@ -3,7 +3,8 @@
     Pause the image build process.
 
 .DESCRIPTION
-    This function allows the user to pause the image build process and choose whether to continue or cancel the build. If cancelled, the WIM file will be discarded.
+    This function allows the user to pause the image build process and choose whether to continue or cancel the build.
+    If cancelled, the WIM file will be discarded.
 
 .NOTES
     Name:        Suspend-MakeItSo.ps1

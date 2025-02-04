@@ -3,7 +3,8 @@
     Update the Windows version combo box based on the selected OS.
 
 .DESCRIPTION
-    This function updates the Windows version combo box with appropriate versions based on the selected operating system (Windows Server, Windows 10, or Windows 11).
+    This function updates the Windows version combo box with appropriate versions based on the selected operating system
+    (Windows Server, Windows 10, or Windows 11).
 
 .NOTES
     Name:        Update-ImportVersionCB.ps1

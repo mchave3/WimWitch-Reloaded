@@ -37,11 +37,26 @@ function Invoke-MEMCMUpdateSupersedence {
         Set-Location $CMDrive
         $Arch = 'x64'
 
-        if (($prod -eq 'Windows 10') -and (($ver -ge '1903') -or ($ver -eq '20H2') -or ($ver -eq '21H1') -or ($ver -eq '21H2')  )) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'" }
-        if (($prod -eq 'Windows 10') -and ($ver -le '1809')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10'" }
-        if (($prod -eq 'Windows Server') -and ($ver = '1607')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2016'" }
-        if (($prod -eq 'Windows Server') -and ($ver -eq '1809')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'" }
-        if (($prod -eq 'Windows Server') -and ($ver -eq '21H2')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'" }
+        if (($prod -eq 'Windows 10') -and (
+            ($ver -ge '1903') -or 
+            ($ver -eq '20H2') -or 
+            ($ver -eq '21H1') -or 
+            ($ver -eq '21H2')
+        )) { 
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'" 
+        }
+        if (($prod -eq 'Windows 10') -and ($ver -le '1809')) { 
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10'" 
+        }
+        if (($prod -eq 'Windows Server') -and ($ver = '1607')) { 
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2016'" 
+        }
+        if (($prod -eq 'Windows Server') -and ($ver -eq '1809')) { 
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'" 
+        }
+        if (($prod -eq 'Windows Server') -and ($ver -eq '21H2')) { 
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'" 
+        }
 
         Update-Log -data 'Checking files for supersedense...' -Class Information
 
@@ -59,17 +74,27 @@ function Invoke-MEMCMUpdateSupersedence {
             foreach ($FolderSecondLevel in $FolderSecondLevels) {
 
                 #for every cab under updates\prod\ver\class\update
-                $UpdateCabs = (Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel")
+                $UpdateCabs = (Get-ChildItem -Path (
+                    "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
+                ))
                 foreach ($UpdateCab in $UpdateCabs) {
                     Update-Log -data "Checking update file name $UpdateCab" -Class Information
-                    $UpdateItem = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.LocalizedDisplayName -eq $FolderSecondLevel) }
+                    $UpdateItem = Get-WmiObject `
+                        -Namespace "root\SMS\Site_$($global:SiteCode)" `
+                        -Class SMS_SoftwareUpdate `
+                        -ComputerName $global:SiteServer `
+                        -Filter $WMIQueryFilter `
+                        -ErrorAction Stop | 
+                        Where-Object { ($_.LocalizedDisplayName -eq $FolderSecondLevel) }
 
                     if ($UpdateItem.IsSuperseded -eq $false) {
 
                         Update-Log -data "Update $FolderSecondLevel is current" -Class Information
                     } else {
                         Update-Log -Data "Update $UpdateCab is superseded. Deleting file..." -Class Warning
-                        Remove-Item -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel\$UpdateCab"
+                        Remove-Item -Path (
+                            "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel\$UpdateCab"
+                        )
                     }
                 }
             }

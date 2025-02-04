@@ -3,7 +3,8 @@
     Create a new Windows ISO file.
 
 .DESCRIPTION
-    This function creates a new Windows ISO file from the modified WIM file and staged content. It handles the ISO creation process using oscdimg and manages any errors that occur during the process.
+    This function creates a new Windows ISO file from the modified WIM file and staged content. 
+    It handles the ISO creation process using oscdimg and manages any errors that occur during the process.
 
 .NOTES
     Name:        New-WindowsISO.ps1
@@ -29,7 +30,9 @@ function New-WindowsISO {
     )
 
     process {
-        if ((Test-Path -Path ${env:ProgramFiles(x86)}'\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe' -PathType Leaf) -eq $false) {
+        $oscdimgPath = "${env:ProgramFiles(x86)}" + 
+            '\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe'
+        if ((Test-Path -Path $oscdimgPath -PathType Leaf) -eq $false) {
             Update-Log -Data 'The file oscdimg.exe was not found. Skipping ISO creation...' -Class Error
             return
         }
@@ -40,7 +43,8 @@ function New-WindowsISO {
         }
     
         $Location = ${env:ProgramFiles(x86)}
-        $executable = $location + '\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe'
+        $executable = $location + 
+            '\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe'
         $bootbin = $global:workdir + '\staging\media\efi\microsoft\boot\efisys.bin'
         $source = $global:workdir + '\staging\media'
         $folder = $WPFMISTBFilePath.text
@@ -52,7 +56,14 @@ function New-WindowsISO {
         try {
             Update-Log -Data 'Starting to build ISO...' -Class Information
             # write-host $executable
-            Start-Process $executable -args @("`"$text`"", '-pEF', '-u1', '-udfver102', "`"$source`"", "`"$dest`"") -Wait -ErrorAction Stop
+            Start-Process $executable -args @(
+                "`"$text`"",
+                '-pEF',
+                '-u1',
+                '-udfver102',
+                "`"$source`"",
+                "`"$dest`""
+            ) -Wait -ErrorAction Stop
             Update-Log -Data 'ISO has been built' -Class Information
         } catch {
             Update-Log -Data "Couldn't create the ISO file" -Class Error

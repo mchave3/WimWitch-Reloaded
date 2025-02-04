@@ -34,11 +34,13 @@ function Select-DistributionPoints {
 
         if ($WPFCMCBDPDPG.SelectedItem -eq 'Distribution Points') {
 
-            $SelectedDPs = (Get-CMDistributionPoint -SiteCode $global:sitecode).NetworkOSPath | Out-GridView -Title 'Select Distribution Points' -PassThru
+            $SelectedDPs = (Get-CMDistributionPoint -SiteCode $global:sitecode).NetworkOSPath | `
+                Out-GridView -Title 'Select Distribution Points' -PassThru
             foreach ($SelectedDP in $SelectedDPs) { $WPFCMLBDPs.Items.Add($SelectedDP) }
         }
         if ($WPFCMCBDPDPG.SelectedItem -eq 'Distribution Point Groups') {
-            $SelectedDPs = (Get-CMDistributionPointGroup).Name | Out-GridView -Title 'Select Distribution Point Groups' -PassThru
+            $SelectedDPs = (Get-CMDistributionPointGroup).Name | `
+                Out-GridView -Title 'Select Distribution Point Groups' -PassThru
             foreach ($SelectedDP in $SelectedDPs) { $WPFCMLBDPs.Items.Add($SelectedDP) }
         }
         Set-Location $global:workdir

@@ -50,7 +50,8 @@ function Test-Superceded {
                 $path3 = $path1 + '\' + $sprout
                 $fileinfo = Get-ChildItem -Path $path3
                 foreach ($file in $fileinfo) {
-                    $StillCurrent = Get-OSDUpdate | Where-Object { $_.FileName -eq $file }
+                    $StillCurrent = Get-OSDUpdate | 
+                        Where-Object { $_.FileName -eq $file }
                     If ($null -eq $StillCurrent) {
                         Update-Log -data "$file no longer current" -Class Warning
                         if ($action -eq 'delete') {
@@ -58,7 +59,9 @@ function Test-Superceded {
                             Remove-Item -Path $path3 -Recurse -Force
                         }
                         if ($action -eq 'audit') {
-                            $WPFUpdatesOSDListBox.items.add('Superceded updates discovered. Please select the versions of Windows 10 you are supporting and click Update')
+                            $message = 'Superceded updates discovered. Please select the versions of Windows 10 ' + `
+                                'you are supporting and click Update'
+                            $WPFUpdatesOSDListBox.items.add($message)
                             Return
                         }
                     } else {

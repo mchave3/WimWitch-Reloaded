@@ -3,7 +3,8 @@
     Select start menu layout file.
 
 .DESCRIPTION
-    This function opens a file dialog to allow the user to select an XML file containing a custom start menu layout. It validates the selected file and updates the UI accordingly.
+    This function opens a file dialog to allow the user to select an XML file containing a custom start menu layout. 
+    It validates the selected file and updates the UI accordingly.
 
 .NOTES
     Name:        Select-StartMenu.ps1

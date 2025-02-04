@@ -29,7 +29,8 @@ function Invoke-2XXXPreReq {
     )
 
     process {
-        $KB_URI = 'http://download.windowsupdate.com/c/msdownload/update/software/secu/2021/05/windows10.0-kb5003173-x64_375062f9d88a5d9d11c5b99673792fdce8079e09.cab'
+        $KB_URI = 'http://download.windowsupdate.com/c/msdownload/update/software/secu/2021/05/' + `
+            'windows10.0-kb5003173-x64_375062f9d88a5d9d11c5b99673792fdce8079e09.cab'
         $executable = "$env:windir\system32\expand.exe"
         $mountdir = $WPFMISMountTextBox.Text
 
@@ -65,7 +66,8 @@ function Invoke-2XXXPreReq {
 
                     try {
                         Update-Log -data 'The folder for the required SSU does not exist. Creating it now...' -class Information
-                        New-Item -Path "$global:workdir\updates\Windows 10" -Name '2XXX_prereq' -ItemType Directory -ErrorAction stop | Out-Null
+                        New-Item -Path "$global:workdir\updates\Windows 10" -Name '2XXX_prereq' `
+                            -ItemType Directory -ErrorAction stop | Out-Null
                         Update-Log -data 'The folder has been created' -class information
                     } catch {
                         Update-Log -data 'Could not create the required folder.' -class error
@@ -76,7 +78,11 @@ function Invoke-2XXXPreReq {
 
                 try {
                     Update-Log -data 'Extracting the SSU from the May 2021 LCU...' -class Information
-                    Start-Process $executable -args @("`"$global:workdir\staging\extract_me.cab`"", '/f:*SSU*.CAB', "`"$global:workdir\updates\Windows 10\2XXX_prereq`"") -Wait -ErrorAction Stop
+                    Start-Process $executable -args @(
+                        "`"$global:workdir\staging\extract_me.cab`"",
+                        '/f:*SSU*.CAB',
+                        "`"$global:workdir\updates\Windows 10\2XXX_prereq`""
+                    ) -Wait -ErrorAction Stop
                     Update-Log 'Extraction of SSU was success' -class information
                 } catch {
                     Update-Log -data "Couldn't extract the SSU from the LCU" -class error
@@ -100,7 +106,8 @@ function Invoke-2XXXPreReq {
 
             try {
                 Update-Log -data 'Applying the SSU...' -class Information
-                Add-WindowsPackage -PackagePath "$global:workdir\updates\Windows 10\2XXX_prereq" -Path $WPFMISMountTextBox.Text -ErrorAction Stop | Out-Null
+                Add-WindowsPackage -PackagePath "$global:workdir\updates\Windows 10\2XXX_prereq" `
+                    -Path $WPFMISMountTextBox.Text -ErrorAction Stop | Out-Null
                 Update-Log -data 'SSU applied successfully' -class Information
 
             } catch {

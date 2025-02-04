@@ -338,14 +338,18 @@ function Invoke-MakeItSo {
         if (($WPFMISCBUpgradePackage.IsChecked -eq $true) -or ($WPFMISCBISO.IsChecked -eq $true)) {
             Copy-StageIsoMedia
             Update-Log -Data 'Exporting install.wim to media staging folder...' -Class Information
-            Export-WindowsImage -SourceImagePath $wimname -SourceIndex 1 -DestinationImagePath ($global:workdir + '\staging\media\sources\install.wim') -DestinationName ('WW - ' + $WPFSourceWIMImgDesTextBox.text) | Out-Null
+            Export-WindowsImage -SourceImagePath $wimname -SourceIndex 1 `
+                -DestinationImagePath ($global:workdir + '\staging\media\sources\install.wim') `
+                -DestinationName ('WW - ' + $WPFSourceWIMImgDesTextBox.text) | Out-Null
         }
 
         #Export the wim file to various locations
         if ($WPFMISCBNoWIM.IsChecked -ne $true) {
             try {
                 Update-Log -Data 'Exporting WIM file' -Class Information
-                Export-WindowsImage -SourceImagePath $wimname -SourceIndex 1 -DestinationImagePath ($WPFMISWimFolderTextBox.Text + '\' + $WPFMISWimNameTextBox.Text) -DestinationName ('WW - ' + $WPFSourceWIMImgDesTextBox.text) | Out-Null
+                Export-WindowsImage -SourceImagePath $wimname -SourceIndex 1 `
+                    -DestinationImagePath ($WPFMISWimFolderTextBox.Text + '\' + $WPFMISWimNameTextBox.Text) `
+                    -DestinationName ('WW - ' + $WPFSourceWIMImgDesTextBox.text) | Out-Null
             } catch {
                 Update-Log -data $_.Exception.Message -class Error
                 Update-Log -data "The WIM couldn't be exported. You can still retrieve it from staging path." -Class Error

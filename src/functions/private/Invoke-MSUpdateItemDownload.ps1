@@ -89,7 +89,11 @@ function Invoke-MSUpdateItemDownload {
             #here
             #if (($UpdateName -like "* 1903 *") -or ($UpdateName -like "* 1909 *") -or ($UpdateName -like "* 2004 *") -or ($UpdateName -like "* 20H2 *") -or ($UpdateName -like "* 21H1 *") -or ($UpdateName -like "* 21H2 *") -or ($UpdateName -like "* 22H2 *")){$WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'"}
 
-            if (($UpdateName -like '* 1903 *') -or ($UpdateName -like '* 1909 *') -or ($UpdateName -like '* 2004 *') -or ($UpdateName -like '* 20H2 *') -or ($UpdateName -like '* 21H1 *') -or ($UpdateName -like '* 21H2 *') -or ($UpdateName -like '* 22H2 *')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'" }
+            if (($UpdateName -like '* 1903 *') -or ($UpdateName -like '* 1909 *') -or ($UpdateName -like '* 2004 *') -or 
+                ($UpdateName -like '* 20H2 *') -or ($UpdateName -like '* 21H1 *') -or ($UpdateName -like '* 21H2 *') -or 
+                ($UpdateName -like '* 22H2 *')) { 
+                $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'" 
+            }
             else { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10'" }
             if ($updateName -like '*Dynamic*') {
                 if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10 Dynamic Update'" }
@@ -113,18 +117,24 @@ function Invoke-MSUpdateItemDownload {
         if (($UpdateName -like '*Windows Server*') -and ($ver -eq '1809')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'" }
         if (($UpdateName -like '*Windows Server*') -and ($ver -eq '21H2')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'" }
 
-        $UpdateItem = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | Where-Object { ($_.LocalizedDisplayName -eq $UpdateName) }
+        $UpdateItem = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate `
+            -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
+            Where-Object { ($_.LocalizedDisplayName -eq $UpdateName) }
 
         if ($null -ne $UpdateItem) {
 
             # Determine the ContentID instances associated with the update instance
-            $UpdateItemContentIDs = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_CIToContent -ComputerName $global:SiteServer -Filter "CI_ID = $($UpdateItem.CI_ID)" -ErrorAction Stop
+            $UpdateItemContentIDs = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
+                -Class SMS_CIToContent -ComputerName $global:SiteServer -Filter "CI_ID = $($UpdateItem.CI_ID)" `
+                -ErrorAction Stop
             if ($null -ne $UpdateItemContentIDs) {
 
                 # Account for multiple content ID items
                 foreach ($UpdateItemContentID in $UpdateItemContentIDs) {
                     # Get the content files associated with current Content ID
-                    $UpdateItemContent = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_CIContentFiles -ComputerName $global:SiteServer -Filter "ContentID = $($UpdateItemContentID.ContentID)" -ErrorAction Stop
+                    $UpdateItemContent = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
+                        -Class SMS_CIContentFiles -ComputerName $global:SiteServer `
+                        -Filter "ContentID = $($UpdateItemContentID.ContentID)" -ErrorAction Stop
                     if ($null -ne $UpdateItemContent) {
                         # Create new custom object for the update content
                         #write-host $UpdateItemContent.filename

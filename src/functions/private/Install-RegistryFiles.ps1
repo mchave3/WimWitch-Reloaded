@@ -78,10 +78,14 @@ function Install-RegistryFiles {
             # Write-Host $regpath
             Try {
                 Update-Log -Data 'Parsing reg file...'
-            ((Get-Content -Path $regpath -Raw) -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE\OfflineDefaultUser') | Set-Content -Path $regpath -ErrorAction Stop
-            ((Get-Content -Path $regpath -Raw) -replace 'HKEY_LOCAL_MACHINE\\SOFTWARE', 'HKEY_LOCAL_MACHINE\OfflineSoftware') | Set-Content -Path $regpath -ErrorAction Stop
-            ((Get-Content -Path $regpath -Raw) -replace 'HKEY_LOCAL_MACHINE\\SYSTEM', 'HKEY_LOCAL_MACHINE\OfflineSystem') | Set-Content -Path $regpath -ErrorAction Stop
-            ((Get-Content -Path $regpath -Raw) -replace 'HKEY_USERS\\.DEFAULT', 'HKEY_LOCAL_MACHINE\OfflineDefault') | Set-Content -Path $regpath -ErrorAction Stop
+                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_CURRENT_USER', 
+                    'HKEY_LOCAL_MACHINE\OfflineDefaultUser') | Set-Content -Path $regpath -ErrorAction Stop
+                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_LOCAL_MACHINE\\SOFTWARE', 
+                    'HKEY_LOCAL_MACHINE\OfflineSoftware') | Set-Content -Path $regpath -ErrorAction Stop
+                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_LOCAL_MACHINE\\SYSTEM', 
+                    'HKEY_LOCAL_MACHINE\OfflineSystem') | Set-Content -Path $regpath -ErrorAction Stop
+                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_USERS\\.DEFAULT', 
+                    'HKEY_LOCAL_MACHINE\OfflineDefault') | Set-Content -Path $regpath -ErrorAction Stop
             } Catch {
                 Update-log -Data "Couldn't read or update reg file $regpath" -Class Error
                 Update-Log -data $_.Exception.Message -Class Error
