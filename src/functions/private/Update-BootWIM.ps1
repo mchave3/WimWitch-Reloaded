@@ -67,9 +67,9 @@ function Update-BootWIM {
             }
 
             Update-Log -data 'Applying SSU Update' -Class Information
-            Deploy-Updates -class 'PESSU'
+            Deploy-Update -class 'PESSU'
             Update-Log -data 'Applying LCU Update' -Class Information
-            Deploy-Updates -class 'PELCU'
+            Deploy-Update -class 'PELCU'
 
             #Dismount the PE Image
             try {

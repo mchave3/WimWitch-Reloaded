@@ -6,7 +6,7 @@
     This function applies registry modifications to the mounted Windows image by loading offline registry hives and importing registry files.
 
 .NOTES
-    Name:        Install-RegistryFiles.ps1
+    Name:        Install-RegistryFile.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Install-RegistryFiles
+    Install-RegistryFile
 #>
-function Install-RegistryFiles {
+function Install-RegistryFile {
     [CmdletBinding()]
     param(
 

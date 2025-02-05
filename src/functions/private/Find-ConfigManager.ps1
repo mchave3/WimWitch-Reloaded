@@ -53,7 +53,7 @@ function Find-ConfigManager {
                 Update-Log -Data $siteservertext -Class Information
                 if ($CM -eq 'New') {
                     $WPFCMCBImageType.SelectedIndex = 1
-                    Enable-ConfigMgrOptions
+                    Enable-ConfigMgrOption
                 }
     
                 return 0

@@ -6,7 +6,7 @@
     This function is used to install language packs into a mounted WIM file.
 
 .NOTES
-    Name:        Install-LanguagePacks.ps1
+    Name:        Install-LanguagePack.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-30
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Install-LanguagePacks
+    Install-LanguagePack
 #>
-function Install-LanguagePacks {
+function Install-LanguagePack {
     [CmdletBinding()]
     param(
 

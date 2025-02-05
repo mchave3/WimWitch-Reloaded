@@ -75,7 +75,7 @@ function Invoke-MakeItSo {
         }
 
         if ($WPFMISDotNetCheckBox.IsChecked -eq $true) {
-            if ((Test-DotNetExists) -eq $False) { return }
+            if ((Test-DotNetExist) -eq $False) { return }
         }
 
         #Check for free space
@@ -168,7 +168,7 @@ function Invoke-MakeItSo {
 
         #Language Packs and FOD
         if ($WPFCustomCBLangPacks.IsChecked -eq $true) {
-            Install-LanguagePacks
+            Install-LanguagePack
         } else {
             Update-Log -Data 'Language Packs Injection not selected. Skipping...'
         }
@@ -219,7 +219,7 @@ function Invoke-MakeItSo {
 
         #Inject default application association XML
         if ($WPFCustomCBEnableApp.IsChecked -eq $true) {
-            Install-DefaultApplicationAssociations
+            Install-DefaultApplicationAssociation
         } else {
             Update-Log -Data 'Default Application Association not selected. Skipping...' -Class Information
         }
@@ -233,27 +233,27 @@ function Invoke-MakeItSo {
 
         #apply registry files
         if ($WPFCustomCBEnableRegistry.IsChecked -eq $true) {
-            Install-RegistryFiles
+            Install-RegistryFile
         } else {
             Update-Log -Data 'Registry file injection not selected. Skipping...' -Class Information
         }
 
         #Check for updates when ConfigMgr source is selected
         if ($WPFMISCBCheckForUpdates.IsChecked -eq $true) {
-            Invoke-MISUpdates
+            Invoke-MISUpdate
             if (($WPFSourceWIMImgDesTextBox.text -like '*Windows 10*') -or ($WPFSourceWIMImgDesTextBox.text -like '*Windows 11*')) { Get-OneDrive }
         }
 
         #Apply Updates
         If ($WPFUpdatesEnableCheckBox.IsChecked -eq $true) {
-            Deploy-Updates -class 'SSU'
-            Deploy-Updates -class 'LCU'
-            Deploy-Updates -class 'AdobeSU'
-            Deploy-Updates -class 'DotNet'
-            Deploy-Updates -class 'DotNetCU'
-            #if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True){Deploy-Updates -class "Dynamic"}
+            Deploy-Update -class 'SSU'
+            Deploy-Update -class 'LCU'
+            Deploy-Update -class 'AdobeSU'
+            Deploy-Update -class 'DotNet'
+            Deploy-Update -class 'DotNetCU'
+            #if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True){Deploy-Update -class "Dynamic"}
             if ($WPFUpdatesOptionalEnableCheckBox.IsChecked -eq $True) {
-                Deploy-Updates -class 'Optional'
+                Deploy-Update -class 'Optional'
             }
         } else {
             Update-Log -Data 'Updates not enabled' -Class Information
@@ -375,7 +375,7 @@ function Invoke-MakeItSo {
 
         #Apply Dynamic Update to media
         if ($WPFMISCBDynamicUpdates.IsChecked -eq $true) {
-            Deploy-Updates -class 'Dynamic'
+            Deploy-Update -class 'Dynamic'
         } else {
             Update-Log -data 'Dynamic Updates skipped or not applicable' -Class Information
         }

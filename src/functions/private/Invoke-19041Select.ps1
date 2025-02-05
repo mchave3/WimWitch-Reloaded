@@ -74,7 +74,7 @@ function Invoke-19041Select {
             catch { throw }
         }
 
-        Get-FormVariables | Out-Null
+        Get-FormVariable | Out-Null
 
         #Combo Box population
         $Win10VerNums = @('20H2', '21H1', '21H2', '22H2')

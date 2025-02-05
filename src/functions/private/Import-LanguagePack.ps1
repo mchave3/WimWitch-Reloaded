@@ -7,7 +7,7 @@
     It handles different Windows versions and creates necessary directories if they don't exist.
 
 .NOTES
-    Name:        Import-LanguagePacks.ps1
+    Name:        Import-LanguagePack.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -21,9 +21,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Import-LanguagePacks -Winver "21H2" -LPSourceFolder "C:\LanguagePacks\" -WinOS "Windows 10"
+    Import-LanguagePack -Winver "21H2" -LPSourceFolder "C:\LanguagePacks\" -WinOS "Windows 10"
 #>
-function Import-LanguagePacks {
+function Import-LanguagePack {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]

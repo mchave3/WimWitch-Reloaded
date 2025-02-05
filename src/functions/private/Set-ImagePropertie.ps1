@@ -6,7 +6,7 @@
     This function will update image version, properties and binary differential replication settings.
 
 .NOTES
-    Name:        Set-ImageProperties.ps1
+    Name:        Set-ImagePropertie.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Set-ImageProperties -PackageID "ABC00001"
+    Set-ImagePropertie -PackageID "ABC00001"
 #>
-function Set-ImageProperties {
+function Set-ImagePropertie {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]

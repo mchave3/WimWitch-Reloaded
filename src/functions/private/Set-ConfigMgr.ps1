@@ -58,7 +58,7 @@ function Set-ConfigMgr {
     
             if ($CM -eq 'New') {
                 $WPFCMCBImageType.SelectedIndex = 1
-                Enable-ConfigMgrOptions
+                Enable-ConfigMgrOption
             }
     
             return 0

@@ -6,7 +6,7 @@
     This function is used to select the criteria for Language Packs, Local Experience Packs and Features on Demand.
 
 .NOTES
-    Name:        Select-LPFODCriteria.ps1
+    Name:        Select-LPFODRequirement.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-30
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Select-LPFODCriteria
+    Select-LPFODRequirement
 #>
-function Select-LPFODCriteria {
+function Select-LPFODRequirement {
     [CmdletBinding()]
     param(
 
@@ -45,7 +45,7 @@ function Select-LPFODCriteria {
                 Update-Log -Data 'Source not found. Please import some language packs and try again' -Class Error
                 return
             }
-            Select-LanguagePacks -winver $Winver -WinOS $WinOS
+            Select-LanguagePack -winver $Winver -WinOS $WinOS
         }
 
         If ($type -eq 'LXP') {

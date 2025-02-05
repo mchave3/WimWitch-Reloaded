@@ -6,7 +6,7 @@
     Function to apply updates to the mounted image.
 
 .NOTES
-    Name:        Deploy-Updates.ps1
+    Name:        Deploy-Update.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,13 +20,13 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Deploy-Updates -class "SSU"
-    Deploy-Updates -class "LCU"
-    Deploy-Updates -class "AdobeSU"
-    Deploy-Updates -class "DotNet"
-    Deploy-Updates -class "DotNetCU"
+    Deploy-Update -class "SSU"
+    Deploy-Update -class "LCU"
+    Deploy-Update -class "AdobeSU"
+    Deploy-Update -class "DotNet"
+    Deploy-Update -class "DotNetCU"
 #>
-function Deploy-Updates {
+function Deploy-Update {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]

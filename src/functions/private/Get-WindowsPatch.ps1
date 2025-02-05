@@ -7,7 +7,7 @@
     It will download SSU, AdobeSU, LCU, .Net, .Net CU, optional and dynamic updates for the specified OS and build.
 
 .NOTES
-    Name:        Get-WindowsPatches.ps1
+    Name:        Get-WindowsPatch.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -21,9 +21,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Get-WindowsPatches -OS 'Windows 10' -build '1909'
+    Get-WindowsPatch -OS 'Windows 10' -build '1909'
 #>
-function Get-WindowsPatches {
+function Get-WindowsPatch {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]

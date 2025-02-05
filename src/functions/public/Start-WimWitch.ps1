@@ -153,7 +153,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         Show-OpeningText
 
-        # Get-FormVariables #lists all WPF variables
+        # Get-FormVariable #lists all WPF variables
         $global:workdir = Select-WorkingDirectory
         Test-WorkingDirectory
 
@@ -238,20 +238,20 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFCMCBImageType.SelectedIndex = 0
 
 
-        Enable-ConfigMgrOptions
+        Enable-ConfigMgrOption
 
         #Software Update Catalog Source combo box
         $UpdateSourceCombos = @('None', 'OSDSUS', 'ConfigMgr')
         foreach ($UpdateSourceCombo in $UpdateSourceCombos) { $WPFUSCBSelectCatalogSource.Items.Add($UpdateSourceCombo) | Out-Null }
         $WPFUSCBSelectCatalogSource.SelectedIndex = 0
-        Invoke-UpdateTabOptions
+        Invoke-UpdateTabOption
 
         #Check for ConfigMgr and set integration
         if ((Find-ConfigManager) -eq 0) {
 
             if ((Import-CMModule) -eq 0) {
                 $WPFUSCBSelectCatalogSource.SelectedIndex = 2
-                Invoke-UpdateTabOptions
+                Invoke-UpdateTabOption
             }
         } else
         { Update-Log -Data 'Skipping ConfigMgr PowerShell module importation' }
@@ -261,10 +261,10 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 0) {
             Update-Log -Data 'Setting OSDSUS as the Update Catalog' -Class Information
             $WPFUSCBSelectCatalogSource.SelectedIndex = 1
-            Invoke-UpdateTabOptions
+            Invoke-UpdateTabOption
         }
 
-        #Function Get-WindowsPatches($build,$OS)
+        #Function Get-WindowsPatch($build,$OS)
 
         if ($DownloadUpdates -eq $true) {
             #    If (($UpdatePoShModules -eq $true) -and ($WPFUpdatesOSDBOutOfDateTextBlock.Visibility -eq "Visible")) {
@@ -277,7 +277,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             if ($Server2016 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                     Test-Superceded -action delete -OS 'Windows Server' -Build 1607
-                    Get-WindowsPatches -OS 'Windows Server' -build 1607
+                    Get-WindowsPatch -OS 'Windows Server' -build 1607
                 }
 
 
@@ -290,7 +290,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             if ($Server2019 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                     Test-Superceded -action delete -OS 'Windows Server' -Build 1809
-                    Get-WindowsPatches -OS 'Windows Server' -build 1809
+                    Get-WindowsPatch -OS 'Windows Server' -build 1809
                 }
 
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
@@ -302,7 +302,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             if ($Server2022 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                     Test-Superceded -action delete -OS 'Windows Server' -Build 21H2
-                    Get-WindowsPatches -OS 'Windows Server' -build 21H2
+                    Get-WindowsPatch -OS 'Windows Server' -build 21H2
                 }
 
 
@@ -318,7 +318,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1709
-                        Get-WindowsPatches -OS 'Windows 10' -build 1709
+                        Get-WindowsPatch -OS 'Windows 10' -build 1709
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1709
@@ -330,7 +330,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1803
-                        Get-WindowsPatches -OS 'Windows 10' -build 1803
+                        Get-WindowsPatch -OS 'Windows 10' -build 1803
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1803
@@ -341,7 +341,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if (($Win10Version -eq '1809') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1809
-                        Get-WindowsPatches -OS 'Windows 10' -build 1809
+                        Get-WindowsPatch -OS 'Windows 10' -build 1809
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1809
@@ -354,7 +354,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1903
-                        Get-WindowsPatches -OS 'Windows 10' -build 1903
+                        Get-WindowsPatch -OS 'Windows 10' -build 1903
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1903
@@ -366,7 +366,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if (($Win10Version -eq '1909') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1909
-                        Get-WindowsPatches -OS 'Windows 10' -build 1909
+                        Get-WindowsPatch -OS 'Windows 10' -build 1909
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1909
@@ -377,7 +377,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if (($Win10Version -eq '2004') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 2004
-                        Get-WindowsPatches -OS 'Windows 10' -build 2004
+                        Get-WindowsPatch -OS 'Windows 10' -build 2004
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2004
@@ -388,7 +388,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if (($Win10Version -eq '20H2') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 2009
-                        Get-WindowsPatches -OS 'Windows 10' -build 2009
+                        Get-WindowsPatch -OS 'Windows 10' -build 2009
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2009
@@ -399,7 +399,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if (($Win10Version -eq '21H1') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 21H1
-                        Get-WindowsPatches -OS 'Windows 10' -build 21H1
+                        Get-WindowsPatch -OS 'Windows 10' -build 21H1
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H1
@@ -410,7 +410,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if (($Win10Version -eq '21H2') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 21H2
-                        Get-WindowsPatches -OS 'Windows 10' -build 21H2
+                        Get-WindowsPatch -OS 'Windows 10' -build 21H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H2
@@ -421,7 +421,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if ($Win11Version -eq '21H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 11' -Build 21H2
-                        Get-WindowsPatches -OS 'Windows 11' -build 21H2
+                        Get-WindowsPatch -OS 'Windows 11' -build 21H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 21H2
@@ -431,7 +431,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if ($Win11Version -eq '22H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 11' -Build 22H2
-                        Get-WindowsPatches -OS 'Windows 11' -build 22H2
+                        Get-WindowsPatch -OS 'Windows 11' -build 22H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 22H2
@@ -441,7 +441,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if ($Win11Version -eq '23H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 11' -Build 23H2
-                        Get-WindowsPatches -OS 'Windows 11' -build 23H2
+                        Get-WindowsPatch -OS 'Windows 11' -build 23H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 23H2
@@ -576,7 +576,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 }
 
                 if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') { 
-                    Import-LanguagePacks -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                    Import-LanguagePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
                         -LPSourceFolder $WPFImportOtherTBPath.text 
                 }
                 if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { 
@@ -590,13 +590,13 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         })
 
         #Button Select LP's for importation
-        $WPFCustomBLangPacksSelect.add_click({ Select-LPFODCriteria -type 'LP' })
+        $WPFCustomBLangPacksSelect.add_click({ Select-LPFODRequirement -type 'LP' })
 
         #Button to select FODs for importation
-        $WPFCustomBFODSelect.add_click({ Select-LPFODCriteria -type 'FOD' })
+        $WPFCustomBFODSelect.add_click({ Select-LPFODRequirement -type 'FOD' })
 
         #Button to select LXPs for importation
-        $WPFCustomBLEPSelect.add_click({ Select-LPFODCriteria -type 'LXP' })
+        $WPFCustomBLEPSelect.add_click({ Select-LPFODRequirement -type 'LXP' })
 
         #Button to select PS1 script
         $WPFCustomBSelectPath.add_click({
@@ -626,7 +626,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         #$WPFCMBFilePathSelect.Add_Click({ })
 
         #Button to add DP/DPG to list box on ConfigMgr tab
-        $WPFCMBAddDP.Add_Click({ Select-DistributionPoints })
+        $WPFCMBAddDP.Add_Click({ Select-DistributionPoint })
 
         #Button to remove DP/DPG from list box on ConfigMgr tab
         $WPFCMBRemoveDP.Add_Click({
@@ -638,10 +638,10 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #Combo Box dynamic change ConfigMgr type
-        $WPFCMCBImageType.add_SelectionChanged({ Enable-ConfigMgrOptions })
+        $WPFCMCBImageType.add_SelectionChanged({ Enable-ConfigMgrOption })
 
         #Combo Box Software Update Catalog source
-        $WPFUSCBSelectCatalogSource.add_SelectionChanged({ Invoke-UpdateTabOptions })
+        $WPFUSCBSelectCatalogSource.add_SelectionChanged({ Invoke-UpdateTabOption })
 
         #Button to remove items from Language Packs List Box
         $WPFCustomBLangPacksRemove.Add_Click({
@@ -670,13 +670,13 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #Button to select default app association XML
-        $WPFCustomBDefaultApp.Add_Click({ Select-DefaultApplicationAssociations })
+        $WPFCustomBDefaultApp.Add_Click({ Select-DefaultApplicationAssociation })
 
         #Button to select start menu XML
         $WPFCustomBStartMenu.Add_Click({ Select-StartMenu })
 
         #Button to select registry files
-        $WPFCustomBRegistryAdd.Add_Click({ Select-RegFiles })
+        $WPFCustomBRegistryAdd.Add_Click({ Select-RegFile })
 
         #Button to remove registry files
         $WPFCustomBRegistryRemove.Add_Click({

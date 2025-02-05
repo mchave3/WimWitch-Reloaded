@@ -6,7 +6,7 @@
     This function is used to get all the variables that are used in the WPF forms.
 
 .NOTES
-    Name:        Get-FormVariables.ps1
+    Name:        Get-FormVariable.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Get-FormVariables
+    Get-FormVariable
 #>
-function Get-FormVariables {
+function Get-FormVariable {
     [CmdletBinding()]
     param(
 
@@ -30,7 +30,7 @@ function Get-FormVariables {
 
     process {
         if ($global:ReadmeDisplay -ne $true) { 
-            Write-Host 'If you need to reference this display again, run Get-FormVariables' -ForegroundColor Yellow; $global:ReadmeDisplay = $true 
+            Write-Host 'If you need to reference this display again, run Get-FormVariable' -ForegroundColor Yellow; $global:ReadmeDisplay = $true 
         }
         Get-Variable WPF*
     }

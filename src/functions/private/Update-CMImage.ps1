@@ -42,7 +42,7 @@ function Update-CMImage {
         Update-Log -Data 'Refreshing image proprties from the WIM' -Class Information
         Invoke-CimMethod -InputObject $cim -MethodName "ReloadImageProperties" | Out-Null
 
-        Set-ImageProperties -PackageID $WPFCMTBPackageID.Text
+        Set-ImagePropertie -PackageID $WPFCMTBPackageID.Text
         Save-Configuration -CM -filename $WPFCMTBPackageID.Text
 
         Set-Location $global:workdir

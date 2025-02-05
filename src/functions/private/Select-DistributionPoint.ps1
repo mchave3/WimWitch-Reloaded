@@ -6,7 +6,7 @@
     This function allows you to select ConfigMgr distribution points or distribution point groups.
 
 .NOTES
-    Name:        Select-DistributionPoints.ps1
+    Name:        Select-DistributionPoint.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Select-DistributionPoints
+    Select-DistributionPoint
 #>
-function Select-DistributionPoints {
+function Select-DistributionPoint {
     [CmdletBinding()]
     param(
 

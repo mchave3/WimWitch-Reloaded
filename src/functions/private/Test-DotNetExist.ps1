@@ -6,7 +6,7 @@
     This function checks if the .Net binaries are present in the import folder for the current build of Windows.
 
 .NOTES
-    Name:        Test-DotNetExists.ps1
+    Name:        Test-DotNetExist.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-30
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Test-DotNetExists
+    Test-DotNetExist
 #>
-function Test-DotNetExists {
+function Test-DotNetExist {
     [CmdletBinding()]
     param(
 
