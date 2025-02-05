@@ -609,17 +609,18 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Button to Select ConfigMgr Image Package
         $WPFCMBSelectImage.Add_Click({
-                $image = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage `
-                -ComputerName $global:SiteServer) | Select-Object -Property Name, version, language, ImageOSVersion, `
-                PackageID, Description | Out-GridView -Title 'Pick an image' -PassThru
-                $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
-                if ((Test-Path -Path $path ) -eq $True) {
-                    # write-host "True"
-                    Get-Configuration -filename $path
-                } else {
-                    Get-ImageInfo -PackID $image.PackageID
-                }
-            })
+            $image = Get-CimInstance -Namespace "root\SMS\Site_$($global:SiteCode)" -ClassName SMS_ImagePackage `
+                -ComputerName $global:SiteServer | 
+                Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description | 
+                Out-GridView -Title 'Pick an image' -PassThru
+            
+            $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
+            if ((Test-Path -Path $path ) -eq $True) {
+                Get-Configuration -filename $path
+            } else {
+                Get-ImageInfo -PackID $image.PackageID
+            }
+        })
 
         #Button to select new file path (may not need)
         #$WPFCMBFilePathSelect.Add_Click({ })

@@ -79,9 +79,9 @@ function Invoke-MEMCMUpdateSupersedence {
                 ))
                 foreach ($UpdateCab in $UpdateCabs) {
                     Update-Log -data "Checking update file name $UpdateCab" -Class Information
-                    $UpdateItem = Get-WmiObject `
+                    $UpdateItem = Get-CimInstance `
                         -Namespace "root\SMS\Site_$($global:SiteCode)" `
-                        -Class SMS_SoftwareUpdate `
+                        -ClassName SMS_SoftwareUpdate `
                         -ComputerName $global:SiteServer `
                         -Filter $WMIQueryFilter `
                         -ErrorAction Stop | 
