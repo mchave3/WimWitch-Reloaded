@@ -74,9 +74,12 @@ function Invoke-MSUpdateItemDownload {
 
             #Update-Log -data "This update appears to be optional. Skipping..." -Class Warning
             #return
-            if ($WPFUpdatesCBEnableOptional.IsChecked -eq $True) { Update-Log -data 'This update appears to be optional. Downloading...' -Class Information }
+            if ($WPFUpdatesCBEnableOptional.IsChecked -eq $True) { 
+                Update-Log -data 'This update appears to be optional. Downloading...' -Class Information 
+            }
             else {
-                Update-Log -data 'This update appears to be optional, but are not enabled for download. Skipping...' -Class Information
+                Update-Log -data 'This update appears to be optional, but are not enabled for download. Skipping...' `
+                -Class Information
                 return
             }
             #Update-Log -data "This update appears to be optional. Downloading..." -Class Information
@@ -86,9 +89,6 @@ function Invoke-MSUpdateItemDownload {
         }
 
         if ($UpdateName -like '*Windows 10*') {
-            #here
-            #if (($UpdateName -like "* 1903 *") -or ($UpdateName -like "* 1909 *") -or ($UpdateName -like "* 2004 *") -or ($UpdateName -like "* 20H2 *") -or ($UpdateName -like "* 21H1 *") -or ($UpdateName -like "* 21H2 *") -or ($UpdateName -like "* 22H2 *")){$WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10, version 1903 and later'"}
-
             if (($UpdateName -like '* 1903 *') -or ($UpdateName -like '* 1909 *') -or ($UpdateName -like '* 2004 *') -or 
                 ($UpdateName -like '* 20H2 *') -or ($UpdateName -like '* 21H1 *') -or ($UpdateName -like '* 21H2 *') -or 
                 ($UpdateName -like '* 22H2 *')) { 
@@ -96,7 +96,9 @@ function Invoke-MSUpdateItemDownload {
             }
             else { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10'" }
             if ($updateName -like '*Dynamic*') {
-                if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10 Dynamic Update'" }
+                if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True) { 
+                    $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10 Dynamic Update'" 
+                }
             }
             #else{
             #Update-Log -data "Dynamic updates have not been selected for downloading. Skipping..." -Class Information
@@ -108,14 +110,22 @@ function Invoke-MSUpdateItemDownload {
             { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 11'" }
 
             if ($updateName -like '*Dynamic*') {
-                if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 11 Dynamic Update'" }
+                if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True) { 
+                    $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 11 Dynamic Update'" 
+                }
             }
 
         }
 
-        if (($UpdateName -like '*Windows Server*') -and ($ver -eq '1607')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2016'" }
-        if (($UpdateName -like '*Windows Server*') -and ($ver -eq '1809')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'" }
-        if (($UpdateName -like '*Windows Server*') -and ($ver -eq '21H2')) { $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'" }
+        if (($UpdateName -like '*Windows Server*') -and ($ver -eq '1607')) { 
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2016'" 
+        }
+        if (($UpdateName -like '*Windows Server*') -and ($ver -eq '1809')) { 
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'" 
+        }
+        if (($UpdateName -like '*Windows Server*') -and ($ver -eq '21H2')) { 
+            $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'" 
+        }
 
         $UpdateItem = Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate `
             -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 

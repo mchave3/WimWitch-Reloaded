@@ -3,7 +3,8 @@
     Install WimWitch ConfigMgr console extension.
 
 .DESCRIPTION
-    This function installs the WimWitch extension for the Configuration Manager console. It handles the installation process and validates the results.
+    This function installs the WimWitch extension for the Configuration Manager console. 
+    It handles the installation process and validates the results.
 
 .NOTES
     Name:        Install-WWCMConsoleExtension.ps1

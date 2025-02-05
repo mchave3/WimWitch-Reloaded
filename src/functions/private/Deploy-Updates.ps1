@@ -95,10 +95,19 @@ function Deploy-Updates {
                         $expandArgs = @("`"$text`"", '-F:*', "`"$mediafolder`"")
                         Start-Process -FilePath c:\windows\system32\expand.exe -ArgumentList $expandArgs -Wait
                     }
-                } elseif ($IsPE -eq $true) { Add-WindowsPackage -Path ($global:workdir + '\staging\mount') -PackagePath $compound -ErrorAction stop | Out-Null }
+                } elseif ($IsPE -eq $true) { 
+                    Add-WindowsPackage -Path ($global:workdir + '\staging\mount') `
+                    -PackagePath $compound -ErrorAction stop | Out-Null 
+                }
                 else {
                     if ($class -eq 'LCU') {
-                        if (($os -eq 'Windows 10') -and (($buildnum -eq '2004') -or ($buildnum -eq '2009') -or ($buildnum -eq '20H2') -or ($buildnum -eq '21H1') -or ($buildnum -eq '21H2') -or ($buildnum -eq '22H2'))) {
+                        if (($os -eq 'Windows 10') -and 
+                        (($buildnum -eq '2004') -or 
+                        ($buildnum -eq '2009') -or 
+                        ($buildnum -eq '20H2') -or 
+                        ($buildnum -eq '21H1') -or 
+                        ($buildnum -eq '21H2') -or 
+                        ($buildnum -eq '22H2'))) {
                             Update-Log -data 'Processing the LCU package to retrieve SSU...' -class information
                             Deploy-LCU -packagepath $compound
                         } elseif ($os -eq 'Windows 11') {

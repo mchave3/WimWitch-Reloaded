@@ -122,19 +122,24 @@ function Invoke-MEMCMUpdatecatalog {
         }
 
         if ($null -eq $updates) {
-            Update-Log -data 'No updates found. Product is likely not synchronized. Continuing with build...' -class Warning
+            Update-Log -data 'No updates found. Product is likely not synchronized. Continuing with build...' `
+            -class Warning
             Set-Location $global:workdir
             return
         }
 
         foreach ($update in $updates) {
-            if ((($update.localizeddisplayname -notlike 'Feature update*') -and ($update.localizeddisplayname -notlike 'Upgrade to Windows 11*' )) -and ($update.localizeddisplayname -notlike '*Language Pack*') -and ($update.localizeddisplayname -notlike '*editions),*')) {
+            if ((($update.localizeddisplayname -notlike 'Feature update*') -and 
+            ($update.localizeddisplayname -notlike 'Upgrade to Windows 11*' )) -and 
+            ($update.localizeddisplayname -notlike '*Language Pack*') -and 
+            ($update.localizeddisplayname -notlike '*editions),*')) {
                 Update-Log -Data 'Checking the following update:' -Class Information
                 Update-Log -data $update.localizeddisplayname -Class Information
                 #write-host "Display Name"
                 #write-host $update.LocalizedDisplayName
                 #            if ($ver -eq  "20H2"){$ver = "2009"} #Another 20H2 naming work around
-                Invoke-MSUpdateItemDownload -FilePath "$global:workdir\updates\$Prod\$ver\" -UpdateName $update.LocalizedDisplayName
+                Invoke-MSUpdateItemDownload -FilePath "$global:workdir\updates\$Prod\$ver\" `
+                -UpdateName $update.LocalizedDisplayName
             }
         }
 
