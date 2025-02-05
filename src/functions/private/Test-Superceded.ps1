@@ -32,7 +32,7 @@ function Test-Superceded {
 
     process {
         Update-Log -Data 'Checking WIM Witch Update store for superseded updates' -Class Information
-        $path = $global:workdir + '\updates\' + $OS + '\' + $Build + '\' #sets base path
+        $path = $Script:workdir + '\updates\' + $OS + '\' + $Build + '\' #sets base path
     
         if ((Test-Path -Path $path) -eq $false) {
             Update-Log -Data 'No updates found, likely not yet downloaded. Skipping supersedense check...' -Class Warning

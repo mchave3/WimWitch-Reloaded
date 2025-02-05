@@ -30,7 +30,7 @@ function Remove-OSIndex {
 
     process {
         Update-Log -Data 'Attempting to remove unwanted image indexes' -Class Information
-        $wimname = Get-Item -Path $global:workdir\Staging\*.wim
+        $wimname = Get-Item -Path $Script:workdir\Staging\*.wim
     
         Update-Log -Data "Found Image $wimname" -Class Information
         $IndexesAll = Get-WindowsImage -ImagePath $wimname | ForEach-Object { $_.ImageName }

@@ -65,6 +65,6 @@ function New-CMImagePackage {
         }
 
         Save-Configuration -CM $PackageID
-        Set-Location $global:workdir
+        Set-Location $Script:workdir
     }
 }

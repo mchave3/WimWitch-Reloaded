@@ -55,7 +55,7 @@ function Update-Log {
     )
 
     process {
-        $global:ScriptLogFilePath = $Log
+        $Script:ScriptLogFilePath = $Log
         $LogString = "$(Get-Date) $Class  -  $Data"
         $HostString = "$(Get-Date) $Class  -  $Data"
     

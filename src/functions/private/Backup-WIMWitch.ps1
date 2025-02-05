@@ -37,7 +37,7 @@ function Backup-WIMWitch {
     
         try {
             Update-Log -data 'Copy script to backup folder...' -Class Information
-            Copy-Item -Path $scriptname -Destination $global:workdir\backup -ErrorAction Stop
+            Copy-Item -Path $scriptname -Destination $Script:workdir\backup -ErrorAction Stop
             Update-Log -Data 'Successfully copied...' -Class Information
         } catch {
             Update-Log -data "Couldn't copy the WIM Witch script. My guess is a permissions issue" -Class Error
@@ -47,7 +47,7 @@ function Backup-WIMWitch {
     
         try {
             Update-Log -data 'Renaming archived script...' -Class Information
-            Rename-Name -file $global:workdir\backup\$scriptname -extension '.ps1'
+            Rename-Name -file $Script:workdir\backup\$scriptname -extension '.ps1'
             Update-Log -data 'Backup successfully renamed for archiving' -class Information
         } catch {
     

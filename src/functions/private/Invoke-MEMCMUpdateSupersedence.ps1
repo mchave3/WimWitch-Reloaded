@@ -60,29 +60,29 @@ function Invoke-MEMCMUpdateSupersedence {
 
         Update-Log -data 'Checking files for supersedense...' -Class Information
 
-        if ((Test-Path -Path "$global:workdir\updates\$Prod\$ver\") -eq $False) {
+        if ((Test-Path -Path "$Script:workdir\updates\$Prod\$ver\") -eq $False) {
             Update-Log -Data 'Folder doesnt exist. Skipping supersedence check...' -Class Warning
             return
         }
 
         #For every folder under updates\prod\ver
-        $FolderFirstLevels = Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\"
+        $FolderFirstLevels = Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\"
         foreach ($FolderFirstLevel in $FolderFirstLevels) {
 
             #For every folder under updates\prod\ver\class
-            $FolderSecondLevels = Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel"
+            $FolderSecondLevels = Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel"
             foreach ($FolderSecondLevel in $FolderSecondLevels) {
 
                 #for every cab under updates\prod\ver\class\update
                 $UpdateCabs = (Get-ChildItem -Path (
-                    "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
+                    "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
                 ))
                 foreach ($UpdateCab in $UpdateCabs) {
                     Update-Log -data "Checking update file name $UpdateCab" -Class Information
                     $UpdateItem = Get-CimInstance `
-                        -Namespace "root\SMS\Site_$($global:SiteCode)" `
+                        -Namespace "root\SMS\Site_$($Script:SiteCode)" `
                         -ClassName SMS_SoftwareUpdate `
-                        -ComputerName $global:SiteServer `
+                        -ComputerName $Script:SiteServer `
                         -Filter $WMIQueryFilter `
                         -ErrorAction Stop | 
                         Where-Object { ($_.LocalizedDisplayName -eq $FolderSecondLevel) }
@@ -93,7 +93,7 @@ function Invoke-MEMCMUpdateSupersedence {
                     } else {
                         Update-Log -Data "Update $UpdateCab is superseded. Deleting file..." -Class Warning
                         Remove-Item -Path (
-                            "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel\$UpdateCab"
+                            "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel\$UpdateCab"
                         )
                     }
                 }
@@ -101,24 +101,24 @@ function Invoke-MEMCMUpdateSupersedence {
         }
 
         Update-Log -Data 'Cleaning folders...' -Class Information
-        $FolderFirstLevels = Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\"
+        $FolderFirstLevels = Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\"
         foreach ($FolderFirstLevel in $FolderFirstLevels) {
 
             #For every folder under updates\prod\ver\class
-            $FolderSecondLevels = Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel"
+            $FolderSecondLevels = Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel"
             foreach ($FolderSecondLevel in $FolderSecondLevels) {
 
                 #for every cab under updates\prod\ver\class\update
-                $UpdateCabs = (Get-ChildItem -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel")
+                $UpdateCabs = (Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel")
 
                 if ($null -eq $UpdateCabs) {
                     Update-Log -Data "$FolderSecondLevel is empty. Deleting...." -Class Warning
-                    Remove-Item -Path "$global:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
+                    Remove-Item -Path "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
                 }
             }
         }
 
-        Set-Location $global:workdir
+        Set-Location $Script:workdir
         Update-Log -data 'Supersedence check complete' -class Information
     }
 }

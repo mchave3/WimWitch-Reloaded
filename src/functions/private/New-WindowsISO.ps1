@@ -45,8 +45,8 @@ function New-WindowsISO {
         $Location = ${env:ProgramFiles(x86)}
         $executable = $location + 
             '\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe'
-        $bootbin = $global:workdir + '\staging\media\efi\microsoft\boot\efisys.bin'
-        $source = $global:workdir + '\staging\media'
+        $bootbin = $Script:workdir + '\staging\media\efi\microsoft\boot\efisys.bin'
+        $source = $Script:workdir + '\staging\media'
         $folder = $WPFMISTBFilePath.text
         $file = $WPFMISTBISOFileName.text
         $dest = "$folder\$file"

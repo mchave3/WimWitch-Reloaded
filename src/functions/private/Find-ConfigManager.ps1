@@ -41,9 +41,9 @@ function Find-ConfigManager {
                 #$WPFCMTBSiteServer.text = "nt-tpmemcm.notorious.local"
                 #$WPFCMTBSitecode.text = "NTP"
     
-                $global:SiteCode = $WPFCMTBSitecode.text
-                $global:SiteServer = $WPFCMTBSiteServer.Text
-                $global:CMDrive = $WPFCMTBSitecode.text + ':'
+                $Script:SiteCode = $WPFCMTBSitecode.text
+                $Script:SiteServer = $WPFCMTBSiteServer.Text
+                $Script:CMDrive = $WPFCMTBSitecode.text + ':'
     
                 Update-Log -Data 'ConfigMgr detected and properties set' -Class Information
                 Update-Log -Data 'ConfigMgr feature enabled' -Class Information
@@ -65,10 +65,10 @@ function Find-ConfigManager {
             }
         }
     
-        if ((Test-Path -Path $global:workdir\ConfigMgr\SiteInfo.XML) -eq $true) {
+        if ((Test-Path -Path $Script:workdir\ConfigMgr\SiteInfo.XML) -eq $true) {
             Update-Log -data 'ConfigMgr Site info XML found' -class Information
     
-            $settings = Import-Clixml -Path $global:workdir\ConfigMgr\SiteInfo.xml -ErrorAction Stop
+            $settings = Import-Clixml -Path $Script:workdir\ConfigMgr\SiteInfo.xml -ErrorAction Stop
     
             $WPFCMTBSitecode.text = $settings.SiteCode
             $WPFCMTBSiteServer.text = $settings.SiteServer
@@ -80,9 +80,9 @@ function Find-ConfigManager {
             $siteservertext = 'Site Server - ' + $WPFCMTBSiteServer.text
             Update-Log -Data $siteservertext -Class Information
     
-            $global:SiteCode = $WPFCMTBSitecode.text
-            $global:SiteServer = $WPFCMTBSiteServer.Text
-            $global:CMDrive = $WPFCMTBSitecode.text + ':'
+            $Script:SiteCode = $WPFCMTBSitecode.text
+            $Script:SiteServer = $WPFCMTBSiteServer.Text
+            $Script:CMDrive = $WPFCMTBSitecode.text + ':'
     
             return 0
         }

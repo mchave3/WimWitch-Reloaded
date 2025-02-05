@@ -36,7 +36,7 @@ function Get-OneDrive {
 
         Update-Log -Data 'Downloading latest 32-bit OneDrive agent installer...' -class Information
         $DownloadUrl = 'https://go.microsoft.com/fwlink/p/?LinkId=248256'
-        $DownloadPath = "$global:workdir\updates\OneDrive"
+        $DownloadPath = "$Script:workdir\updates\OneDrive"
         $DownloadFile = 'OneDriveSetup.exe'
 
         if (!(Test-Path "$DownloadPath")) { New-Item -Path $DownloadPath -ItemType Directory -Force | Out-Null }
@@ -49,7 +49,7 @@ function Get-OneDrive {
 
         Update-Log -Data 'Downloading latest 64-bit OneDrive agent installer...' -class Information
         $DownloadUrl = 'https://go.microsoft.com/fwlink/?linkid=2181064'
-        $DownloadPath = "$global:workdir\updates\OneDrive\x64"
+        $DownloadPath = "$Script:workdir\updates\OneDrive\x64"
         $DownloadFile = 'OneDriveSetup.exe'
 
         if (!(Test-Path "$DownloadPath")) { New-Item -Path $DownloadPath -ItemType Directory -Force | Out-Null }

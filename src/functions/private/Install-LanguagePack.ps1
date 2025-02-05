@@ -41,7 +41,7 @@ function Install-LanguagePack {
     
         $mountdir = $WPFMISMountTextBox.text
     
-        $LPSourceFolder = $global:workdir + '\imports\Lang\' + $WinOS + '\' + $winver + '\LanguagePacks\'
+        $LPSourceFolder = $Script:workdir + '\imports\Lang\' + $WinOS + '\' + $winver + '\LanguagePacks\'
         $items = $WPFCustomLBLangPacks.items
     
         foreach ($item in $items) {

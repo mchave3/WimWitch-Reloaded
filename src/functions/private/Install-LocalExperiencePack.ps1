@@ -42,7 +42,7 @@ function Install-LocalExperiencePack {
             $winver = '2004' 
         }
 
-        $LPSourceFolder = $global:workdir + '\imports\Lang\' + $WinOS + '\' + $winver + '\localexperiencepack\'
+        $LPSourceFolder = $Script:workdir + '\imports\Lang\' + $WinOS + '\' + $winver + '\localexperiencepack\'
         $items = $WPFCustomLBLEP.items
 
         foreach ($item in $items) {

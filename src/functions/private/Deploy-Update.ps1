@@ -55,7 +55,7 @@ function Deploy-Update {
         }
     
         If (($WPFSourceWimVerTextBox.text -like '10.0.18362.*') -and (($class -eq 'Dynamic') -or ($class -like 'PE*'))) {
-            $windowsver = Get-WindowsImage -ImagePath ($global:workdir + '\staging\' + $WPFMISWimNameTextBox.text) -Index 1
+            $windowsver = Get-WindowsImage -ImagePath ($Script:workdir + '\staging\' + $WPFMISWimNameTextBox.text) -Index 1
             $Vardate = (Get-Date -Year 2019 -Month 10 -Day 01)
             if ($windowsver.CreatedTime -gt $vardate) { $buildnum = 1909 }
             else
@@ -72,7 +72,7 @@ function Deploy-Update {
             $class = 'LCU'
         }
     
-        $path = $global:workdir + '\updates\' + $OS + '\' + $buildnum + '\' + $class + '\'
+        $path = $Script:workdir + '\updates\' + $OS + '\' + $buildnum + '\' + $class + '\'
     
     
         if ((Test-Path $path) -eq $False) {
@@ -87,7 +87,7 @@ function Deploy-Update {
             try {
                 if ($class -eq 'Dynamic') {
                     #Update-Log -data "Applying Dynamic to media" -Class Information
-                    $mediafolder = $global:workdir + '\staging\media\sources'
+                    $mediafolder = $Script:workdir + '\staging\media\sources'
                     $DynUpdates = (Get-ChildItem -Path $compound -Name)
                     foreach ($DynUpdate in $DynUpdates) {
     
@@ -96,7 +96,7 @@ function Deploy-Update {
                         Start-Process -FilePath c:\windows\system32\expand.exe -ArgumentList $expandArgs -Wait
                     }
                 } elseif ($IsPE -eq $true) { 
-                    Add-WindowsPackage -Path ($global:workdir + '\staging\mount') `
+                    Add-WindowsPackage -Path ($Script:workdir + '\staging\mount') `
                     -PackagePath $compound -ErrorAction stop | Out-Null 
                 }
                 else {

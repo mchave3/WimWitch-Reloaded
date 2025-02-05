@@ -30,7 +30,7 @@ function Select-Config {
 
     process {
         $SourceXML = New-Object System.Windows.Forms.OpenFileDialog -Property @{
-            InitialDirectory = "$global:workdir\Configs"
+            InitialDirectory = "$Script:workdir\Configs"
             Filter           = 'XML (*.XML)|'
         }
         $null = $SourceXML.ShowDialog()

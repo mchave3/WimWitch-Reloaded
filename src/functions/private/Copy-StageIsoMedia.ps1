@@ -41,7 +41,7 @@ function Copy-StageIsoMedia {
         #create staging folder
         try {
             Update-Log -Data 'Creating staging folder for media' -Class Information
-            New-Item -Path $global:workdir\staging -Name 'Media' -ItemType Directory -ErrorAction Stop | Out-Null
+            New-Item -Path $Script:workdir\staging -Name 'Media' -ItemType Directory -ErrorAction Stop | Out-Null
             Update-Log -Data 'Media staging folder has been created' -Class Information
         } catch {
             Update-Log -Data 'Could not create staging folder' -Class Error
@@ -51,7 +51,7 @@ function Copy-StageIsoMedia {
         #copy source to staging
         try {
             Update-Log -data 'Staging media binaries...' -Class Information
-            Copy-Item -Path $global:workdir\imports\iso\$OS\$Ver\* -Destination $global:workdir\staging\media -Force -Recurse -ErrorAction Stop
+            Copy-Item -Path $Script:workdir\imports\iso\$OS\$Ver\* -Destination $Script:workdir\staging\media -Force -Recurse -ErrorAction Stop
             Update-Log -data 'Media files have been staged' -Class Information
         } catch {
             Update-Log -Data 'Failed to stage media binaries...' -Class Error

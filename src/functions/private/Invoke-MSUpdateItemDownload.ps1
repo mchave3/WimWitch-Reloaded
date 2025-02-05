@@ -127,23 +127,23 @@ function Invoke-MSUpdateItemDownload {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'" 
         }
 
-        $UpdateItem = Get-CimInstance -Namespace "root\SMS\Site_$($global:SiteCode)" -ClassName SMS_SoftwareUpdate `
-            -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
+        $UpdateItem = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+            -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
             Where-Object { ($_.LocalizedDisplayName -eq $UpdateName) }
 
         if ($null -ne $UpdateItem) {
 
             # Determine the ContentID instances associated with the update instance
-            $UpdateItemContentIDs = Get-CimInstance -Namespace "root\SMS\Site_$($global:SiteCode)" `
-                -ClassName SMS_CIToContent -ComputerName $global:SiteServer -Filter "CI_ID = $($UpdateItem.CI_ID)" `
+            $UpdateItemContentIDs = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
+                -ClassName SMS_CIToContent -ComputerName $Script:SiteServer -Filter "CI_ID = $($UpdateItem.CI_ID)" `
                 -ErrorAction Stop
             if ($null -ne $UpdateItemContentIDs) {
 
                 # Account for multiple content ID items
                 foreach ($UpdateItemContentID in $UpdateItemContentIDs) {
                     # Get the content files associated with current Content ID
-                    $UpdateItemContent = Get-CimInstance -Namespace "root\SMS\Site_$($global:SiteCode)" `
-                        -ClassName SMS_CIContentFiles -ComputerName $global:SiteServer `
+                    $UpdateItemContent = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
+                        -ClassName SMS_CIContentFiles -ComputerName $Script:SiteServer `
                         -Filter "ContentID = $($UpdateItemContentID.ContentID)" -ErrorAction Stop
                     if ($null -ne $UpdateItemContent) {
                         # Create new custom object for the update content

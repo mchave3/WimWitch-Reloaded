@@ -34,7 +34,7 @@ function Select-DistributionPoint {
 
         if ($WPFCMCBDPDPG.SelectedItem -eq 'Distribution Points') {
 
-            $SelectedDPs = (Get-CMDistributionPoint -SiteCode $global:sitecode).NetworkOSPath | `
+            $SelectedDPs = (Get-CMDistributionPoint -SiteCode $Script:sitecode).NetworkOSPath | `
                 Out-GridView -Title 'Select Distribution Points' -PassThru
             foreach ($SelectedDP in $SelectedDPs) { $WPFCMLBDPs.Items.Add($SelectedDP) }
         }
@@ -43,6 +43,6 @@ function Select-DistributionPoint {
                 Out-GridView -Title 'Select Distribution Point Groups' -PassThru
             foreach ($SelectedDP in $SelectedDPs) { $WPFCMLBDPs.Items.Add($SelectedDP) }
         }
-        Set-Location $global:workdir
+        Set-Location $Script:workdir
     }
 }

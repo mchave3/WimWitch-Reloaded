@@ -41,7 +41,7 @@ function Select-LPFODRequirement {
         }
 
         if ($type -eq 'LP') {
-            if ((Test-Path -Path "$global:workdir\imports\Lang\$WinOS\$Winver\LanguagePacks") -eq $false) {
+            if ((Test-Path -Path "$Script:workdir\imports\Lang\$WinOS\$Winver\LanguagePacks") -eq $false) {
                 Update-Log -Data 'Source not found. Please import some language packs and try again' -Class Error
                 return
             }
@@ -49,7 +49,7 @@ function Select-LPFODRequirement {
         }
 
         If ($type -eq 'LXP') {
-            if ((Test-Path -Path "$global:workdir\imports\Lang\$WinOS\$Winver\localexperiencepack") -eq $false) {
+            if ((Test-Path -Path "$Script:workdir\imports\Lang\$WinOS\$Winver\localexperiencepack") -eq $false) {
                 Update-Log -Data 'Source not found. Please import some Local Experience Packs and try again' -Class Error
                 return
             }
@@ -57,7 +57,7 @@ function Select-LPFODRequirement {
         }
 
         if ($type -eq 'FOD') {
-            if ((Test-Path -Path "$global:workdir\imports\FODs\$WinOS\$Winver\") -eq $false) {
+            if ((Test-Path -Path "$Script:workdir\imports\FODs\$WinOS\$Winver\") -eq $false) {
                 Update-Log -Data 'Source not found. Please import some Demanding Features and try again' -Class Error
                 return
             }

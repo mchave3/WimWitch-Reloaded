@@ -59,7 +59,7 @@ function Copy-OneDrivex64 {
         try {
     
             Update-Log -data 'Copying updated OneDrive agent installer...' -Class Information
-            Copy-Item "$global:workdir\updates\OneDrive\x64\OneDriveSetup.exe" -Destination "$mountpath\Windows\System32" -Force -ErrorAction Stop
+            Copy-Item "$Script:workdir\updates\OneDrive\x64\OneDriveSetup.exe" -Destination "$mountpath\Windows\System32" -Force -ErrorAction Stop
             Update-Log -Data 'OneDrive installer successfully copied.' -Class Information
         } catch {
             Update-Log -data "Couldn't copy the OneDrive installer file." -class Error

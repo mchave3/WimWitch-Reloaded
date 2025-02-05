@@ -51,22 +51,22 @@ function Invoke-2XXXPreReq {
         if ($regvalues.UBR -lt '985') {
             Update-Log -data 'The image requires an additional required SSU.' -class Information
             Update-Log -data 'Checking to see if the required SSU exists...' -class Information
-            if ((Test-Path "$global:workdir\updates\Windows 10\2XXX_prereq\SSU-19041.985-x64.cab") -eq $false) {
+            if ((Test-Path "$Script:workdir\updates\Windows 10\2XXX_prereq\SSU-19041.985-x64.cab") -eq $false) {
                 Update-Log -data 'The required SSU does not exist. Downloading it now...' -class Information
 
                 try {
-                    Invoke-WebRequest -Uri $KB_URI -OutFile "$global:workdir\staging\extract_me.cab" -ErrorAction stop
+                    Invoke-WebRequest -Uri $KB_URI -OutFile "$Script:workdir\staging\extract_me.cab" -ErrorAction stop
                 } catch {
                     Update-Log -data 'Failed to download the update' -class Error
                     Update-Log -data $_.Exception.Message -Class Error
                     return 1
                 }
 
-                if ((Test-Path "$global:workdir\updates\Windows 10\2XXX_prereq") -eq $false) {
+                if ((Test-Path "$Script:workdir\updates\Windows 10\2XXX_prereq") -eq $false) {
 
                     try {
                         Update-Log -data 'The folder for the required SSU does not exist. Creating it now...' -class Information
-                        New-Item -Path "$global:workdir\updates\Windows 10" -Name '2XXX_prereq' `
+                        New-Item -Path "$Script:workdir\updates\Windows 10" -Name '2XXX_prereq' `
                             -ItemType Directory -ErrorAction stop | Out-Null
                         Update-Log -data 'The folder has been created' -class information
                     } catch {
@@ -79,9 +79,9 @@ function Invoke-2XXXPreReq {
                 try {
                     Update-Log -data 'Extracting the SSU from the May 2021 LCU...' -class Information
                     Start-Process $executable -args @(
-                        "`"$global:workdir\staging\extract_me.cab`"",
+                        "`"$Script:workdir\staging\extract_me.cab`"",
                         '/f:*SSU*.CAB',
-                        "`"$global:workdir\updates\Windows 10\2XXX_prereq`""
+                        "`"$Script:workdir\updates\Windows 10\2XXX_prereq`""
                     ) -Wait -ErrorAction Stop
                     Update-Log 'Extraction of SSU was success' -class information
                 } catch {
@@ -93,7 +93,7 @@ function Invoke-2XXXPreReq {
 
                 try {
                     Update-Log -data 'Deleting the staged LCU file...' -class Information
-                    Remove-Item -Path $global:workdir\staging\extract_me.cab -Force -ErrorAction stop | Out-Null
+                    Remove-Item -Path $Script:workdir\staging\extract_me.cab -Force -ErrorAction stop | Out-Null
                     Update-Log -data 'The source file for the SSU has been Baleeted!' -Class Information
                 } catch {
                     Update-Log -data 'Could not delete the source package' -Class Error
@@ -106,7 +106,7 @@ function Invoke-2XXXPreReq {
 
             try {
                 Update-Log -data 'Applying the SSU...' -class Information
-                Add-WindowsPackage -PackagePath "$global:workdir\updates\Windows 10\2XXX_prereq" `
+                Add-WindowsPackage -PackagePath "$Script:workdir\updates\Windows 10\2XXX_prereq" `
                     -Path $WPFMISMountTextBox.Text -ErrorAction Stop | Out-Null
                 Update-Log -data 'SSU applied successfully' -class Information
 

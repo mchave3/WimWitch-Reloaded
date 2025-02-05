@@ -38,9 +38,9 @@ function Set-ConfigMgr {
             #$WPFCMTBSiteServer.text = "nt-tpmemcm.notorious.local"
             #$WPFCMTBSitecode.text = "NTP"
     
-            $global:SiteCode = $WPFCMTBSitecode.text
-            $global:SiteServer = $WPFCMTBSiteServer.Text
-            $global:CMDrive = $WPFCMTBSitecode.text + ':'
+            $Script:SiteCode = $WPFCMTBSitecode.text
+            $Script:SiteServer = $WPFCMTBSiteServer.Text
+            $Script:CMDrive = $WPFCMTBSitecode.text + ':'
     
             Update-Log -Data 'ConfigMgr detected and properties set' -Class Information
             Update-Log -Data 'ConfigMgr feature enabled' -Class Information
@@ -54,7 +54,7 @@ function Set-ConfigMgr {
                 SiteServer = $WPFCMTBSiteServer.text
             }
             Update-Log -data 'Saving ConfigMgr site information...'
-            $CMConfig | Export-Clixml -Path $global:workdir\ConfigMgr\SiteInfo.xml -ErrorAction Stop
+            $CMConfig | Export-Clixml -Path $Script:workdir\ConfigMgr\SiteInfo.xml -ErrorAction Stop
     
             if ($CM -eq 'New') {
                 $WPFCMCBImageType.SelectedIndex = 1

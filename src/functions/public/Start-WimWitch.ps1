@@ -75,7 +75,7 @@ function Start-WimWitch {
         [switch]$demomode,
 
         [parameter(mandatory = $false, HelpMessage = 'Select working directory')]
-        [string]$global:workdir
+        [string]$Script:workdir
     )
 
     process {
@@ -154,11 +154,11 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         Show-OpeningText
 
         # Get-FormVariable #lists all WPF variables
-        $global:workdir = Select-WorkingDirectory
+        $Script:workdir = Select-WorkingDirectory
         Test-WorkingDirectory
 
         # Set the path and name for logging
-        $Log = "$global:workdir\logging\WIMWitch.log"
+        $Log = "$Script:workdir\logging\WIMWitch.log"
 
         # Clears out old logs from previous builds and checks for other folders
         Set-Logging
@@ -167,9 +167,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         Test-Admin
 
         # Setting default values for the WPF form
-        $WPFMISWimFolderTextBox.Text = "$global:workdir\CompletedWIMs"
-        $WPFMISMountTextBox.Text = "$global:workdir\Mount"
-        $WPFJSONTextBoxSavePath.Text = "$global:workdir\Autopilot"
+        $WPFMISWimFolderTextBox.Text = "$Script:workdir\CompletedWIMs"
+        $WPFMISMountTextBox.Text = "$Script:workdir\Mount"
+        $WPFJSONTextBoxSavePath.Text = "$Script:workdir\Autopilot"
 
 
         ##################
@@ -208,7 +208,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         $WPFMISAppxTextBox.Text = 'False'
 
-        $global:Win10VerDet = ''
+        $Script:Win10VerDet = ''
 
         #===========================================================================
         # Section for Combo box Functions
@@ -477,7 +477,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFDriverDir5Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir5TextBox })
 
         #Make it So Button, which builds the WIM file
-        $WPFMISMakeItSoButton.Add_Click( { Invoke-MakeItSo -appx $global:SelectedAppx })
+        $WPFMISMakeItSoButton.Add_Click( { Invoke-MakeItSo -appx $Script:SelectedAppx })
 
         #Update OSDBuilder Button
         $WPFUpdateOSDBUpdateButton.Add_Click( {
@@ -489,7 +489,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFUpdatesDownloadNewButton.Add_Click( { Update-PatchSource })
 
         #Select Appx packages to remove
-        $WPFAppxButton.Add_Click( { $global:SelectedAppx = Select-Appx })
+        $WPFAppxButton.Add_Click( { $Script:SelectedAppx = Select-Appx })
 
         #Select Autopilot path to save button
         $WPFJSONButtonSavePath.Add_Click( { Select-NewJSONDir })
@@ -609,8 +609,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Button to Select ConfigMgr Image Package
         $WPFCMBSelectImage.Add_Click({
-            $image = Get-CimInstance -Namespace "root\SMS\Site_$($global:SiteCode)" -ClassName SMS_ImagePackage `
-                -ComputerName $global:SiteServer | 
+            $image = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_ImagePackage `
+                -ComputerName $Script:SiteServer | 
                 Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description | 
                 Out-GridView -Title 'Pick an image' -PassThru
             

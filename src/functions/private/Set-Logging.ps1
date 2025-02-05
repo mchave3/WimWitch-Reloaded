@@ -36,12 +36,12 @@ function Set-Logging {
 
     process {
         # Initialize or reset the log file
-        if (!(Test-Path -Path "$global:workdir\logging\WIMWitch.Log" -PathType Leaf)) {
-            New-Item -ItemType Directory -Force -Path "$global:workdir\Logging" | Out-Null
-            New-Item -Path "$global:workdir\logging" -Name 'WIMWitch.log' -ItemType 'file' -Value '***Logging Started***' | Out-Null
+        if (!(Test-Path -Path "$Script:workdir\logging\WIMWitch.Log" -PathType Leaf)) {
+            New-Item -ItemType Directory -Force -Path "$Script:workdir\Logging" | Out-Null
+            New-Item -Path "$Script:workdir\logging" -Name 'WIMWitch.log' -ItemType 'file' -Value '***Logging Started***' | Out-Null
         } Else {
-            Remove-Item -Path "$global:workdir\logging\WIMWitch.log"
-            New-Item -Path "$global:workdir\logging" -Name 'WIMWitch.log' -ItemType 'file' -Value '***Logging Started***' | Out-Null
+            Remove-Item -Path "$Script:workdir\logging\WIMWitch.log"
+            New-Item -Path "$Script:workdir\logging" -Name 'WIMWitch.log' -ItemType 'file' -Value '***Logging Started***' | Out-Null
         }
 
         # Create and verify required folders
@@ -54,10 +54,10 @@ function Set-Logging {
         )
 
         foreach ($folder in $requiredFolders) {
-            $FileExist = Test-Path -Path "$global:workdir\$($folder.Path)"
+            $FileExist = Test-Path -Path "$Script:workdir\$($folder.Path)"
             if (-not $FileExist) {
                 Update-Log -Data "$($folder.Description) folder does not exist. Creating..." -Class Warning
-                New-Item -ItemType Directory -Force -Path "$global:workdir\$($folder.Path)" | Out-Null
+                New-Item -ItemType Directory -Force -Path "$Script:workdir\$($folder.Path)" | Out-Null
                 Update-Log -Data "$($folder.Description) folder created" -Class Information
             } else {
                 Update-Log -Data "$($folder.Description) folder exists" -Class Information

@@ -44,12 +44,12 @@ function Import-LanguagePack {
             $winver = '1909'
         }
 
-        if ((Test-Path -Path $global:workdir\imports\Lang\$WinOS\$winver\LanguagePacks) -eq $False) {
+        if ((Test-Path -Path $Script:workdir\imports\Lang\$WinOS\$winver\LanguagePacks) -eq $False) {
             Update-Log -Data 'Destination folder does not exist. Creating...' -Class Warning
-            $path = $global:workdir + '\imports\Lang\' + $WinOS + '\' + $winver + '\LanguagePacks'
+            $path = $Script:workdir + '\imports\Lang\' + $WinOS + '\' + $winver + '\LanguagePacks'
             $text = 'Creating folder ' + $path
             Update-Log -data $text -Class Information
-            New-Item -Path $global:workdir\imports\Lang\$WinOS\$winver -Name LanguagePacks -ItemType Directory
+            New-Item -Path $Script:workdir\imports\Lang\$WinOS\$winver -Name LanguagePacks -ItemType Directory
             Update-Log -Data 'Folder created successfully' -Class Information
         }
 
@@ -58,7 +58,7 @@ function Import-LanguagePack {
             $source = $LPSourceFolder + $item
             $text = 'Importing ' + $item
             Update-Log -Data $text -Class Information
-            Copy-Item $source -Destination $global:workdir\imports\Lang\$WinOS\$Winver\LanguagePacks -Force
+            Copy-Item $source -Destination $Script:workdir\imports\Lang\$WinOS\$Winver\LanguagePacks -Force
         }
         Update-Log -Data 'Importation Complete' -Class Information
     }

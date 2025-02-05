@@ -31,9 +31,9 @@ function Update-CMImage {
     process {
         #set-ConfigMgrConnection
         Set-Location $CMDrive
-        $cim = Get-CimInstance -Namespace "root\SMS\Site_$($global:SiteCode)" `
+        $cim = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
                 -ClassName SMS_ImagePackage `
-                -ComputerName $global:SiteServer |
+                -ComputerName $Script:SiteServer |
                 Where-Object { $_.PackageID -eq $WPFCMTBPackageID.text }
 
         Update-Log -Data 'Updating images on the Distribution Points...'
@@ -45,6 +45,6 @@ function Update-CMImage {
         Set-ImagePropertie -PackageID $WPFCMTBPackageID.Text
         Save-Configuration -CM -filename $WPFCMTBPackageID.Text
 
-        Set-Location $global:workdir
+        Set-Location $Script:workdir
     }
 }
