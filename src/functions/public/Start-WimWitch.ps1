@@ -106,9 +106,13 @@ function Start-WimWitch {
 
         $reader = (New-Object System.Xml.XmlNodeReader $xaml)
         try {
-            $Form = [Windows.Markup.XamlReader]::Load( $reader )
+        $Form = [Windows.Markup.XamlReader]::Load($reader)
         } catch {
-            Write-Warning "Unable to parse XML, with error: $($Error[0])`n Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes (PowerShell cannot process them)"
+        Write-Warning @"
+Unable to parse XML, with error: $($Error[0])
+Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes
+(PowerShell cannot process them)
+"@
             throw
         }
 
@@ -511,33 +515,57 @@ function Start-WimWitch {
         #Button to select the import path in the other components
         $WPFImportOtherBSelectPath.add_click({ Select-ImportOtherPath
 
-                if ($WPFImportOtherCBType.SelectedItem -ne 'Feature On Demand') {
-                    if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Out-GridView -Title 'Select Objects' -PassThru) }
-                    if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack')) { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Where-Object { ($_.Name -like '*Windows-Client-Language-Pack*') } | Out-GridView -Title 'Select Objects' -PassThru) }
-                    if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack')) { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Out-GridView -Title 'Select Objects' -PassThru) }
-
+            if ($WPFImportOtherCBType.SelectedItem -ne 'Feature On Demand') {
+                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
+                        Select-Object -Property Name | 
+                        Out-GridView -Title 'Select Objects' -PassThru) 
                 }
-
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
-                    if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text) }
-                    if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Where-Object { ($_.Name -notlike '*Windows-Client-Language-Pack*') } | Out-GridView -Title 'Select Objects' -PassThru) }
-
+                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and 
+                    ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack')) { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
+                        Select-Object -Property Name | 
+                        Where-Object { ($_.Name -like '*Windows-Client-Language-Pack*') } | 
+                        Out-GridView -Title 'Select Objects' -PassThru) 
                 }
-
-
-                $WPFImportOtherLBList.Items.Clear()
-                $count = 0
-                $path = $WPFImportOtherTBPath.text
-                foreach ($item in $items) {
-                    $WPFImportOtherLBList.Items.Add($item.name)
-                    $count = $count + 1
+                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and 
+                    ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack')) { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
+                        Select-Object -Property Name | 
+                        Out-GridView -Title 'Select Objects' -PassThru) 
                 }
+            }
 
-                if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') { Update-Log -data "$count Language Packs selected from $path" -Class Information }
-                if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { Update-Log -data "$count Local Experience Packs selected from $path" -Class Information }
-                if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') { Update-Log -data "Features On Demand source selected from $path" -Class Information }
+            if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
+                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text) 
+                }
+                if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
+                        Select-Object -Property Name | 
+                        Where-Object { ($_.Name -notlike '*Windows-Client-Language-Pack*') } | 
+                        Out-GridView -Title 'Select Objects' -PassThru)
+                }
+            }
 
-            })
+            $WPFImportOtherLBList.Items.Clear()
+            $count = 0
+            $path = $WPFImportOtherTBPath.text
+            foreach ($item in $items) {
+                $WPFImportOtherLBList.Items.Add($item.name)
+                $count = $count + 1
+            }
+
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') { 
+                Update-Log -data "$count Language Packs selected from $path" -Class Information 
+            }
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { 
+                Update-Log -data "$count Local Experience Packs selected from $path" -Class Information 
+            }
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') { 
+                Update-Log -data "Features On Demand source selected from $path" -Class Information 
+            }
+        })
 
         #Button to import Other Components content
         $WPFImportOtherBImport.add_click({
@@ -547,9 +575,19 @@ function Start-WimWitch {
                     $WinVerConversion = $WPFImportOtherCBWinVer.SelectedItem
                 }
 
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') { Import-LanguagePacks -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text }
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { Import-LocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text }
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') { Import-FeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text } })
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') { 
+                    Import-LanguagePacks -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                        -LPSourceFolder $WPFImportOtherTBPath.text 
+                }
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { 
+                    Import-LocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                        -LPSourceFolder $WPFImportOtherTBPath.text 
+                }
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') { 
+                    Import-FeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                        -LPSourceFolder $WPFImportOtherTBPath.text 
+                } 
+        })
 
         #Button Select LP's for importation
         $WPFCustomBLangPacksSelect.add_click({ Select-LPFODCriteria -type 'LP' })
@@ -571,7 +609,9 @@ function Start-WimWitch {
 
         #Button to Select ConfigMgr Image Package
         $WPFCMBSelectImage.Add_Click({
-                $image = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage -ComputerName $global:SiteServer) | Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description | Out-GridView -Title 'Pick an image' -PassThru
+                $image = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage `
+                -ComputerName $global:SiteServer) | Select-Object -Property Name, version, language, ImageOSVersion, `
+                PackageID, Description | Out-GridView -Title 'Pick an image' -PassThru
                 $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
                 if ((Test-Path -Path $path ) -eq $True) {
                     # write-host "True"
@@ -861,7 +901,10 @@ function Start-WimWitch {
                 If ($WPFImportISOCheckBox.IsChecked -eq $true) {
                     $WPFImportImportButton.IsEnabled = $True
                 } else {
-                    if (($WPFImportWIMCheckBox.IsChecked -eq $False) -and ($WPFImportDotNetCheckBox.IsChecked -eq $False)) { $WPFImportImportButton.IsEnabled = $False }
+                    if (($WPFImportWIMCheckBox.IsChecked -eq $False) -and 
+                    ($WPFImportDotNetCheckBox.IsChecked -eq $False)) { 
+                        $WPFImportImportButton.IsEnabled = $False 
+                    }
                 }
             })
 
