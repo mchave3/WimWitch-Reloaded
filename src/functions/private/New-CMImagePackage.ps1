@@ -44,7 +44,7 @@ function New-CMImagePackage {
         $PackageID = (Get-CMOperatingSystemImage -Name $WPFCMTBImageName.text).PackageID
         Update-Log -Data "The Package ID of the new image is $PackageID" -Class Information
 
-        Set-ImageProperties -PackageID $PackageID
+        Set-ImagePropertie -PackageID $PackageID
 
         Update-Log -Data 'Retriveing Distribution Point information...' -Class Information
         $DPs = $WPFCMLBDPs.Items
@@ -65,6 +65,6 @@ function New-CMImagePackage {
         }
 
         Save-Configuration -CM $PackageID
-        Set-Location $global:workdir
+        Set-Location $Script:workdir
     }
 }

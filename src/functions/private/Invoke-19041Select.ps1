@@ -74,7 +74,7 @@ function Invoke-19041Select {
             catch { throw }
         }
 
-        Get-FormVariables | Out-Null
+        Get-FormVariable | Out-Null
 
         #Combo Box population
         $Win10VerNums = @('20H2', '21H1', '21H2', '22H2')
@@ -83,14 +83,14 @@ function Invoke-19041Select {
 
         #Button_OK_Click
         $WPFWin10PUOK.Add_Click({
-                $global:Win10VerDet = $WPFWin10PUCombo.SelectedItem
+                $Script:Win10VerDet = $WPFWin10PUCombo.SelectedItem
                 $Form.Close()
                 return
             })
 
         #Button_Cancel_Click
         $WPFWin10PUCancel.Add_Click({
-                $global:Win10VerDet = $null
+                $Script:Win10VerDet = $null
                 Update-Log -data 'User cancelled the confirmation dialog box' -Class Warning
                 $Form.Close()
                 return

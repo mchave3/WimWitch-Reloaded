@@ -53,7 +53,7 @@ function Import-ISO {
                 Update-Log -Data 'Appending new file name with an extension' -Class Information
             }
     
-            if ((Test-Path -Path $global:workdir\Imports\WIM\$newname) -eq $true) {
+            if ((Test-Path -Path $Script:workdir\Imports\WIM\$newname) -eq $true) {
                 Update-Log -Data 'Destination WIM name already exists. Provide a new name and try again.' -Class Error
                 return
             } else {
@@ -112,14 +112,14 @@ function Import-ISO {
             $version = Set-Version -wimversion $windowsver.version
     
             if ($version -eq 2004) {
-                $global:Win10VerDet = $null
+                $Script:Win10VerDet = $null
                 Invoke-19041Select
-                if ($null -eq $global:Win10VerDet) {
+                if ($null -eq $Script:Win10VerDet) {
                     Write-Host 'cancelling'
                     return
                 } else {
-                    $version = $global:Win10VerDet
-                    $global:Win10VerDet = $null
+                    $version = $Script:Win10VerDet
+                    $Script:Win10VerDet = $null
                 }
     
                 if ($version -eq '20H2') { $version = '2009' }
@@ -139,11 +139,11 @@ function Import-ISO {
             #Copy out the WIM file from the selected ISO
             try {
                 Update-Log -data 'Purging staging folder...' -Class Information
-                Remove-Item -Path $global:workdir\staging\*.* -Force
+                Remove-Item -Path $Script:workdir\staging\*.* -Force
                 Update-Log -data 'Purge complete.' -Class Information
                 if ($installWimFound) {
                     Update-Log -Data 'Copying WIM file to the staging folder...' -Class Information
-                    Copy-Item -Path $iso\sources\install.wim -Destination $global:workdir\staging -Force -ErrorAction Stop -PassThru
+                    Copy-Item -Path $iso\sources\install.wim -Destination $Script:workdir\staging -Force -ErrorAction Stop -PassThru
                 }
             } catch {
                 Update-Log -data "Couldn't copy from the source" -Class Error
@@ -161,7 +161,7 @@ function Import-ISO {
                     try {
                         Update-Log -Data "Converting index $($index.ImageIndex) - $($index.ImageName)" -Class Information
                         Export-WindowsImage -SourceImagePath $sourceEsdFile -SourceIndex $($index.ImageIndex) `
-                            -DestinationImagePath (Join-Path $global:workdir '\staging\install.wim') -CompressionType fast -ErrorAction Stop
+                            -DestinationImagePath (Join-Path $Script:workdir '\staging\install.wim') -CompressionType fast -ErrorAction Stop
                     } catch {
                         Update-Log -Data "Converting index $($index.ImageIndex) failed - skipping..." -Class Error
                         continue
@@ -171,14 +171,14 @@ function Import-ISO {
     
             #Change file attribute to normal
             Update-Log -Data 'Setting file attribute of install.wim to Normal' -Class Information
-            $attrib = Get-Item $global:workdir\staging\install.wim
+            $attrib = Get-Item $Script:workdir\staging\install.wim
             $attrib.Attributes = 'Normal'
     
             #Rename install.wim to the new name
             try {
                 $text = 'Renaming install.wim to ' + $newname
                 Update-Log -Data $text -Class Information
-                Rename-Item -Path $global:workdir\Staging\install.wim -NewName $newname -ErrorAction Stop
+                Rename-Item -Path $Script:workdir\Staging\install.wim -NewName $newname -ErrorAction Stop
             } catch {
                 Update-Log -data "Couldn't rename the copied file. Most likely a weird permissions issues." -Class Error
                 Invoke-RemoveISOMount -inputObject $isomount
@@ -189,7 +189,7 @@ function Import-ISO {
     
             try {
                 Update-Log -data "Moving $newname to imports folder..." -Class Information
-                Move-Item -Path $global:workdir\Staging\$newname -Destination $global:workdir\Imports\WIM -ErrorAction Stop
+                Move-Item -Path $Script:workdir\Staging\$newname -Destination $Script:workdir\Imports\WIM -ErrorAction Stop
             } catch {
                 Update-Log -Data "Couldn't move the new WIM to the staging folder." -Class Error
                 Invoke-RemoveISOMount -inputObject $isomount
@@ -205,14 +205,14 @@ function Import-ISO {
     
             If (($windowsver.imagename -like '*Windows 10*') -or 
                 (($windowsver.imagename -like '*server') -and ($windowsver.version -lt 10.0.20248.0))) { 
-                $Path = "$global:workdir\Imports\DotNet\$version" 
+                $Path = "$Script:workdir\Imports\DotNet\$version" 
             }
             If (($windowsver.Imagename -like '*server*') -and 
                 ($windowsver.version -gt 10.0.20348.0)) { 
-                $Path = "$global:workdir\Imports\Dotnet\Windows Server\$version" 
+                $Path = "$Script:workdir\Imports\Dotnet\Windows Server\$version" 
             }
             If ($windowsver.imagename -like '*Windows 11*') { 
-                $Path = "$global:workdir\Imports\Dotnet\Windows 11\$version" 
+                $Path = "$Script:workdir\Imports\Dotnet\Windows 11\$version" 
             }
     
     
@@ -251,28 +251,28 @@ function Import-ISO {
     
             if ($windowsver.ImageName -like '*Server*') { $OS = 'Windows Server' }
             Update-Log -Data "$OS detected" -Class Information
-            if ((Test-Path -Path $global:workdir\imports\iso\$OS\$Version) -eq $false) {
+            if ((Test-Path -Path $Script:workdir\imports\iso\$OS\$Version) -eq $false) {
                 Update-Log -Data 'Path does not exist. Creating...' -Class Information
-                New-Item -Path $global:workdir\imports\iso\$OS\ -Name $version -ItemType Directory
+                New-Item -Path $Script:workdir\imports\iso\$OS\ -Name $version -ItemType Directory
             }
     
             Update-Log -Data 'Copying boot folder...' -Class Information
-            Copy-Item -Path $iso\boot\ -Destination $global:workdir\imports\iso\$OS\$Version\boot -Recurse -Force #-Exclude install.wim
+            Copy-Item -Path $iso\boot\ -Destination $Script:workdir\imports\iso\$OS\$Version\boot -Recurse -Force #-Exclude install.wim
     
             Update-Log -Data 'Copying efi folder...' -Class Information
-            Copy-Item -Path $iso\efi\ -Destination $global:workdir\imports\iso\$OS\$Version\efi -Recurse -Force #-Exclude install.wim
+            Copy-Item -Path $iso\efi\ -Destination $Script:workdir\imports\iso\$OS\$Version\efi -Recurse -Force #-Exclude install.wim
     
             Update-Log -Data 'Copying sources folder...' -Class Information
-            Copy-Item -Path $iso\sources\ -Destination $global:workdir\imports\iso\$OS\$Version\sources -Recurse -Force -Exclude install.wim
+            Copy-Item -Path $iso\sources\ -Destination $Script:workdir\imports\iso\$OS\$Version\sources -Recurse -Force -Exclude install.wim
     
             Update-Log -Data 'Copying support folder...' -Class Information
-            Copy-Item -Path $iso\support\ -Destination $global:workdir\imports\iso\$OS\$Version\support -Recurse -Force #-Exclude install.wim
+            Copy-Item -Path $iso\support\ -Destination $Script:workdir\imports\iso\$OS\$Version\support -Recurse -Force #-Exclude install.wim
     
             Update-Log -Data 'Copying files in root folder...' -Class Information
-            Copy-Item $iso\autorun.inf -Destination $global:workdir\imports\iso\$OS\$Version\ -Force
-            Copy-Item $iso\bootmgr -Destination $global:workdir\imports\iso\$OS\$Version\ -Force
-            Copy-Item $iso\bootmgr.efi -Destination $global:workdir\imports\iso\$OS\$Version\ -Force
-            Copy-Item $iso\setup.exe -Destination $global:workdir\imports\iso\$OS\$Version\ -Force
+            Copy-Item $iso\autorun.inf -Destination $Script:workdir\imports\iso\$OS\$Version\ -Force
+            Copy-Item $iso\bootmgr -Destination $Script:workdir\imports\iso\$OS\$Version\ -Force
+            Copy-Item $iso\bootmgr.efi -Destination $Script:workdir\imports\iso\$OS\$Version\ -Force
+            Copy-Item $iso\setup.exe -Destination $Script:workdir\imports\iso\$OS\$Version\ -Force
     
         }
     

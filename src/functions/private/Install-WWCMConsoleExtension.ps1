@@ -40,7 +40,7 @@ function Install-WWCMConsoleExtension {
 	<Executable>
 		<FilePath>$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe</FilePath>
 		<Parameters> -ExecutionPolicy Bypass -File "$PSCommandPath" -auto -autofile 
-            "$global:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
+            "$Script:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
 	</Executable>
 </ActionDescription>
 "@
@@ -55,7 +55,7 @@ function Install-WWCMConsoleExtension {
 	<Executable>
 		<FilePath>$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe</FilePath>
 		<Parameters> -ExecutionPolicy Bypass -File "$PSCommandPath" -CM "Edit" -autofile 
-            "$global:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
+            "$Script:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
 	</Executable>
 </ActionDescription>
 "@

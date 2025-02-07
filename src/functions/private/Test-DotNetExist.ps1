@@ -6,7 +6,7 @@
     This function checks if the .Net binaries are present in the import folder for the current build of Windows.
 
 .NOTES
-    Name:        Test-DotNetExists.ps1
+    Name:        Test-DotNetExist.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-30
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Test-DotNetExists
+    Test-DotNetExist
 #>
-function Test-DotNetExists {
+function Test-DotNetExist {
     [CmdletBinding()]
     param(
 
@@ -35,9 +35,9 @@ function Test-DotNetExists {
 
         if ($OSType -eq 'Windows 10') {
             if ($buildnum -eq '20H2') { $Buildnum = '2009' }
-            $DotNetFiles = "$global:workdir\imports\DotNet\$buildnum"
+            $DotNetFiles = "$Script:workdir\imports\DotNet\$buildnum"
         }
-        if (($OSType -eq 'Windows 11') -or ($OSType -eq 'Windows Server')) { $DotNetFiles = "$global:workdir\imports\DotNet\$OSType\$buildnum" }
+        if (($OSType -eq 'Windows 11') -or ($OSType -eq 'Windows Server')) { $DotNetFiles = "$Script:workdir\imports\DotNet\$OSType\$buildnum" }
 
 
         Test-Path -Path $DotNetFiles\*

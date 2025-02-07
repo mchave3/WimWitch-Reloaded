@@ -31,20 +31,20 @@ function Update-CMImage {
     process {
         #set-ConfigMgrConnection
         Set-Location $CMDrive
-        $wmi = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
-                -Class SMS_ImagePackage `
-                -ComputerName $global:SiteServer) | 
+        $cim = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
+                -ClassName SMS_ImagePackage `
+                -ComputerName $Script:SiteServer |
                 Where-Object { $_.PackageID -eq $WPFCMTBPackageID.text }
 
         Update-Log -Data 'Updating images on the Distribution Points...'
-        $WMI.RefreshPkgSource() | Out-Null
+        Invoke-CimMethod -InputObject $cim -MethodName "RefreshPkgSource" | Out-Null
 
         Update-Log -Data 'Refreshing image proprties from the WIM' -Class Information
-        $WMI.ReloadImageProperties() | Out-Null
+        Invoke-CimMethod -InputObject $cim -MethodName "ReloadImageProperties" | Out-Null
 
-        Set-ImageProperties -PackageID $WPFCMTBPackageID.Text
+        Set-ImagePropertie -PackageID $WPFCMTBPackageID.Text
         Save-Configuration -CM -filename $WPFCMTBPackageID.Text
 
-        Set-Location $global:workdir
+        Set-Location $Script:workdir
     }
 }

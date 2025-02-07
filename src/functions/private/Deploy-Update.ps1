@@ -6,7 +6,7 @@
     Function to apply updates to the mounted image.
 
 .NOTES
-    Name:        Deploy-Updates.ps1
+    Name:        Deploy-Update.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,13 +20,13 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Deploy-Updates -class "SSU"
-    Deploy-Updates -class "LCU"
-    Deploy-Updates -class "AdobeSU"
-    Deploy-Updates -class "DotNet"
-    Deploy-Updates -class "DotNetCU"
+    Deploy-Update -class "SSU"
+    Deploy-Update -class "LCU"
+    Deploy-Update -class "AdobeSU"
+    Deploy-Update -class "DotNet"
+    Deploy-Update -class "DotNetCU"
 #>
-function Deploy-Updates {
+function Deploy-Update {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
@@ -55,7 +55,7 @@ function Deploy-Updates {
         }
     
         If (($WPFSourceWimVerTextBox.text -like '10.0.18362.*') -and (($class -eq 'Dynamic') -or ($class -like 'PE*'))) {
-            $windowsver = Get-WindowsImage -ImagePath ($global:workdir + '\staging\' + $WPFMISWimNameTextBox.text) -Index 1
+            $windowsver = Get-WindowsImage -ImagePath ($Script:workdir + '\staging\' + $WPFMISWimNameTextBox.text) -Index 1
             $Vardate = (Get-Date -Year 2019 -Month 10 -Day 01)
             if ($windowsver.CreatedTime -gt $vardate) { $buildnum = 1909 }
             else
@@ -72,7 +72,7 @@ function Deploy-Updates {
             $class = 'LCU'
         }
     
-        $path = $global:workdir + '\updates\' + $OS + '\' + $buildnum + '\' + $class + '\'
+        $path = $Script:workdir + '\updates\' + $OS + '\' + $buildnum + '\' + $class + '\'
     
     
         if ((Test-Path $path) -eq $False) {
@@ -87,7 +87,7 @@ function Deploy-Updates {
             try {
                 if ($class -eq 'Dynamic') {
                     #Update-Log -data "Applying Dynamic to media" -Class Information
-                    $mediafolder = $global:workdir + '\staging\media\sources'
+                    $mediafolder = $Script:workdir + '\staging\media\sources'
                     $DynUpdates = (Get-ChildItem -Path $compound -Name)
                     foreach ($DynUpdate in $DynUpdates) {
     
@@ -96,7 +96,7 @@ function Deploy-Updates {
                         Start-Process -FilePath c:\windows\system32\expand.exe -ArgumentList $expandArgs -Wait
                     }
                 } elseif ($IsPE -eq $true) { 
-                    Add-WindowsPackage -Path ($global:workdir + '\staging\mount') `
+                    Add-WindowsPackage -Path ($Script:workdir + '\staging\mount') `
                     -PackagePath $compound -ErrorAction stop | Out-Null 
                 }
                 else {

@@ -46,16 +46,15 @@ function Invoke-MEMCMUpdatecatalog {
                 $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10'" 
             }
 
-            $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate `
-                -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
+            $Updates = (Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+                -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
                 Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($ver)*$($Arch)*") } )
         }
 
-
         if (($prod -like '*Windows Server*') -and ($ver -eq '1607')) {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2016'"
-            $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate `
-                -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
+            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+                -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
                 Where-Object { 
                     ($_.IsSuperseded -eq $false) -and 
                     ($_.LocalizedDisplayName -notlike '* Next *') -and 
@@ -67,31 +66,31 @@ function Invoke-MEMCMUpdatecatalog {
 
         if (($prod -like '*Windows Server*') -and ($ver -eq '1809')) {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'"
-            $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate `
-                -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
+            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+                -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
                 Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($Arch)*") } )
         }
 
         if (($prod -like '*Windows Server*') -and ($ver -eq '21H2')) {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'"
-            $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_SoftwareUpdate `
-                -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
+            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+                -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
                 Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($Arch)*") } )
         }
 
         if ($prod -eq 'Windows 11') {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 11'"
             if ($ver -eq '21H2') { 
-                $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
-                    -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
+                $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" `
+                    -ClassName SMS_SoftwareUpdate -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
                     Where-Object { 
                         ($_.IsSuperseded -eq $false) -and 
                         ($_.LocalizedDisplayName -like "*Windows 11 for $($Arch)*") 
                     } ) 
             }
             else { 
-                $Updates = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
-                    -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
+                $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" `
+                    -ClassName SMS_SoftwareUpdate -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop | 
                     Where-Object { 
                         ($_.IsSuperseded -eq $false) -and 
                         ($_.LocalizedDisplayName -like "*$($ver)*$($Arch)*") 
@@ -101,8 +100,8 @@ function Invoke-MEMCMUpdatecatalog {
 
         if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True) {
             if ($prod -eq 'Windows 10') { 
-                $Updates = $Updates + (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
-                    -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer `
+                $Updates = $Updates + (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" `
+                    -ClassName SMS_SoftwareUpdate -ComputerName $Script:SiteServer `
                     -Filter "LocalizedCategoryInstanceNames = 'Windows 10 Dynamic Update'" -ErrorAction Stop | 
                     Where-Object { 
                         ($_.IsSuperseded -eq $false) -and 
@@ -110,8 +109,8 @@ function Invoke-MEMCMUpdatecatalog {
                     } ) 
             }
             if ($prod -eq 'Windows 11') { 
-                $Updates = $Updates + (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" `
-                    -Class SMS_SoftwareUpdate -ComputerName $global:SiteServer `
+                $Updates = $Updates + (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" `
+                    -ClassName SMS_SoftwareUpdate -ComputerName $Script:SiteServer `
                     -Filter "LocalizedCategoryInstanceNames = 'Windows 11 Dynamic Update'" -ErrorAction Stop | 
                     Where-Object { 
                         ($_.IsSuperseded -eq $false) -and 
@@ -124,7 +123,7 @@ function Invoke-MEMCMUpdatecatalog {
         if ($null -eq $updates) {
             Update-Log -data 'No updates found. Product is likely not synchronized. Continuing with build...' `
             -class Warning
-            Set-Location $global:workdir
+            Set-Location $Script:workdir
             return
         }
 
@@ -138,11 +137,11 @@ function Invoke-MEMCMUpdatecatalog {
                 #write-host "Display Name"
                 #write-host $update.LocalizedDisplayName
                 #            if ($ver -eq  "20H2"){$ver = "2009"} #Another 20H2 naming work around
-                Invoke-MSUpdateItemDownload -FilePath "$global:workdir\updates\$Prod\$ver\" `
+                Invoke-MSUpdateItemDownload -FilePath "$Script:workdir\updates\$Prod\$ver\" `
                 -UpdateName $update.LocalizedDisplayName
             }
         }
 
-        Set-Location $global:workdir
+        Set-Location $Script:workdir
     }
 }

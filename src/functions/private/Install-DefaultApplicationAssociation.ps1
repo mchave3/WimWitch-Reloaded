@@ -7,7 +7,7 @@
     It uses DISM to import the associations and handles any errors that occur during the process.
 
 .NOTES
-    Name:        Install-DefaultApplicationAssociations.ps1
+    Name:        Install-DefaultApplicationAssociation.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -21,9 +21,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Install-DefaultApplicationAssociations
+    Install-DefaultApplicationAssociation
 #>
-function Install-DefaultApplicationAssociations {
+function Install-DefaultApplicationAssociation {
     [CmdletBinding()]
     param(
 

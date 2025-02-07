@@ -7,7 +7,7 @@
     the mounted Windows image. It validates the selected files and updates the UI accordingly.
 
 .NOTES
-    Name:        Select-RegFiles.ps1
+    Name:        Select-RegFile.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -21,9 +21,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Select-RegFiles
+    Select-RegFile
 #>
-function Select-RegFiles {
+function Select-RegFile {
     [CmdletBinding()]
     param(
 

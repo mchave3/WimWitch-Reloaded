@@ -6,7 +6,7 @@
     This function applies registry modifications to the mounted Windows image by loading offline registry hives and importing registry files.
 
 .NOTES
-    Name:        Install-RegistryFiles.ps1
+    Name:        Install-RegistryFile.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Install-RegistryFiles
+    Install-RegistryFile
 #>
-function Install-RegistryFiles {
+function Install-RegistryFile {
     [CmdletBinding()]
     param(
 
@@ -64,7 +64,7 @@ function Install-RegistryFiles {
             #write-host $RegFile
 
             Try {
-                $Destination = $global:workdir + '\staging\'
+                $Destination = $Script:workdir + '\staging\'
                 Update-Log -Data 'Copying file to staging folder...' -Class Information
                 Copy-Item -Path $regfile -Destination $Destination -Force -ErrorAction Stop  #Copy Source Registry File to staging
             } Catch {
@@ -73,7 +73,7 @@ function Install-RegistryFiles {
             }
 
             $regtemp = Split-Path $regfile -Leaf #get file name
-            $regpath = $global:workdir + '\staging' + '\' + $regtemp
+            $regpath = $Script:workdir + '\staging' + '\' + $regtemp
 
             # Write-Host $regpath
             Try {

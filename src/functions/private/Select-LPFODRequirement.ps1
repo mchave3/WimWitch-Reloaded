@@ -6,7 +6,7 @@
     This function is used to select the criteria for Language Packs, Local Experience Packs and Features on Demand.
 
 .NOTES
-    Name:        Select-LPFODCriteria.ps1
+    Name:        Select-LPFODRequirement.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-30
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Select-LPFODCriteria
+    Select-LPFODRequirement
 #>
-function Select-LPFODCriteria {
+function Select-LPFODRequirement {
     [CmdletBinding()]
     param(
 
@@ -41,15 +41,15 @@ function Select-LPFODCriteria {
         }
 
         if ($type -eq 'LP') {
-            if ((Test-Path -Path "$global:workdir\imports\Lang\$WinOS\$Winver\LanguagePacks") -eq $false) {
+            if ((Test-Path -Path "$Script:workdir\imports\Lang\$WinOS\$Winver\LanguagePacks") -eq $false) {
                 Update-Log -Data 'Source not found. Please import some language packs and try again' -Class Error
                 return
             }
-            Select-LanguagePacks -winver $Winver -WinOS $WinOS
+            Select-LanguagePack -winver $Winver -WinOS $WinOS
         }
 
         If ($type -eq 'LXP') {
-            if ((Test-Path -Path "$global:workdir\imports\Lang\$WinOS\$Winver\localexperiencepack") -eq $false) {
+            if ((Test-Path -Path "$Script:workdir\imports\Lang\$WinOS\$Winver\localexperiencepack") -eq $false) {
                 Update-Log -Data 'Source not found. Please import some Local Experience Packs and try again' -Class Error
                 return
             }
@@ -57,7 +57,7 @@ function Select-LPFODCriteria {
         }
 
         if ($type -eq 'FOD') {
-            if ((Test-Path -Path "$global:workdir\imports\FODs\$WinOS\$Winver\") -eq $false) {
+            if ((Test-Path -Path "$Script:workdir\imports\FODs\$WinOS\$Winver\") -eq $false) {
                 Update-Log -Data 'Source not found. Please import some Demanding Features and try again' -Class Error
                 return
             }

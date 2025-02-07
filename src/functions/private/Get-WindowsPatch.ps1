@@ -7,7 +7,7 @@
     It will download SSU, AdobeSU, LCU, .Net, .Net CU, optional and dynamic updates for the specified OS and build.
 
 .NOTES
-    Name:        Get-WindowsPatches.ps1
+    Name:        Get-WindowsPatch.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -21,9 +21,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Get-WindowsPatches -OS 'Windows 10' -build '1909'
+    Get-WindowsPatch -OS 'Windows 10' -build '1909'
 #>
-function Get-WindowsPatches {
+function Get-WindowsPatch {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
@@ -41,7 +41,7 @@ function Get-WindowsPatches {
                     $_.UpdateArch -eq 'x64' -and 
                     $_.UpdateBuild -eq $build -and 
                     $_.UpdateGroup -eq 'SSU' 
-                } | Get-DownOSDUpdate -DownloadPath $global:workdir\updates\$OS\$build\SSU
+                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\SSU
         } catch {
             Update-Log -data 'Failed to download SSU update' -Class Error
             Update-Log -data $_.Exception.Message -class Error
@@ -55,7 +55,7 @@ function Get-WindowsPatches {
                     $_.UpdateArch -eq 'x64' -and 
                     $_.UpdateBuild -eq $build -and 
                     $_.UpdateGroup -eq 'AdobeSU' 
-                } | Get-DownOSDUpdate -DownloadPath $global:workdir\updates\$OS\$build\AdobeSU
+                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\AdobeSU
         } catch {
             Update-Log -data 'Failed to download AdobeSU update' -Class Error
             Update-Log -data $_.Exception.Message -class Error
@@ -69,7 +69,7 @@ function Get-WindowsPatches {
                     $_.UpdateArch -eq 'x64' -and 
                     $_.UpdateBuild -eq $build -and 
                     $_.UpdateGroup -eq 'LCU' 
-                } | Get-DownOSDUpdate -DownloadPath $global:workdir\updates\$OS\$build\LCU
+                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\LCU
         } catch {
             Update-Log -data 'Failed to download LCU update' -Class Error
             Update-Log -data $_.Exception.Message -class Error
@@ -82,7 +82,7 @@ function Get-WindowsPatches {
                     $_.UpdateArch -eq 'x64' -and 
                     $_.UpdateBuild -eq $build -and 
                     $_.UpdateGroup -eq 'DotNet' 
-                } | Get-DownOSDUpdate -DownloadPath $global:workdir\updates\$OS\$build\DotNet
+                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\DotNet
         } catch {
             Update-Log -data 'Failed to download .Net update' -Class Error
             Update-Log -data $_.Exception.Message -class Error
@@ -96,7 +96,7 @@ function Get-WindowsPatches {
                     $_.UpdateArch -eq 'x64' -and 
                     $_.UpdateBuild -eq $build -and 
                     $_.UpdateGroup -eq 'DotNetCU' 
-                } | Get-DownOSDUpdate -DownloadPath $global:workdir\updates\$OS\$build\DotNetCU
+                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\DotNetCU
         } catch {
             Update-Log -data 'Failed to download .Net CU update' -Class Error
             Update-Log -data $_.Exception.Message -class Error
@@ -111,7 +111,7 @@ function Get-WindowsPatches {
                         $_.UpdateArch -eq 'x64' -and 
                         $_.UpdateBuild -eq $build -and 
                         $_.UpdateGroup -eq 'Optional' 
-                    } | Get-DownOSDUpdate -DownloadPath $global:workdir\updates\$OS\$build\Optional
+                    } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\Optional
             } catch {
                 Update-Log -data 'Failed to download optional update' -Class Error
                 Update-Log -data $_.Exception.Message -class Error
@@ -127,7 +127,7 @@ function Get-WindowsPatches {
                         $_.UpdateArch -eq 'x64' -and 
                         $_.UpdateBuild -eq $build -and 
                         $_.UpdateGroup -eq 'SetupDU' 
-                    } | Get-DownOSDUpdate -DownloadPath $global:workdir\updates\$OS\$build\Dynamic
+                    } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\Dynamic
             } catch {
                 Update-Log -data 'Failed to download dynamic update' -Class Error
                 Update-Log -data $_.Exception.Message -class Error

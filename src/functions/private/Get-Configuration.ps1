@@ -51,7 +51,7 @@ function Get-Configuration {
             $WPFMISWimNameTextBox.text = $settings.WIMName
             $WPFMISWimFolderTextBox.text = $settings.WIMPath
             $WPFMISMountTextBox.text = $settings.MountPath
-            $global:SelectedAppx = $settings.AppxSelected -split ' '
+            $Script:SelectedAppx = $settings.AppxSelected -split ' '
             $WPFMISDotNetCheckBox.IsChecked = $settings.DotNetEnabled
             $WPFMISOneDriveCheckBox.IsChecked = $settings.OneDriveEnabled
             $WPFCustomCBLangPacks.IsChecked = $settings.LPsEnabled

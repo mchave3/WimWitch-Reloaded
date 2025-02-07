@@ -6,7 +6,7 @@
     This function will execute Windows updates on the mounted image.
 
 .NOTES
-    Name:        Invoke-MISUpdates.ps1
+    Name:        Invoke-MISUpdate.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Invoke-MISUpdates
+    Invoke-MISUpdate
 #>
-function Invoke-MISUpdates {
+function Invoke-MISUpdate {
     [CmdletBinding()]
     param(
 

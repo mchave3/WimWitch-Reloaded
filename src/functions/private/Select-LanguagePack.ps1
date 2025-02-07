@@ -6,7 +6,7 @@
     This function is used to update the list of language packs in the WPF GUI.
 
 .NOTES
-    Name:        Select-LanguagePacks.ps1
+    Name:        Select-LanguagePack.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-30
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Select-LanguagePacks -winver '1909' -WinOS 'Pro'
+    Select-LanguagePack -winver '1909' -WinOS 'Pro'
 #>
-function Select-LanguagePacks {
+function Select-LanguagePack {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
@@ -32,7 +32,7 @@ function Select-LanguagePacks {
     )
 
     process {
-        $LPSourceFolder = $global:workdir + '\imports\lang\' + $WinOS + '\' + $winver + '\' + 'LanguagePacks' + '\'
+        $LPSourceFolder = $Script:workdir + '\imports\lang\' + $WinOS + '\' + $winver + '\' + 'LanguagePacks' + '\'
 
         $items = (Get-ChildItem -Path $LPSourceFolder | Select-Object -Property Name | Out-GridView -Title 'Select Language Packs' -PassThru)
         foreach ($item in $items) { $WPFCustomLBLangPacks.Items.Add($item.name) }

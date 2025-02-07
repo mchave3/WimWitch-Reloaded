@@ -6,7 +6,7 @@
     This function allows you to select ConfigMgr distribution points or distribution point groups.
 
 .NOTES
-    Name:        Select-DistributionPoints.ps1
+    Name:        Select-DistributionPoint.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Select-DistributionPoints
+    Select-DistributionPoint
 #>
-function Select-DistributionPoints {
+function Select-DistributionPoint {
     [CmdletBinding()]
     param(
 
@@ -34,7 +34,7 @@ function Select-DistributionPoints {
 
         if ($WPFCMCBDPDPG.SelectedItem -eq 'Distribution Points') {
 
-            $SelectedDPs = (Get-CMDistributionPoint -SiteCode $global:sitecode).NetworkOSPath | `
+            $SelectedDPs = (Get-CMDistributionPoint -SiteCode $Script:sitecode).NetworkOSPath | `
                 Out-GridView -Title 'Select Distribution Points' -PassThru
             foreach ($SelectedDP in $SelectedDPs) { $WPFCMLBDPs.Items.Add($SelectedDP) }
         }
@@ -43,6 +43,6 @@ function Select-DistributionPoints {
                 Out-GridView -Title 'Select Distribution Point Groups' -PassThru
             foreach ($SelectedDP in $SelectedDPs) { $WPFCMLBDPs.Items.Add($SelectedDP) }
         }
-        Set-Location $global:workdir
+        Set-Location $Script:workdir
     }
 }

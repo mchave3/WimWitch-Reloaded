@@ -75,7 +75,7 @@ function Start-WimWitch {
         [switch]$demomode,
 
         [parameter(mandatory = $false, HelpMessage = 'Select working directory')]
-        [string]$global:workdir
+        [string]$Script:workdir
     )
 
     process {
@@ -106,9 +106,13 @@ function Start-WimWitch {
 
         $reader = (New-Object System.Xml.XmlNodeReader $xaml)
         try {
-            $Form = [Windows.Markup.XamlReader]::Load( $reader )
+        $Form = [Windows.Markup.XamlReader]::Load($reader)
         } catch {
-            Write-Warning "Unable to parse XML, with error: $($Error[0])`n Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes (PowerShell cannot process them)"
+        Write-Warning @"
+Unable to parse XML, with error: $($Error[0])
+Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes
+(PowerShell cannot process them)
+"@
             throw
         }
 
@@ -149,12 +153,12 @@ function Start-WimWitch {
 
         Show-OpeningText
 
-        # Get-FormVariables #lists all WPF variables
-        $global:workdir = Select-WorkingDirectory
+        # Get-FormVariable #lists all WPF variables
+        $Script:workdir = Select-WorkingDirectory
         Test-WorkingDirectory
 
         # Set the path and name for logging
-        $Log = "$global:workdir\logging\WIMWitch.log"
+        $Log = "$Script:workdir\logging\WIMWitch.log"
 
         # Clears out old logs from previous builds and checks for other folders
         Set-Logging
@@ -163,9 +167,9 @@ function Start-WimWitch {
         Test-Admin
 
         # Setting default values for the WPF form
-        $WPFMISWimFolderTextBox.Text = "$global:workdir\CompletedWIMs"
-        $WPFMISMountTextBox.Text = "$global:workdir\Mount"
-        $WPFJSONTextBoxSavePath.Text = "$global:workdir\Autopilot"
+        $WPFMISWimFolderTextBox.Text = "$Script:workdir\CompletedWIMs"
+        $WPFMISMountTextBox.Text = "$Script:workdir\Mount"
+        $WPFJSONTextBoxSavePath.Text = "$Script:workdir\Autopilot"
 
 
         ##################
@@ -204,7 +208,7 @@ function Start-WimWitch {
 
         $WPFMISAppxTextBox.Text = 'False'
 
-        $global:Win10VerDet = ''
+        $Script:Win10VerDet = ''
 
         #===========================================================================
         # Section for Combo box Functions
@@ -234,20 +238,20 @@ function Start-WimWitch {
         $WPFCMCBImageType.SelectedIndex = 0
 
 
-        Enable-ConfigMgrOptions
+        Enable-ConfigMgrOption
 
         #Software Update Catalog Source combo box
         $UpdateSourceCombos = @('None', 'OSDSUS', 'ConfigMgr')
         foreach ($UpdateSourceCombo in $UpdateSourceCombos) { $WPFUSCBSelectCatalogSource.Items.Add($UpdateSourceCombo) | Out-Null }
         $WPFUSCBSelectCatalogSource.SelectedIndex = 0
-        Invoke-UpdateTabOptions
+        Invoke-UpdateTabOption
 
         #Check for ConfigMgr and set integration
         if ((Find-ConfigManager) -eq 0) {
 
             if ((Import-CMModule) -eq 0) {
                 $WPFUSCBSelectCatalogSource.SelectedIndex = 2
-                Invoke-UpdateTabOptions
+                Invoke-UpdateTabOption
             }
         } else
         { Update-Log -Data 'Skipping ConfigMgr PowerShell module importation' }
@@ -257,10 +261,10 @@ function Start-WimWitch {
         if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 0) {
             Update-Log -Data 'Setting OSDSUS as the Update Catalog' -Class Information
             $WPFUSCBSelectCatalogSource.SelectedIndex = 1
-            Invoke-UpdateTabOptions
+            Invoke-UpdateTabOption
         }
 
-        #Function Get-WindowsPatches($build,$OS)
+        #Function Get-WindowsPatch($build,$OS)
 
         if ($DownloadUpdates -eq $true) {
             #    If (($UpdatePoShModules -eq $true) -and ($WPFUpdatesOSDBOutOfDateTextBlock.Visibility -eq "Visible")) {
@@ -273,7 +277,7 @@ function Start-WimWitch {
             if ($Server2016 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                     Test-Superceded -action delete -OS 'Windows Server' -Build 1607
-                    Get-WindowsPatches -OS 'Windows Server' -build 1607
+                    Get-WindowsPatch -OS 'Windows Server' -build 1607
                 }
 
 
@@ -286,7 +290,7 @@ function Start-WimWitch {
             if ($Server2019 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                     Test-Superceded -action delete -OS 'Windows Server' -Build 1809
-                    Get-WindowsPatches -OS 'Windows Server' -build 1809
+                    Get-WindowsPatch -OS 'Windows Server' -build 1809
                 }
 
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
@@ -298,7 +302,7 @@ function Start-WimWitch {
             if ($Server2022 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                     Test-Superceded -action delete -OS 'Windows Server' -Build 21H2
-                    Get-WindowsPatches -OS 'Windows Server' -build 21H2
+                    Get-WindowsPatch -OS 'Windows Server' -build 21H2
                 }
 
 
@@ -314,7 +318,7 @@ function Start-WimWitch {
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1709
-                        Get-WindowsPatches -OS 'Windows 10' -build 1709
+                        Get-WindowsPatch -OS 'Windows 10' -build 1709
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1709
@@ -326,7 +330,7 @@ function Start-WimWitch {
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1803
-                        Get-WindowsPatches -OS 'Windows 10' -build 1803
+                        Get-WindowsPatch -OS 'Windows 10' -build 1803
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1803
@@ -337,7 +341,7 @@ function Start-WimWitch {
                 if (($Win10Version -eq '1809') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1809
-                        Get-WindowsPatches -OS 'Windows 10' -build 1809
+                        Get-WindowsPatch -OS 'Windows 10' -build 1809
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1809
@@ -350,7 +354,7 @@ function Start-WimWitch {
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1903
-                        Get-WindowsPatches -OS 'Windows 10' -build 1903
+                        Get-WindowsPatch -OS 'Windows 10' -build 1903
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1903
@@ -362,7 +366,7 @@ function Start-WimWitch {
                 if (($Win10Version -eq '1909') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 1909
-                        Get-WindowsPatches -OS 'Windows 10' -build 1909
+                        Get-WindowsPatch -OS 'Windows 10' -build 1909
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1909
@@ -373,7 +377,7 @@ function Start-WimWitch {
                 if (($Win10Version -eq '2004') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 2004
-                        Get-WindowsPatches -OS 'Windows 10' -build 2004
+                        Get-WindowsPatch -OS 'Windows 10' -build 2004
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2004
@@ -384,7 +388,7 @@ function Start-WimWitch {
                 if (($Win10Version -eq '20H2') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 2009
-                        Get-WindowsPatches -OS 'Windows 10' -build 2009
+                        Get-WindowsPatch -OS 'Windows 10' -build 2009
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2009
@@ -395,7 +399,7 @@ function Start-WimWitch {
                 if (($Win10Version -eq '21H1') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 21H1
-                        Get-WindowsPatches -OS 'Windows 10' -build 21H1
+                        Get-WindowsPatch -OS 'Windows 10' -build 21H1
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H1
@@ -406,7 +410,7 @@ function Start-WimWitch {
                 if (($Win10Version -eq '21H2') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 10' -Build 21H2
-                        Get-WindowsPatches -OS 'Windows 10' -build 21H2
+                        Get-WindowsPatch -OS 'Windows 10' -build 21H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H2
@@ -417,7 +421,7 @@ function Start-WimWitch {
                 if ($Win11Version -eq '21H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 11' -Build 21H2
-                        Get-WindowsPatches -OS 'Windows 11' -build 21H2
+                        Get-WindowsPatch -OS 'Windows 11' -build 21H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 21H2
@@ -427,7 +431,7 @@ function Start-WimWitch {
                 if ($Win11Version -eq '22H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 11' -Build 22H2
-                        Get-WindowsPatches -OS 'Windows 11' -build 22H2
+                        Get-WindowsPatch -OS 'Windows 11' -build 22H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 22H2
@@ -437,7 +441,7 @@ function Start-WimWitch {
                 if ($Win11Version -eq '23H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
                         Test-Superceded -action delete -OS 'Windows 11' -Build 23H2
-                        Get-WindowsPatches -OS 'Windows 11' -build 23H2
+                        Get-WindowsPatch -OS 'Windows 11' -build 23H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
                         Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 23H2
@@ -473,7 +477,7 @@ function Start-WimWitch {
         $WPFDriverDir5Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir5TextBox })
 
         #Make it So Button, which builds the WIM file
-        $WPFMISMakeItSoButton.Add_Click( { Invoke-MakeItSo -appx $global:SelectedAppx })
+        $WPFMISMakeItSoButton.Add_Click( { Invoke-MakeItSo -appx $Script:SelectedAppx })
 
         #Update OSDBuilder Button
         $WPFUpdateOSDBUpdateButton.Add_Click( {
@@ -485,7 +489,7 @@ function Start-WimWitch {
         $WPFUpdatesDownloadNewButton.Add_Click( { Update-PatchSource })
 
         #Select Appx packages to remove
-        $WPFAppxButton.Add_Click( { $global:SelectedAppx = Select-Appx })
+        $WPFAppxButton.Add_Click( { $Script:SelectedAppx = Select-Appx })
 
         #Select Autopilot path to save button
         $WPFJSONButtonSavePath.Add_Click( { Select-NewJSONDir })
@@ -511,33 +515,57 @@ function Start-WimWitch {
         #Button to select the import path in the other components
         $WPFImportOtherBSelectPath.add_click({ Select-ImportOtherPath
 
-                if ($WPFImportOtherCBType.SelectedItem -ne 'Feature On Demand') {
-                    if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Out-GridView -Title 'Select Objects' -PassThru) }
-                    if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack')) { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Where-Object { ($_.Name -like '*Windows-Client-Language-Pack*') } | Out-GridView -Title 'Select Objects' -PassThru) }
-                    if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack')) { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Out-GridView -Title 'Select Objects' -PassThru) }
-
+            if ($WPFImportOtherCBType.SelectedItem -ne 'Feature On Demand') {
+                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
+                        Select-Object -Property Name | 
+                        Out-GridView -Title 'Select Objects' -PassThru) 
                 }
-
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
-                    if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text) }
-                    if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') { $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | Select-Object -Property Name | Where-Object { ($_.Name -notlike '*Windows-Client-Language-Pack*') } | Out-GridView -Title 'Select Objects' -PassThru) }
-
+                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and 
+                    ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack')) { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
+                        Select-Object -Property Name | 
+                        Where-Object { ($_.Name -like '*Windows-Client-Language-Pack*') } | 
+                        Out-GridView -Title 'Select Objects' -PassThru) 
                 }
-
-
-                $WPFImportOtherLBList.Items.Clear()
-                $count = 0
-                $path = $WPFImportOtherTBPath.text
-                foreach ($item in $items) {
-                    $WPFImportOtherLBList.Items.Add($item.name)
-                    $count = $count + 1
+                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and 
+                    ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack')) { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
+                        Select-Object -Property Name | 
+                        Out-GridView -Title 'Select Objects' -PassThru) 
                 }
+            }
 
-                if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') { Update-Log -data "$count Language Packs selected from $path" -Class Information }
-                if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { Update-Log -data "$count Local Experience Packs selected from $path" -Class Information }
-                if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') { Update-Log -data "Features On Demand source selected from $path" -Class Information }
+            if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
+                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text) 
+                }
+                if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') { 
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
+                        Select-Object -Property Name | 
+                        Where-Object { ($_.Name -notlike '*Windows-Client-Language-Pack*') } | 
+                        Out-GridView -Title 'Select Objects' -PassThru)
+                }
+            }
 
-            })
+            $WPFImportOtherLBList.Items.Clear()
+            $count = 0
+            $path = $WPFImportOtherTBPath.text
+            foreach ($item in $items) {
+                $WPFImportOtherLBList.Items.Add($item.name)
+                $count = $count + 1
+            }
+
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') { 
+                Update-Log -data "$count Language Packs selected from $path" -Class Information 
+            }
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { 
+                Update-Log -data "$count Local Experience Packs selected from $path" -Class Information 
+            }
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') { 
+                Update-Log -data "Features On Demand source selected from $path" -Class Information 
+            }
+        })
 
         #Button to import Other Components content
         $WPFImportOtherBImport.add_click({
@@ -547,18 +575,28 @@ function Start-WimWitch {
                     $WinVerConversion = $WPFImportOtherCBWinVer.SelectedItem
                 }
 
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') { Import-LanguagePacks -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text }
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { Import-LocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text }
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') { Import-FeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem -LPSourceFolder $WPFImportOtherTBPath.text } })
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') { 
+                    Import-LanguagePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                        -LPSourceFolder $WPFImportOtherTBPath.text 
+                }
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { 
+                    Import-LocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                        -LPSourceFolder $WPFImportOtherTBPath.text 
+                }
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') { 
+                    Import-FeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                        -LPSourceFolder $WPFImportOtherTBPath.text 
+                } 
+        })
 
         #Button Select LP's for importation
-        $WPFCustomBLangPacksSelect.add_click({ Select-LPFODCriteria -type 'LP' })
+        $WPFCustomBLangPacksSelect.add_click({ Select-LPFODRequirement -type 'LP' })
 
         #Button to select FODs for importation
-        $WPFCustomBFODSelect.add_click({ Select-LPFODCriteria -type 'FOD' })
+        $WPFCustomBFODSelect.add_click({ Select-LPFODRequirement -type 'FOD' })
 
         #Button to select LXPs for importation
-        $WPFCustomBLEPSelect.add_click({ Select-LPFODCriteria -type 'LXP' })
+        $WPFCustomBLEPSelect.add_click({ Select-LPFODRequirement -type 'LXP' })
 
         #Button to select PS1 script
         $WPFCustomBSelectPath.add_click({
@@ -571,21 +609,24 @@ function Start-WimWitch {
 
         #Button to Select ConfigMgr Image Package
         $WPFCMBSelectImage.Add_Click({
-                $image = (Get-WmiObject -Namespace "root\SMS\Site_$($global:SiteCode)" -Class SMS_ImagePackage -ComputerName $global:SiteServer) | Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description | Out-GridView -Title 'Pick an image' -PassThru
-                $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
-                if ((Test-Path -Path $path ) -eq $True) {
-                    # write-host "True"
-                    Get-Configuration -filename $path
-                } else {
-                    Get-ImageInfo -PackID $image.PackageID
-                }
-            })
+            $image = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_ImagePackage `
+                -ComputerName $Script:SiteServer | 
+                Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description | 
+                Out-GridView -Title 'Pick an image' -PassThru
+            
+            $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
+            if ((Test-Path -Path $path ) -eq $True) {
+                Get-Configuration -filename $path
+            } else {
+                Get-ImageInfo -PackID $image.PackageID
+            }
+        })
 
         #Button to select new file path (may not need)
         #$WPFCMBFilePathSelect.Add_Click({ })
 
         #Button to add DP/DPG to list box on ConfigMgr tab
-        $WPFCMBAddDP.Add_Click({ Select-DistributionPoints })
+        $WPFCMBAddDP.Add_Click({ Select-DistributionPoint })
 
         #Button to remove DP/DPG from list box on ConfigMgr tab
         $WPFCMBRemoveDP.Add_Click({
@@ -597,10 +638,10 @@ function Start-WimWitch {
             })
 
         #Combo Box dynamic change ConfigMgr type
-        $WPFCMCBImageType.add_SelectionChanged({ Enable-ConfigMgrOptions })
+        $WPFCMCBImageType.add_SelectionChanged({ Enable-ConfigMgrOption })
 
         #Combo Box Software Update Catalog source
-        $WPFUSCBSelectCatalogSource.add_SelectionChanged({ Invoke-UpdateTabOptions })
+        $WPFUSCBSelectCatalogSource.add_SelectionChanged({ Invoke-UpdateTabOption })
 
         #Button to remove items from Language Packs List Box
         $WPFCustomBLangPacksRemove.Add_Click({
@@ -629,13 +670,13 @@ function Start-WimWitch {
             })
 
         #Button to select default app association XML
-        $WPFCustomBDefaultApp.Add_Click({ Select-DefaultApplicationAssociations })
+        $WPFCustomBDefaultApp.Add_Click({ Select-DefaultApplicationAssociation })
 
         #Button to select start menu XML
         $WPFCustomBStartMenu.Add_Click({ Select-StartMenu })
 
         #Button to select registry files
-        $WPFCustomBRegistryAdd.Add_Click({ Select-RegFiles })
+        $WPFCustomBRegistryAdd.Add_Click({ Select-RegFile })
 
         #Button to remove registry files
         $WPFCustomBRegistryRemove.Add_Click({
@@ -861,7 +902,10 @@ function Start-WimWitch {
                 If ($WPFImportISOCheckBox.IsChecked -eq $true) {
                     $WPFImportImportButton.IsEnabled = $True
                 } else {
-                    if (($WPFImportWIMCheckBox.IsChecked -eq $False) -and ($WPFImportDotNetCheckBox.IsChecked -eq $False)) { $WPFImportImportButton.IsEnabled = $False }
+                    if (($WPFImportWIMCheckBox.IsChecked -eq $False) -and 
+                    ($WPFImportDotNetCheckBox.IsChecked -eq $False)) { 
+                        $WPFImportImportButton.IsEnabled = $False 
+                    }
                 }
             })
 

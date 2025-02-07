@@ -33,7 +33,7 @@ function Invoke-RunConfigFile {
         Update-Log -Data "Loading the config file: $filename" -Class Information
         Get-Configuration -filename $filename
         Update-Log -Data $WWScriptVer
-        Invoke-MakeItSo -appx $global:SelectedAppx
+        Invoke-MakeItSo -appx $Script:SelectedAppx
         Write-Output ' '
         Write-Output '##########################################################'
         Write-Output ' '
