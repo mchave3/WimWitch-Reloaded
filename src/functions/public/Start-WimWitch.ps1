@@ -98,7 +98,7 @@ function Start-WimWitch {
         #Your XAML goes here
         $inputXML = Get-Content -Path "$PSScriptRoot\resources\UI\MainWindow.xaml" -Raw
 
-        $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window'
+        $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window' -replace 'WWScriptVer', $WWScriptVer
         [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
         [void][System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
         [xml]$XAML = $inputXML

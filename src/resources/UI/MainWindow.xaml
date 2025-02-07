@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WIM_Witch_Tabbed"
         mc:Ignorable="d"
-        Title="WimWitch Reloaded - $WWScriptVer" 
+        Title="WimWitch Reloaded - WWScriptVer" 
         Width="800"
         Height="500"
         WindowStartupLocation="CenterScreen"
