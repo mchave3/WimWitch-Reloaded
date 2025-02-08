@@ -40,7 +40,7 @@ function Install-DefaultApplicationAssociation {
                 # Apply default app associations using DISM
                 $result = dism.exe /image:$mountPath /Import-DefaultAppAssociations:$defaultAppPath
                 
-                if ($LASTEXITCODE -eq 0) {
+                if ($result.exitCode -eq 0) {
                     Update-Log -Data 'Default application associations installed successfully' -Class Information
                 }
                 else {

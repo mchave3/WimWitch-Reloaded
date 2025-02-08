@@ -116,7 +116,6 @@ function Deploy-Update {
                         }
     
                         else {
-    
                             Add-WindowsPackage -Path $WPFMISMountTextBox.Text -PackagePath $compound -ErrorAction stop | Out-Null
                         }
                     }
