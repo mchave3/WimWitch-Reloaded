@@ -10,13 +10,7 @@
 
 </div>
 
-> A modern PowerShell-based Windows image customization tool, born from the ashes of the original WIM-Witch project.
-
-<!--
-<div align="center">
-    <img src="docs/assets/logo.png" alt="WimWitch-Reloaded Logo" width="200"/>
-</div>
--->
+> A modern PowerShell-based Windows image customization and deployment tool, focusing on Windows 10/11 and Server customization with an intuitive GUI.
 
 ## 📑 Table of Contents
 - [Overview](#-overview)
@@ -34,22 +28,20 @@
 
 WimWitch-Reloaded is a maintained and enhanced fork of [TheNotoriousDRR's WIM-Witch](https://github.com/thenotoriousdrr/WIM-Witch) (now EOL). This project aims to continue the legacy while adding modern features and ensuring compatibility with the latest Windows versions.
 
-## ✨ Features
+## ✨ Key Features
 
-<div align="center">
-  <table>
-    <tr>
-      <td align="center">🖥️<br><b>Image Management</b></td>
-      <td align="center">📦<br><b>AppX Handling</b></td>
-      <td align="center">🌍<br><b>Language Support</b></td>
-    </tr>
-    <tr>
-      <td>Windows image customization<br>Win10/11 support</td>
-      <td>Package management<br>Removal & Installation</td>
-      <td>Language pack integration<br>Regional settings</td>
-    </tr>
-  </table>
-</div>
+- **Windows Image Management**: Full support for Windows 10/11 and Server editions
+- **Update Integration**: Seamless Windows updates and .NET Framework integration  
+- **Driver Management**: Intelligent driver injection for multiple sources
+- **Customization Options**:
+  - AppX package management
+  - Language pack integration
+  - Registry modifications
+  - Custom scripts execution
+- **MEMConfigMgr Integration**: Enhanced ConfigMgr package creation and distribution
+- **ISO Creation**: Create bootable ISO files with custom configurations
+- **AutoPilot Support**: Automated deployment profile integration
+- **Logging**: Detailed logging and error reporting
 
 ## 🔧 Requirements
 
