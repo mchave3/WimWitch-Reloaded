@@ -6,7 +6,7 @@
     This function will update image version, properties and binary differential replication settings.
 
 .NOTES
-    Name:        Set-ImagePropertie.ps1
+    Name:        Invoke-WWCMImagePropertyUpdate.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Set-ImagePropertie -PackageID "ABC00001"
+    Invoke-WWCMImagePropertyUpdate -PackageID "ABC00001"
 #>
-function Set-ImagePropertie {
+function Invoke-WWCMImagePropertyUpdate {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
@@ -37,14 +37,14 @@ function Set-ImagePropertie {
         #Version Text Box
         if ($WPFCMCBImageVerAuto.IsChecked -eq $true) {
             $string = 'Built ' + (Get-Date -DisplayHint Date)
-            Update-Log -Data "Updating image version to $string" -Class Information
+            Write-WWLog -Data "Updating image version to $string" -Class Information
             Set-CMOperatingSystemImage -Id $PackageID -Version $string
         }
 
         if ($WPFCMCBImageVerAuto.IsChecked -eq $false) {
 
             if ($null -ne $WPFCMTBImageVer.text) {
-                Update-Log -Data 'Updating version of the image...' -Class Information
+                Write-WWLog -Data 'Updating version of the image...' -Class Information
                 Set-CMOperatingSystemImage -Id $PackageID -Version $WPFCMTBImageVer.text
             }
         }
@@ -62,14 +62,14 @@ function Set-ImagePropertie {
             if ($WPFDriverCheckBox.IsChecked -eq $true) { $string = $string + 'Drivers, ' }
             if ($WPFJSONEnableCheckBox.IsChecked -eq $true) { $string = $string + 'Autopilot, ' }
             if ($WPFCustomCBRunScript.IsChecked -eq $true) { $string = $string + 'Custom Script, ' }
-            Update-Log -data 'Setting image description...' -Class Information
+            Write-WWLog -data 'Setting image description...' -Class Information
             Set-CMOperatingSystemImage -Id $PackageID -Description $string
         }
 
         if ($WPFCMCBDescriptionAuto.IsChecked -eq $false) {
 
             if ($null -ne $WPFCMTBDescription.Text) {
-                Update-Log -Data 'Updating description of the image...' -Class Information
+                Write-WWLog -Data 'Updating description of the image...' -Class Information
                 Set-CMOperatingSystemImage -Id $PackageID -Description $WPFCMTBDescription.Text
             }
         }
@@ -77,19 +77,19 @@ function Set-ImagePropertie {
         #Check Box properties
         #Binary Differnential Replication
         if ($WPFCMCBBinDirRep.IsChecked -eq $true) {
-            Update-Log -Data 'Enabling Binary Differential Replication' -Class Information
+            Write-WWLog -Data 'Enabling Binary Differential Replication' -Class Information
             Set-CMOperatingSystemImage -Id $PackageID -EnableBinaryDeltaReplication $true
         } else {
-            Update-Log -Data 'Disabling Binary Differential Replication' -Class Information
+            Write-WWLog -Data 'Disabling Binary Differential Replication' -Class Information
             Set-CMOperatingSystemImage -Id $PackageID -EnableBinaryDeltaReplication $false
         }
 
         #Package Share
         if ($WPFCMCBDeploymentShare.IsChecked -eq $true) {
-            Update-Log -Data 'Enabling Package Share' -Class Information
+            Write-WWLog -Data 'Enabling Package Share' -Class Information
             Set-CMOperatingSystemImage -Id $PackageID -CopyToPackageShareOnDistributionPoint $true
         } else {
-            Update-Log -Data 'Disabling Package Share' -Class Information
+            Write-WWLog -Data 'Disabling Package Share' -Class Information
             Set-CMOperatingSystemImage -Id $PackageID -CopyToPackageShareOnDistributionPoint $false
         }
     }

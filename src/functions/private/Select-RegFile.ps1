@@ -36,20 +36,20 @@ function Select-RegFile {
             Filter           = 'REG (*.reg)|'
         }
         $null = $Regfiles.ShowDialog()
-    
+
         $filepaths = $regfiles.FileNames
-        Update-Log -data 'Importing REG files...' -class information
+        Write-WWLog -data 'Importing REG files...' -class information
         foreach ($filepath in $filepaths) {
             if ($filepath -notlike '*.reg') {
-                Update-Log -Data $filepath -Class Warning
-                Update-Log -Data 'Ignoring this file as it is not a .REG file....' -Class Warning
+                Write-WWLog -Data $filepath -Class Warning
+                Write-WWLog -Data 'Ignoring this file as it is not a .REG file....' -Class Warning
                 return
             }
-            Update-Log -Data $filepath -Class Information
+            Write-WWLog -Data $filepath -Class Information
             $WPFCustomLBRegistry.Items.Add($filepath)
         }
-        Update-Log -data 'REG file importation complete' -class information
-    
+        Write-WWLog -data 'REG file importation complete' -class information
+
         #Fix this shit, then you can release her.
     }
 }

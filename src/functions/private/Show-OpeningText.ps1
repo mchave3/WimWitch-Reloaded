@@ -36,6 +36,6 @@ function Show-OpeningText {
         Write-Output "                      version $WWScriptVer"
         Write-Output ' '
         Write-Output '##########################################################'
-        Write-Output ' ' 
+        Write-Output ' '
     }
 }

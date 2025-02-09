@@ -32,9 +32,9 @@ function Install-Driver {
     process {
         try {
             Add-WindowsDriver -Path $WPFMISMountTextBox.Text -Driver $drivertoapply -ErrorAction Stop | Out-Null
-            Update-Log -Data "Applied $drivertoapply" -Class Information
+            Write-WWLog -Data "Applied $drivertoapply" -Class Information
         } catch {
-            Update-Log -Data "Couldn't apply $drivertoapply" -Class Warning
+            Write-WWLog -Data "Couldn't apply $drivertoapply" -Class Warning
         }
     }
 }

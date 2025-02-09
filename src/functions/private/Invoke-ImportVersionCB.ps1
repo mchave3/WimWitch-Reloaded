@@ -7,7 +7,7 @@
     (Windows Server, Windows 10, or Windows 11).
 
 .NOTES
-    Name:        Update-ImportVersionCB.ps1
+    Name:        Invoke-ImportVersionCB.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -21,9 +21,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Update-ImportVersionCB
+    Invoke-ImportVersionCB
 #>
-function Update-ImportVersionCB {
+function Invoke-ImportVersionCB {
     [CmdletBinding()]
     param(
 
@@ -31,20 +31,20 @@ function Update-ImportVersionCB {
 
     process {
         $WPFImportOtherCBWinVer.Items.Clear()
-        if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows Server') { 
-            Foreach ($WinSrvVer in $WinSrvVer) { 
-                $WPFImportOtherCBWinVer.Items.Add($WinSrvVer) 
-            } 
+        if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows Server') {
+            Foreach ($Script:WinSrvVer in $Script:WinSrvVer) {
+                $WPFImportOtherCBWinVer.Items.Add($Script:WinSrvVer)
+            }
         }
-        if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 10') { 
-            Foreach ($Win10Ver in $Win10ver) { 
-                $WPFImportOtherCBWinVer.Items.Add($Win10Ver) 
-            } 
+        if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 10') {
+            Foreach ($Script:Win10Ver in $Script:Win10Ver) {
+                $WPFImportOtherCBWinVer.Items.Add($Script:Win10Ver)
+            }
         }
-        if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') { 
-            Foreach ($Win11Ver in $Win11ver) { 
-                $WPFImportOtherCBWinVer.Items.Add($Win11Ver) 
-            } 
+        if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') {
+            Foreach ($Script:Win11Ver in $Script:Win11Ver) {
+                $WPFImportOtherCBWinVer.Items.Add($Script:Win11Ver)
+            }
         }
     }
 }

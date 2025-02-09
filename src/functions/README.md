@@ -21,7 +21,7 @@ Functions that handle user interface interactions and form management:
 
 ### 🔧 Core Functions
 Essential functions for WimWitch operations:
-- `Update-Log` - Handles logging operations
+- `Write-WWLog` - Handles logging operations
 - `Save-Configuration` - Saves current configuration
 - `Get-Configuration` - Retrieves configuration settings
 - `Import-WimInfo` - Imports Windows image information

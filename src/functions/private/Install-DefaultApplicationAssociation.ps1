@@ -31,17 +31,17 @@ function Install-DefaultApplicationAssociation {
 
     process {
         try {
-            Update-Log -Data 'Installing default application associations...' -Class Information
-            
+            Write-WWLog -Data 'Installing default application associations...' -Class Information
+
             $mountPath = $WPFMISMountTextBox.Text
             $defaultAppPath = $WPFCustomDefaultAppTextBox.Text
-            
+
             if (Test-Path -Path $defaultAppPath) {
                 # Apply default app associations using DISM
                 $result = dism.exe /image:$mountPath /Import-DefaultAppAssociations:$defaultAppPath
-                
+
                 if ($result.exitCode -eq 0) {
-                    Update-Log -Data 'Default application associations installed successfully' -Class Information
+                    Write-WWLog -Data 'Default application associations installed successfully' -Class Information
                 }
                 else {
                     throw "DISM failed with exit code: $LASTEXITCODE"
@@ -52,8 +52,8 @@ function Install-DefaultApplicationAssociation {
             }
         }
         catch {
-            Update-Log -Data 'Failed to install default application associations' -Class Error
-            Update-Log -Data $_.Exception.Message -Class Error
+            Write-WWLog -Data 'Failed to install default application associations' -Class Error
+            Write-WWLog -Data $_.Exception.Message -Class Error
         }
     }
 }

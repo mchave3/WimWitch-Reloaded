@@ -38,64 +38,56 @@ function Deploy-LCU {
         if ($osver -eq 'Windows 10') {
             $executable = "$env:windir\system32\expand.exe"
             $filename = (Get-ChildItem $packagepath).name
-            Update-Log -Data 'Extracting LCU Package content to staging folder...' -Class Information
+            Write-WWLog -Data 'Extracting LCU Package content to staging folder...' -Class Information
             Start-Process $executable -args @("`"$packagepath\$filename`"", '/f:*.CAB', "`"$Script:workdir\staging`"") -Wait -ErrorAction Stop
             $cabs = (Get-Item $Script:workdir\staging\*.cab)
-    
             #MMSMOA2022
-            Update-Log -data 'Applying SSU...' -class information
+            Write-WWLog -data 'Applying SSU...' -class information
             foreach ($cab in $cabs) {
-    
                 if ($cab -like '*SSU*') {
-                    Update-Log -data $cab -class Information
-    
+                    Write-WWLog -data $cab -class Information
                     if ($demomode -eq $false) { Add-WindowsPackage -Path $WPFMISMountTextBox.Text -PackagePath $cab -ErrorAction stop | Out-Null }
                     else {
                         $string = 'Demo mode active - Not applying ' + $cab
-                        Update-Log -data $string -Class Warning
+                        Write-WWLog -data $string -Class Warning
                     }
                 }
-    
             }
-    
-            Update-Log -data 'Applying LCU...' -class information
+            Write-WWLog -data 'Applying LCU...' -class information
             foreach ($cab in $cabs) {
                 if ($cab -notlike '*SSU*') {
-                    Update-Log -data $cab -class information
+                    Write-WWLog -data $cab -class information
                     if ($demomode -eq $false) { Add-WindowsPackage -Path $WPFMISMountTextBox.Text -PackagePath $cab -ErrorAction stop | Out-Null }
                     else {
                         $string = 'Demo mode active - Not applying ' + $cab
-                        Update-Log -data $string -Class Warning
+                        Write-WWLog -data $string -Class Warning
                     }
                 }
             }
         }
         if ($osver -eq 'Windows 11') {
             # Copy file to staging
-            Update-Log -data 'Copying LCU file to staging folder...' -class information
+            Write-WWLog -data 'Copying LCU file to staging folder...' -class information
             $filename = (Get-ChildItem -Path $packagepath -Name)
             Copy-Item -Path $packagepath\$filename -Destination $Script:workdir\staging -Force
-    
-            Update-Log -data 'Changing file extension type from CAB to MSU...' -class information
+            Write-WWLog -data 'Changing file extension type from CAB to MSU...' -class information
             $basename = (Get-Item -Path $Script:workdir\staging\$filename).BaseName
             $newname = $basename + '.msu'
             Rename-Item -Path $Script:workdir\staging\$filename -NewName $newname
-    
-            Update-Log -data 'Applying LCU...' -class information
-            Update-Log -data $Script:workdir\staging\$newname -class information
+            Write-WWLog -data 'Applying LCU...' -class information
+            Write-WWLog -data $Script:workdir\staging\$newname -class information
             $updatename = (Get-Item -Path $packagepath).name
-            Update-Log -data $updatename -Class Information
-    
+            Write-WWLog -data $updatename -Class Information
             try {
                 if ($demomode -eq $false) {
                     Add-WindowsPackage -Path $WPFMISMountTextBox.Text -PackagePath $Script:workdir\staging\$newname -ErrorAction Stop | Out-Null
                 } else {
                     $string = 'Demo mode active - Not applying ' + $updatename
-                    Update-Log -data $string -Class Warning
+                    Write-WWLog -data $string -Class Warning
                 }
             } catch {
-                Update-Log -data 'Failed to apply update' -class Warning
-                Update-Log -data $_.Exception.Message -class Warning
+                Write-WWLog -data 'Failed to apply update' -class Warning
+                Write-WWLog -data $_.Exception.Message -class Warning
             }
         }
     }

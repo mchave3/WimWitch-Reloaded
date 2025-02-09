@@ -6,7 +6,7 @@
     This function is used to update the log file and write to the console.
 
 .NOTES
-    Name:        Update-Log.ps1
+    Name:        Write-WWLog.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,12 +20,12 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Update-Log -Data "This is a test log entry" # Default class is Information
-    Update-Log -Data "This is a test log entry" -Class "Warning"
-    Update-Log -Data "This is a test log entry" -Class "Error"
-    Update-Log -Data "This is a test log entry" -Class "Comment"
+    Write-WWLog -Data "This is a test log entry" # Default class is Information
+    Write-WWLog -Data "This is a test log entry" -Class "Warning"
+    Write-WWLog -Data "This is a test log entry" -Class "Error"
+    Write-WWLog -Data "This is a test log entry" -Class "Comment"
 #>
-function Update-Log {
+function Write-WWLog {
     [CmdletBinding()]
     param(
         [Parameter(
@@ -55,11 +55,10 @@ function Update-Log {
     )
 
     process {
-        $Script:ScriptLogFilePath = $Log
+        $Log = "$Script:workdir\logging\WIMWitch.log"
         $LogString = "$(Get-Date) $Class  -  $Data"
         $HostString = "$(Get-Date) $Class  -  $Data"
-    
-    
+
         Add-Content -Path $Log -Value $LogString
         switch ($Class) {
             'Information' {
@@ -74,7 +73,7 @@ function Update-Log {
             'Comment' {
                 Write-Host $HostString -ForegroundColor Green
             }
-    
+
             Default { }
         }
     }

@@ -36,6 +36,6 @@ function Select-ISODirectory {
         $MountDir = $browser.SelectedPath
         $WPFMISTBFilePath.text = $MountDir
         #Test-MountPath -path $WPFMISMountTextBox.text
-        Update-Log -Data 'ISO directory selected' -Class Information
+        Write-WWLog -Data 'ISO directory selected' -Class Information
     }
 }

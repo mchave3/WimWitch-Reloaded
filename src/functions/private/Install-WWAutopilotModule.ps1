@@ -6,7 +6,7 @@
     This function is used to update the WindowsAutopilotIntune module.
 
 .NOTES
-    Name:        Update-Autopilot.ps1
+    Name:        Install-WWAutopilotModule.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,18 +20,18 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Update-Autopilot
+    Install-WWAutopilotModule
 #>
-function Update-Autopilot {
+function Install-WWAutopilotModule {
     [CmdletBinding()]
     param(
 
     )
 
     process {
-        Update-Log -Data 'Uninstalling old WindowsAutopilotIntune module...' -Class Warning
+        Write-WWLog -Data 'Uninstalling old WindowsAutopilotIntune module...' -Class Warning
         Uninstall-Module -Name WindowsAutopilotIntune -AllVersions
-        Update-Log -Data 'Installing new WindowsAutopilotIntune module...' -Class Warning
+        Write-WWLog -Data 'Installing new WindowsAutopilotIntune module...' -Class Warning
         Install-Module -Name WindowsAutopilotIntune -Force
         $AutopilotUpdate = ([System.Windows.MessageBox]::Show(
             'WIM Witch needs to close and PowerShell needs to be restarted. Click OK to close WIM Witch.',

@@ -43,8 +43,8 @@ function Test-DotNetExist {
         Test-Path -Path $DotNetFiles\*
         if ((Test-Path -Path $DotNetFiles\*) -eq $false) {
             $text = '.Net 3.5 Binaries are not present for ' + $buildnum
-            Update-Log -Data $text -Class Warning
-            Update-Log -data 'Import .Net from an ISO or disable injection to continue' -Class Warning
+            Write-WWLog -Data $text -Class Warning
+            Write-WWLog -data 'Import .Net from an ISO or disable injection to continue' -Class Warning
             return $false
         }
     }

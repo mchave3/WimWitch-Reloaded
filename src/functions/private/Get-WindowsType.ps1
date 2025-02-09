@@ -24,6 +24,7 @@
 #>
 function Get-WindowsType {
     [CmdletBinding()]
+    [OutputType([string])]
     param(
 
     )
@@ -39,7 +40,7 @@ function Get-WindowsType {
             return 'Windows Server'
         }
         else {
-            Update-Log -Data "Could not determine Windows type from description: $($WPFSourceWIMImgDesTextBox.Text)" -Class Warning
+            Write-WWLog -Data "Could not determine Windows type from description: $($WPFSourceWIMImgDesTextBox.Text)" -Class Warning
             return $null
         }
     }

@@ -24,6 +24,7 @@
 #>
 function Rename-Name {
     [CmdletBinding()]
+    [OutputType([string])]
     param(
         [parameter(mandatory = $true, HelpMessage = 'File to rename')]
         [string]$file,
@@ -33,7 +34,7 @@ function Rename-Name {
 
     process {
         $text = 'Renaming existing ' + $extension + ' file...'
-        Update-Log -Data $text -Class Warning
+        Write-WWLog -Data $text -Class Warning
         $filename = (Split-Path -Leaf $file)
         $dateinfo = (Get-Item -Path $file).LastWriteTime -replace (' ', '_') -replace ('/', '_') -replace (':', '_')
         $filename = $filename -replace ($extension, '')
@@ -41,9 +42,9 @@ function Rename-Name {
         try {
             Rename-Item -Path $file -NewName $filename -ErrorAction Stop
             $text = $file + ' has been renamed to ' + $filename
-            Update-Log -Data $text -Class Warning
+            Write-WWLog -Data $text -Class Warning
         } catch {
-            Update-Log -data "Couldn't rename file. Stopping..." -force -Class Error
+            Write-WWLog -data "Couldn't rename file. Stopping..." -force -Class Error
             return 'stop'
         }
     }

@@ -29,7 +29,7 @@ function Update-PatchSource {
     )
 
     process {
-        Update-Log -Data 'attempting to start download Function' -Class Information
+        Write-WWLog -Data 'attempting to start download Function' -Class Information
         if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'OSDSUS') {
             if ($WPFUpdatesW10Main.IsChecked -eq $true) {
                 if ($WPFUpdatesW10_22H2.IsChecked -eq $true) {
@@ -178,6 +178,6 @@ function Update-PatchSource {
             }
             Get-OneDrive
         }
-        Update-Log -data 'All downloads complete' -class Information
+        Write-WWLog -data 'All downloads complete' -class Information
     }
 }

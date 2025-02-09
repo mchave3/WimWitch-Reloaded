@@ -3,7 +3,7 @@
     Select start menu layout file.
 
 .DESCRIPTION
-    This function opens a file dialog to allow the user to select an XML file containing a custom start menu layout. 
+    This function opens a file dialog to allow the user to select an XML file containing a custom start menu layout.
     It validates the selected file and updates the UI accordingly.
 
 .NOTES
@@ -51,19 +51,19 @@ function Select-StartMenu {
 
         if ($OS -ne 'Windows 11') {
             if ($Sourcexml.FileName -notlike '*.xml') {
-                Update-Log -Data 'A XML file not selected. Please select a valid file to continue.' -Class Warning
+                Write-WWLog -Data 'A XML file not selected. Please select a valid file to continue.' -Class Warning
                 return
             }
         }
 
         if ($OS -eq 'Windows 11') {
             if ($Sourcexml.FileName -notlike '*.json') {
-                Update-Log -Data 'A JSON file not selected. Please select a valid file to continue.' -Class Warning
+                Write-WWLog -Data 'A JSON file not selected. Please select a valid file to continue.' -Class Warning
                 return
             }
         }
 
         $text = $WPFCustomTBStartMenu.text + ' selected as the start menu file'
-        Update-Log -Data $text -class Information
+        Write-WWLog -Data $text -class Information
     }
 }

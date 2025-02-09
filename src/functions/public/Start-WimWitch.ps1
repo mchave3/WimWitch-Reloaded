@@ -71,9 +71,6 @@ function Start-WimWitch {
         [ValidateSet('New', 'Edit')]
         [string]$CM = 'none',
 
-        [parameter(mandatory = $false, HelpMessage = 'Used to skip lengthy steps')]
-        [switch]$demomode,
-
         [parameter(mandatory = $false, HelpMessage = 'Select working directory')]
         [string]$Script:workdir
     )
@@ -157,11 +154,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $Script:workdir = Select-WorkingDirectory
         Test-WorkingDirectory
 
-        # Set the path and name for logging
-        $Log = "$Script:workdir\logging\WIMWitch.log"
-
         # Clears out old logs from previous builds and checks for other folders
-        Set-Logging
+        Initialize-WimWitchEnvironment
 
         # Test for admin and exit if not
         Test-Admin
@@ -176,9 +170,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         # Prereq Check segment
 
         #Check for installed PowerShell version
-        if ($PSVersionTable.PSVersion.Major -ge 5) { Update-Log -Data 'PowerShell v5 or greater installed.' -Class Information }
+        if ($PSVersionTable.PSVersion.Major -ge 5) { Write-WWLog -Data 'PowerShell v5 or greater installed.' -Class Information }
         else {
-            Update-Log -data 'PowerShell v5 or greater is required. Please upgrade PowerShell and try again.' -Class Error
+            Write-WWLog -data 'PowerShell v5 or greater is required. Please upgrade PowerShell and try again.' -Class Error
             Show-ClosingText
             exit 0
         }
@@ -218,9 +212,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         $ObjectTypes = @('Language Pack', 'Local Experience Pack', 'Feature On Demand')
         $WinOS = @('Windows Server', 'Windows 10', 'Windows 11')
-        $WinSrvVer = @('2019', '21H2')
-        $Win10Ver = @('1809', '2004')
-        $Win11Ver = @('21H2', '22H2', '23H2')
+        $Script:WinSrvVer = @('2019', '21H2')
+        $Script:Win10Ver = @('1809', '2004')
+        $Script:Win11Ver = @('21H2', '22H2', '23H2')
 
         Foreach ($ObjectType in $ObjectTypes) { $WPFImportOtherCBType.Items.Add($ObjectType) | Out-Null }
         Foreach ($WinOS in $WinOS) { $WPFImportOtherCBWinOS.Items.Add($WinOS) | Out-Null }
@@ -247,19 +241,19 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         Invoke-UpdateTabOption
 
         #Check for ConfigMgr and set integration
-        if ((Find-ConfigManager) -eq 0) {
+        if ((Find-ConfigManager) -eq $true) {
 
-            if ((Import-CMModule) -eq 0) {
+            if ((Import-CMModule) -eq $true) {
                 $WPFUSCBSelectCatalogSource.SelectedIndex = 2
                 Invoke-UpdateTabOption
             }
         } else
-        { Update-Log -Data 'Skipping ConfigMgr PowerShell module importation' }
+        { Write-WWLog -Data 'Skipping ConfigMgr PowerShell module importation' }
 
         #Set OSDSUS to Patch Catalog if CM isn't integratedg
 
         if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 0) {
-            Update-Log -Data 'Setting OSDSUS as the Update Catalog' -Class Information
+            Write-WWLog -Data 'Setting OSDSUS as the Update Catalog' -Class Information
             $WPFUSCBSelectCatalogSource.SelectedIndex = 1
             Invoke-UpdateTabOption
         }
@@ -269,8 +263,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         if ($DownloadUpdates -eq $true) {
             #    If (($UpdatePoShModules -eq $true) -and ($WPFUpdatesOSDBOutOfDateTextBlock.Visibility -eq "Visible")) {
             If ($UpdatePoShModules -eq $true ) {
-                Update-OSDB
-                Update-OSDSUS
+                Install-OSDB
+                Install-OSDSUS
             }
 
 
@@ -481,8 +475,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Update OSDBuilder Button
         $WPFUpdateOSDBUpdateButton.Add_Click( {
-                Update-OSDB
-                Update-OSDSUS
+                Install-OSDB
+                Install-OSDSUS
             })
 
         #Update patch source
@@ -510,40 +504,40 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFImportImportButton.Add_click( { Import-ISO })
 
         #Combo Box dynamic change for Winver combo box
-        $WPFImportOtherCBWinOS.add_SelectionChanged({ Update-ImportVersionCB })
+        $WPFImportOtherCBWinOS.add_SelectionChanged({ Invoke-ImportVersionCB })
 
         #Button to select the import path in the other components
         $WPFImportOtherBSelectPath.add_click({ Select-ImportOtherPath
 
             if ($WPFImportOtherCBType.SelectedItem -ne 'Feature On Demand') {
-                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { 
-                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
-                        Select-Object -Property Name | 
-                        Out-GridView -Title 'Select Objects' -PassThru) 
+                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') {
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text |
+                        Select-Object -Property Name |
+                        Out-GridView -Title 'Select Objects' -PassThru)
                 }
-                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and 
-                    ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack')) { 
-                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
-                        Select-Object -Property Name | 
-                        Where-Object { ($_.Name -like '*Windows-Client-Language-Pack*') } | 
-                        Out-GridView -Title 'Select Objects' -PassThru) 
+                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and
+                    ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack')) {
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text |
+                        Select-Object -Property Name |
+                        Where-Object { ($_.Name -like '*Windows-Client-Language-Pack*') } |
+                        Out-GridView -Title 'Select Objects' -PassThru)
                 }
-                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and 
-                    ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack')) { 
-                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
-                        Select-Object -Property Name | 
-                        Out-GridView -Title 'Select Objects' -PassThru) 
+                if (($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') -and
+                    ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack')) {
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text |
+                        Select-Object -Property Name |
+                        Out-GridView -Title 'Select Objects' -PassThru)
                 }
             }
 
             if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
-                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') { 
-                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text) 
+                if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') {
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text)
                 }
-                if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') { 
-                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text | 
-                        Select-Object -Property Name | 
-                        Where-Object { ($_.Name -notlike '*Windows-Client-Language-Pack*') } | 
+                if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') {
+                    $items = (Get-ChildItem -Path $WPFImportOtherTBPath.text |
+                        Select-Object -Property Name |
+                        Where-Object { ($_.Name -notlike '*Windows-Client-Language-Pack*') } |
                         Out-GridView -Title 'Select Objects' -PassThru)
                 }
             }
@@ -556,14 +550,14 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 $count = $count + 1
             }
 
-            if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') { 
-                Update-Log -data "$count Language Packs selected from $path" -Class Information 
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') {
+                Write-WWLog -data "$count Language Packs selected from $path" -Class Information
             }
-            if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { 
-                Update-Log -data "$count Local Experience Packs selected from $path" -Class Information 
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') {
+                Write-WWLog -data "$count Local Experience Packs selected from $path" -Class Information
             }
-            if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') { 
-                Update-Log -data "Features On Demand source selected from $path" -Class Information 
+            if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
+                Write-WWLog -data "Features On Demand source selected from $path" -Class Information
             }
         })
 
@@ -575,18 +569,18 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                     $WinVerConversion = $WPFImportOtherCBWinVer.SelectedItem
                 }
 
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') { 
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') {
                     Import-LanguagePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
-                        -LPSourceFolder $WPFImportOtherTBPath.text 
+                        -LPSourceFolder $WPFImportOtherTBPath.text
                 }
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') { 
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') {
                     Import-LocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
-                        -LPSourceFolder $WPFImportOtherTBPath.text 
+                        -LPSourceFolder $WPFImportOtherTBPath.text
                 }
-                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') { 
+                if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
                     Import-FeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
-                        -LPSourceFolder $WPFImportOtherTBPath.text 
-                } 
+                        -LPSourceFolder $WPFImportOtherTBPath.text
+                }
         })
 
         #Button Select LP's for importation
@@ -610,10 +604,10 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         #Button to Select ConfigMgr Image Package
         $WPFCMBSelectImage.Add_Click({
             $image = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_ImagePackage `
-                -ComputerName $Script:SiteServer | 
-                Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description | 
+                -ComputerName $Script:SiteServer |
+                Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description |
                 Out-GridView -Title 'Pick an image' -PassThru
-            
+
             $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
             if ((Test-Path -Path $path ) -eq $True) {
                 Get-Configuration -filename $path
@@ -695,7 +689,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Button to set CM Site and Server properties
         $WPFCMBSetCM.Add_Click({
-                Set-ConfigMgr
+                Get-WWConfigMgrConnection
                 Import-CMModule
 
             })
@@ -902,9 +896,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 If ($WPFImportISOCheckBox.IsChecked -eq $true) {
                     $WPFImportImportButton.IsEnabled = $True
                 } else {
-                    if (($WPFImportWIMCheckBox.IsChecked -eq $False) -and 
-                    ($WPFImportDotNetCheckBox.IsChecked -eq $False)) { 
-                        $WPFImportImportButton.IsEnabled = $False 
+                    if (($WPFImportWIMCheckBox.IsChecked -eq $False) -and
+                    ($WPFImportDotNetCheckBox.IsChecked -eq $False)) {
+                        $WPFImportImportButton.IsEnabled = $False
                     }
                 }
             })
@@ -999,22 +993,22 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Runs WIM from a path with multiple files, bypassing the GUI
         if (($auto -eq $true) -and ($autopath -ne '')) {
-            Update-Log -data "Running batch job from config folder $autopath" -Class Information
+            Write-WWLog -data "Running batch job from config folder $autopath" -Class Information
             $files = Get-ChildItem -Path $autopath
-            Update-Log -data 'Setting batch job for the folling configs:' -Class Information
-            foreach ($file in $files) { Update-Log -Data $file -Class Information }
+            Write-WWLog -data 'Setting batch job for the folling configs:' -Class Information
+            foreach ($file in $files) { Write-WWLog -Data $file -Class Information }
             foreach ($file in $files) {
                 $fullpath = $autopath + '\' + $file
                 Invoke-RunConfigFile -filename $fullpath
             }
-            Update-Log -Data 'Work complete' -Class Information
+            Write-WWLog -Data 'Work complete' -Class Information
             Show-ClosingText
             exit 0
         }
 
         #Loads the specified ConfigMgr config file from CM Console
         if (($CM -eq 'Edit') -and ($autofile -ne '')) {
-            Update-Log -Data 'Loading ConfigMgr OS Image Package information...' -Class Information
+            Write-WWLog -Data 'Loading ConfigMgr OS Image Package information...' -Class Information
             Get-Configuration -filename $autofile
         }
 
@@ -1026,12 +1020,12 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         if ($HiHungryImDad -eq $true) {
             $string = Invoke-DadJoke
-            Update-Log -Data $string -Class Comment
+            Write-WWLog -Data $string -Class Comment
             $WPFImportBDJ.Visibility = 'Visible'
         }
 
         #Start GUI
-        Update-Log -data 'Starting WIM Witch GUI' -class Information
+        Write-WWLog -data 'Starting WIM Witch GUI' -class Information
         $Form.ShowDialog() | Out-Null #This starts the GUI
 
         #endregion Main

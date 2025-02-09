@@ -90,7 +90,7 @@ function Save-Configuration {
             RegFilesLB       = $WPFCustomLBRegistry.Items
             SUOptional       = $WPFUpdatesCBEnableOptional.IsChecked
             SUDynamic        = $WPFUpdatesCBEnableDynamic.IsChecked
-    
+
             ApplyDynamicCB   = $WPFMISCBDynamicUpdates.IsChecked
             UpdateBootCB     = $WPFMISCBBootWIM.IsChecked
             DoNotCreateWIMCB = $WPFMISCBNoWIM.IsChecked
@@ -100,42 +100,41 @@ function Save-Configuration {
             UpgradePackageCB = $WPFMISCBUpgradePackage.IsChecked
             UpgradePackPath  = $WPFMISTBUpgradePackage.Text
             IncludeOptionCB  = $WPFUpdatesOptionalEnableCheckBox.IsChecked
-    
+
             SourceVersion    = $WPFSourceWimTBVersionNum.text
         }
-    
+
         if ($CM -eq $False) {
-    
-            Update-Log -data "Saving configuration file $filename" -Class Information
-    
+
+            Write-WWLog -data "Saving configuration file $filename" -Class Information
+
             try {
                 $CurrentConfig | Export-Clixml -Path $Script:workdir\Configs\$filename -ErrorAction Stop
-                Update-Log -data 'file saved' -Class Information
+                Write-WWLog -data 'file saved' -Class Information
             } catch {
-                Update-Log -data "Couldn't save file" -Class Error
+                Write-WWLog -data "Couldn't save file" -Class Error
             }
         } else {
-            Update-Log -data "Saving ConfigMgr Image info for Package $filename" -Class Information
-    
+            Write-WWLog -data "Saving ConfigMgr Image info for Package $filename" -Class Information
+
             $CurrentConfig.CMPackageID = $filename
             $CurrentConfig.CMImageType = 'Update Existing Image'
-    
+
             $CurrentConfig.CMImageType
-    
+
             if ((Test-Path -Path $Script:workdir\ConfigMgr\PackageInfo) -eq $False) {
-                Update-Log -Data 'Creating ConfigMgr Package Info folder...' -Class Information
-    
+                Write-WWLog -Data 'Creating ConfigMgr Package Info folder...' -Class Information
                 try {
                     New-Item -ItemType Directory -Path $Script:workdir\ConfigMgr\PackageInfo -ErrorAction Stop
                 } catch {
-                    Update-Log -Data "Couldn't create the folder. Likely a permission issue" -Class Error
+                    Write-WWLog -Data "Couldn't create the folder. Likely a permission issue" -Class Error
                 }
             }
             try {
                 $CurrentConfig | Export-Clixml -Path $Script:workdir\ConfigMgr\PackageInfo\$filename -Force -ErrorAction Stop
-                Update-Log -data 'file saved' -Class Information
+                Write-WWLog -data 'file saved' -Class Information
             } catch {
-                Update-Log -data "Couldn't save file" -Class Error
+                Write-WWLog -data "Couldn't save file" -Class Error
             }
         }
     }

@@ -33,13 +33,13 @@ function New-WindowsISO {
         $oscdimgPath = "${env:ProgramFiles(x86)}" + 
             '\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe'
         if ((Test-Path -Path $oscdimgPath -PathType Leaf) -eq $false) {
-            Update-Log -Data 'The file oscdimg.exe was not found. Skipping ISO creation...' -Class Error
+            Write-WWLog -Data 'The file oscdimg.exe was not found. Skipping ISO creation...' -Class Error
             return
         }
     
         If ($WPFMISTBISOFileName.Text -notlike '*.iso') {
             $WPFMISTBISOFileName.Text = $WPFMISTBISOFileName.Text + '.iso'
-            Update-Log -Data 'Appending new file name with an extension' -Class Information
+            Write-WWLog -Data 'Appending new file name with an extension' -Class Information
         }
     
         $Location = ${env:ProgramFiles(x86)}
@@ -54,7 +54,7 @@ function New-WindowsISO {
     
         if ((Test-Path -Path $dest) -eq $true) { Rename-Name -file $dest -extension '.iso' }
         try {
-            Update-Log -Data 'Starting to build ISO...' -Class Information
+            Write-WWLog -Data 'Starting to build ISO...' -Class Information
             # write-host $executable
             Start-Process $executable -args @(
                 "`"$text`"",
@@ -64,10 +64,10 @@ function New-WindowsISO {
                 "`"$source`"",
                 "`"$dest`""
             ) -Wait -ErrorAction Stop
-            Update-Log -Data 'ISO has been built' -Class Information
+            Write-WWLog -Data 'ISO has been built' -Class Information
         } catch {
-            Update-Log -Data "Couldn't create the ISO file" -Class Error
-            Update-Log -data $_.Exception.Message -class Error
+            Write-WWLog -Data "Couldn't create the ISO file" -Class Error
+            Write-WWLog -data $_.Exception.Message -class Error
         }
     }
 }

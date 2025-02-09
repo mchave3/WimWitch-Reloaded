@@ -29,18 +29,18 @@ function Remove-OSIndex {
     )
 
     process {
-        Update-Log -Data 'Attempting to remove unwanted image indexes' -Class Information
+        Write-WWLog -Data 'Attempting to remove unwanted image indexes' -Class Information
         $wimname = Get-Item -Path $Script:workdir\Staging\*.wim
     
-        Update-Log -Data "Found Image $wimname" -Class Information
+        Write-WWLog -Data "Found Image $wimname" -Class Information
         $IndexesAll = Get-WindowsImage -ImagePath $wimname | ForEach-Object { $_.ImageName }
         $IndexSelected = $WPFSourceWIMImgDesTextBox.Text
         foreach ($Index in $IndexesAll) {
-            Update-Log -data "$Index is being evaluated"
+            Write-WWLog -data "$Index is being evaluated"
             If ($Index -eq $IndexSelected) {
-                Update-Log -Data "$Index is the index we want to keep. Skipping." -Class Information | Out-Null
+                Write-WWLog -Data "$Index is the index we want to keep. Skipping." -Class Information | Out-Null
             } else {
-                Update-Log -data "Deleting $Index from WIM" -Class Information
+                Write-WWLog -data "Deleting $Index from WIM" -Class Information
                 Remove-WindowsImage -ImagePath $wimname -Name $Index -InformationAction SilentlyContinue | Out-Null
     
             }

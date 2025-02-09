@@ -36,26 +36,23 @@ function Invoke-UpdateTabOption {
             $WPFUpdatesW10Main.IsEnabled = $false
             $WPFUpdatesS2019.IsEnabled = $false
             $WPFUpdatesS2016.IsEnabled = $false
-    
+
             $WPFMISCBCheckForUpdates.IsEnabled = $false
             $WPFMISCBCheckForUpdates.IsChecked = $false
-    
         }
-    
         if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'OSDSUS') {
             $WPFUpdateOSDBUpdateButton.IsEnabled = $true
             $WPFUpdatesDownloadNewButton.IsEnabled = $true
             $WPFUpdatesW10Main.IsEnabled = $true
             $WPFUpdatesS2019.IsEnabled = $true
             $WPFUpdatesS2016.IsEnabled = $true
-    
+
             $WPFMISCBCheckForUpdates.IsEnabled = $false
             $WPFMISCBCheckForUpdates.IsChecked = $false
-            Update-Log -data 'OSDSUS selected as update catalog' -class Information
+            Write-WWLog -data 'OSDSUS selected as update catalog' -class Information
             Invoke-OSDCheck
-    
+
         }
-    
         if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'ConfigMgr') {
             $WPFUpdateOSDBUpdateButton.IsEnabled = $false
             $WPFUpdatesDownloadNewButton.IsEnabled = $true
@@ -63,11 +60,10 @@ function Invoke-UpdateTabOption {
             $WPFUpdatesS2019.IsEnabled = $true
             $WPFUpdatesS2016.IsEnabled = $true
             $WPFMISCBCheckForUpdates.IsEnabled = $true
-            #        $MEMCMsiteinfo = Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SMS\Identification"
-    
+            #   $MEMCMsiteinfo = Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SMS\Identification"
             #   $WPFCMTBSiteServer.text = $MEMCMsiteinfo.'Site Server'
             #   $WPFCMTBSitecode.text = $MEMCMsiteinfo.'Site Code'
-            Update-Log -data 'ConfigMgr is selected as the update catalog' -Class Information
+            Write-WWLog -data 'ConfigMgr is selected as the update catalog' -Class Information
         }
     }
 }

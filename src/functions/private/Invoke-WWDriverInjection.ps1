@@ -6,7 +6,7 @@
     This function is used to inject drivers into a WIM file.
 
 .NOTES
-    Name:        Start-DriverInjection.ps1
+    Name:        Invoke-WWDriverInjection.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Start-DriverInjection -folder "C:\Drivers"
+    Invoke-WWDriverInjection -folder "C:\Drivers"
 #>
-function Start-DriverInjection {
+function Invoke-WWDriverInjection {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
@@ -32,13 +32,13 @@ function Start-DriverInjection {
     process {
         $testpath = Test-Path $folder -PathType Container
         If ($testpath -eq $false) { return }
-    
+
         If ($testpath -eq $true) {
-    
-            Update-Log -data "Applying drivers from $folder" -class Information
-    
+
+            Write-WWLog -data "Applying drivers from $folder" -class Information
+
             Get-ChildItem $Folder -Recurse -Filter '*inf' | ForEach-Object { Install-Driver $_.FullName }
-            Update-Log -Data "Completed driver injection from $folder" -Class Information
+            Write-WWLog -Data "Completed driver injection from $folder" -Class Information
         }
     }
 }

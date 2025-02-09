@@ -52,9 +52,9 @@ function Enable-ConfigMgrOption {
             # $MEMCMsiteinfo = Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SMS\Identification"
             # $WPFCMTBSiteServer.text = $MEMCMsiteinfo.'Site Server'
             # $WPFCMTBSitecode.text = $MEMCMsiteinfo.'Site Code'
-            Update-Log -data 'ConfigMgr feature enabled. New Image selected' -class Information
-            #    Update-Log -data $WPFCMTBSitecode.text -class Information
-            #    Update-Log -data $WPFCMTBSiteServer.text -class Information
+            Write-WWLog -data 'ConfigMgr feature enabled. New Image selected' -class Information
+            #    Write-WWLog -data $WPFCMTBSitecode.text -class Information
+            #    Write-WWLog -data $WPFCMTBSiteServer.text -class Information
         }
 
         if ($WPFCMCBImageType.SelectedItem -eq 'Update Existing Image') {
@@ -78,9 +78,9 @@ function Enable-ConfigMgrOption {
             #  $MEMCMsiteinfo = Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SMS\Identification"
             #  $WPFCMTBSiteServer.text = $MEMCMsiteinfo.'Site Server'
             #  $WPFCMTBSitecode.text = $MEMCMsiteinfo.'Site Code'
-            Update-Log -data 'ConfigMgr feature enabled. Update an existing image selected' -class Information
-            #   Update-Log -data $WPFCMTBSitecode.text -class Information
-            #   Update-Log -data $WPFCMTBSiteServer.text -class Information
+            Write-WWLog -data 'ConfigMgr feature enabled. Update an existing image selected' -class Information
+            #   Write-WWLog -data $WPFCMTBSitecode.text -class Information
+            #   Write-WWLog -data $WPFCMTBSiteServer.text -class Information
         }
 
         if ($WPFCMCBImageType.SelectedItem -eq 'Disabled') {
@@ -100,7 +100,7 @@ function Enable-ConfigMgrOption {
             $WPFCMCBImageVerAuto.IsEnabled = $False
             $WPFCMCBDescriptionAuto.IsEnabled = $False
             $WPFCMCBDeploymentShare.IsEnabled = $False
-            Update-Log -data 'ConfigMgr feature disabled' -class Information
+            Write-WWLog -data 'ConfigMgr feature disabled' -class Information
 
         }
     }

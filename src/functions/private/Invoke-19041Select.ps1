@@ -39,14 +39,14 @@ function Invoke-19041Select {
     mc:Ignorable="d"
     Title="Select Win10 Version" Height="170" Width="353">
     <Grid x:Name="Win10PU" Margin="0,0,10,6">
-    <ComboBox x:Name="Win10PUCombo" HorizontalAlignment="Left" Margin="40,76,0,0" 
+    <ComboBox x:Name="Win10PUCombo" HorizontalAlignment="Left" Margin="40,76,0,0"
         VerticalAlignment="Top" Width="120"/>
-    <Button x:Name="Win10PUOK" Content="OK" HorizontalAlignment="Left" Margin="182,76,0,0" 
+    <Button x:Name="Win10PUOK" Content="OK" HorizontalAlignment="Left" Margin="182,76,0,0"
         VerticalAlignment="Top" Width="50"/>
-    <Button x:Name="Win10PUCancel" Content="Cancel" HorizontalAlignment="Left" Margin="248,76,0,0" 
+    <Button x:Name="Win10PUCancel" Content="Cancel" HorizontalAlignment="Left" Margin="248,76,0,0"
         VerticalAlignment="Top" Width="50"/>
-    <TextBlock x:Name="Win10PUText" HorizontalAlignment="Left" Margin="24,27,0,0" 
-        Text="Please selet the correct version of Windows 10." TextWrapping="Wrap" 
+    <TextBlock x:Name="Win10PUText" HorizontalAlignment="Left" Margin="24,27,0,0"
+        Text="Please selet the correct version of Windows 10." TextWrapping="Wrap"
         VerticalAlignment="Top" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>
@@ -61,15 +61,14 @@ function Invoke-19041Select {
         try {
             $Form = [Windows.Markup.XamlReader]::Load( $reader )
         } catch {
-            Write-Warning "Unable to parse XML, with error: $($Error[0])`n Ensure that there are NO SelectionChanged or " + 
-                "TextChanged properties in your textboxes (PowerShell cannot process them)"
+            Write-Warning "Failed to load XAML form: $($_.Exception.Message)"
             throw
         }
 
-        $xaml.SelectNodes('//*[@Name]') | ForEach-Object { 
+        $xaml.SelectNodes('//*[@Name]') | ForEach-Object {
             "trying item $($_.Name)" | Out-Null
-            try { 
-                Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name) -ErrorAction Stop 
+            try {
+                Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name) -ErrorAction Stop
             }
             catch { throw }
         }
@@ -91,7 +90,7 @@ function Invoke-19041Select {
         #Button_Cancel_Click
         $WPFWin10PUCancel.Add_Click({
                 $Script:Win10VerDet = $null
-                Update-Log -data 'User cancelled the confirmation dialog box' -Class Warning
+                Write-WWLog -data 'User cancelled the confirmation dialog box' -Class Warning
                 $Form.Close()
                 return
             })

@@ -6,7 +6,7 @@
     This function will return the Windows version based on the WIM version.
 
 .NOTES
-    Name:        Set-Version.ps1
+    Name:        Get-WWWindowsReleaseFromWim.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-30
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Set-Version -wimversion '10.0.22621.2428'
+    Get-WWWindowsReleaseFromWim -wimversion '10.0.22621.2428'
 #>
-function Set-Version {
+function Get-WWWindowsReleaseFromWim {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]

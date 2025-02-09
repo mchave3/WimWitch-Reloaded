@@ -29,7 +29,7 @@ function Invoke-CheckboxCleanup {
     )
 
     process {
-        Update-Log -Data 'Cleaning null checkboxes...' -Class Information
+        Write-WWLog -Data 'Cleaning null checkboxes...' -Class Information
         $Variables = Get-Variable WPF*
         foreach ($variable in $variables) {
 

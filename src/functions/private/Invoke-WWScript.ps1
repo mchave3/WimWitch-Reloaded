@@ -6,7 +6,7 @@
     This function executes a PowerShell script with the provided parameters and handles any errors that occur during execution.
 
 .NOTES
-    Name:        Start-Script.ps1
+    Name:        Invoke-WWScript.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,14 +20,14 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Start-Script -File "C:\Scripts\MyScript.ps1" -Parameter "-Action Install -Force"
+    Invoke-WWScript -File "C:\Scripts\MyScript.ps1" -Parameter "-Action Install -Force"
 #>
-function Start-Script {
+function Invoke-WWScript {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
         [string]$File,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$Parameter
     )
@@ -35,11 +35,11 @@ function Start-Script {
     process {
         $string = "$File $Parameter"
         try {
-            Update-Log -Data 'Running script' -Class Information
+            Write-WWLog -Data 'Running script' -Class Information
             Invoke-Expression -Command $string -ErrorAction Stop
-            Update-Log -data 'Script complete' -Class Information
+            Write-WWLog -data 'Script complete' -Class Information
         } catch {
-            Update-Log -Data 'Script failed' -Class Error
+            Write-WWLog -Data 'Script failed' -Class Error
         }
     }
 }

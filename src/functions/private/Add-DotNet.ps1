@@ -40,13 +40,13 @@ function Add-DotNet {
 
         try {
             $text = 'Injecting .Net 3.5 binaries from ' + $DotNetFiles
-            Update-Log -Data $text -Class Information
+            Write-WWLog -Data $text -Class Information
             Add-WindowsPackage -PackagePath $DotNetFiles -Path $WPFMISMountTextBox.Text -ErrorAction Continue | Out-Null
         } catch {
-            Update-Log -Data "Couldn't inject .Net Binaries" -Class Warning
-            Update-Log -data $_.Exception.Message -Class Error
+            Write-WWLog -Data "Couldn't inject .Net Binaries" -Class Warning
+            Write-WWLog -data $_.Exception.Message -Class Error
             return
         }
-        Update-Log -Data '.Net 3.5 injection complete' -Class Information
+        Write-WWLog -Data '.Net 3.5 injection complete' -Class Information
     }
 }

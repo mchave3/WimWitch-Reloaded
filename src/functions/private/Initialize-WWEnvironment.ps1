@@ -12,7 +12,7 @@
     - Configs folder for XML configurations
 
 .NOTES
-    Name:        Set-Logging.ps1
+    Name:        Initialize-WimWitchEnvironment.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -26,9 +26,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Set-Logging
+    Initialize-WimWitchEnvironment
 #>
-function Set-Logging {
+function Initialize-WimWitchEnvironment {
     [CmdletBinding()]
     param(
 
@@ -56,11 +56,11 @@ function Set-Logging {
         foreach ($folder in $requiredFolders) {
             $FileExist = Test-Path -Path "$Script:workdir\$($folder.Path)"
             if (-not $FileExist) {
-                Update-Log -Data "$($folder.Description) folder does not exist. Creating..." -Class Warning
+                Write-WWLog -Data "$($folder.Description) folder does not exist. Creating..." -Class Warning
                 New-Item -ItemType Directory -Force -Path "$Script:workdir\$($folder.Path)" | Out-Null
-                Update-Log -Data "$($folder.Description) folder created" -Class Information
+                Write-WWLog -Data "$($folder.Description) folder created" -Class Information
             } else {
-                Update-Log -Data "$($folder.Description) folder exists" -Class Information
+                Write-WWLog -Data "$($folder.Description) folder exists" -Class Information
             }
         }
     }

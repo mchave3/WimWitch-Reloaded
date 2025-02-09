@@ -29,8 +29,8 @@ function Get-FormVariable {
     )
 
     process {
-        if ($Script:ReadmeDisplay -ne $true) { 
-            Write-Host 'If you need to reference this display again, run Get-FormVariable' -ForegroundColor Yellow; $Script:ReadmeDisplay = $true 
+        if ($Script:ReadmeDisplay -ne $true) {
+            Write-Host 'If you need to reference this display again, run Get-FormVariable' -ForegroundColor Yellow; $Script:ReadmeDisplay = $true
         }
         Get-Variable WPF*
     }

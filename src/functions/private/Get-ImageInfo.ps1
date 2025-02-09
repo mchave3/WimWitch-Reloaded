@@ -33,7 +33,7 @@ function Get-ImageInfo {
         #set-ConfigMgrConnection
         Set-Location $CMDrive
         $image = (Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
-            -ClassName SMS_ImagePackage -ComputerName $Script:SiteServer) | 
+            -ClassName SMS_ImagePackage -ComputerName $Script:SiteServer) |
             Where-Object { ($_.PackageID -eq $PackID) }
 
         $WPFCMTBImageName.text = $image.name
@@ -43,13 +43,13 @@ function Get-ImageInfo {
         $WPFCMTBDescription.text = $image.Description
 
         $text = 'Image ' + $WPFCMTBImageName.text + ' selected'
-        Update-Log -data $text -class Information
+        Write-WWLog -data $text -class Information
 
         $text = 'Package ID is ' + $image.PackageID
-        Update-Log -data $text -class Information
+        Write-WWLog -data $text -class Information
 
         $text = 'Image build number is ' + $image.ImageOSversion
-        Update-Log -data $text -class Information
+        Write-WWLog -data $text -class Information
 
         $packageID = (Get-CMOperatingSystemImage -Id $image.PackageID)
         # $packageID.PkgSourcePath
@@ -63,12 +63,12 @@ function Get-ImageInfo {
             -ComputerName $Script:SiteServer `
             -Query "SELECT * FROM SMS_DistributionPoint WHERE PackageID='$Package'"
 
-        Update-Log -Data 'Retrieving Distrbution Point Information' -Class Information
+        Write-WWLog -Data 'Retrieving Distrbution Point Information' -Class Information
         foreach ($NALPath in $NALPaths) {
             foreach ($dp in $dps) {
                 $DPPath = $dp.NetworkOSPath
                 if ($NALPath.ServerNALPath -like ("*$DPPath*")) {
-                    Update-Log -data "Image has been previously distributed to $DPPath" -class Information
+                    Write-WWLog -data "Image has been previously distributed to $DPPath" -class Information
                     $WPFCMLBDPs.Items.Add($DPPath)
 
                 }
@@ -76,7 +76,7 @@ function Get-ImageInfo {
         }
 
         #Detect Binary Diff Replication
-        Update-Log -data 'Checking Binary Differential Replication setting' -Class Information
+        Write-WWLog -data 'Checking Binary Differential Replication setting' -Class Information
         if ($image.PkgFlags -eq ($image.PkgFlags -bor 0x04000000)) {
             $WPFCMCBBinDirRep.IsChecked = $True
         } else {
@@ -84,7 +84,7 @@ function Get-ImageInfo {
         }
 
         #Detect Package Share Enabled
-        Update-Log -data 'Checking package share settings' -Class Information
+        Write-WWLog -data 'Checking package share settings' -Class Information
         if ($image.PkgFlags -eq ($image.PkgFlags -bor 0x80)) {
             $WPFCMCBDeploymentShare.IsChecked = $true
         } else

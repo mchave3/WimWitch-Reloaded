@@ -33,19 +33,19 @@ function Import-WimInfo {
     )
 
     process {
-        Update-Log -Data 'Importing Source WIM Info' -Class Information
+        Write-WWLog -Data 'Importing Source WIM Info' -Class Information
         try {
             $ImageInfo = Get-WindowsImage -ImagePath $WPFSourceWIMSelectWIMTextBox.text -Index $IndexNumber -ErrorAction Stop
         } catch {
-            Update-Log -data $_.Exception.Message -class Error
-            Update-Log -data 'The WIM file selected may be borked. Try a different one' -Class Warning
+            Write-WWLog -data $_.Exception.Message -class Error
+            Write-WWLog -data 'The WIM file selected may be borked. Try a different one' -Class Warning
             return
         }
         $text = 'WIM file selected: ' + $SourceWIM.FileName
-        Update-Log -data $text -Class Information
+        Write-WWLog -data $text -Class Information
         $text = 'Edition selected: ' + $ImageInfo.ImageName
 
-        Update-Log -data $text -Class Information
+        Write-WWLog -data $text -Class Information
         $ImageIndex = $IndexNumber
 
         $WPFSourceWIMImgDesTextBox.text = $ImageInfo.ImageName
@@ -73,8 +73,8 @@ function Import-WimInfo {
             $WPFMISOneDriveCheckBox.IsEnabled = $True
         }
 
-        if ($SkipUserConfirmation -eq $False) { 
-            $WPFSourceWimTBVersionNum.text = Get-WinVersionNumber 
+        if ($SkipUserConfirmation -eq $False) {
+            $WPFSourceWimTBVersionNum.text = Get-WinVersionNumber
         }
     }
 }

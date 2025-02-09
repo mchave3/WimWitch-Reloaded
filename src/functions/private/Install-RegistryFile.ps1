@@ -30,46 +30,46 @@ function Install-RegistryFile {
 
     process {
         #mount offline hives
-        Update-Log -Data 'Mounting the offline registry hives...' -Class Information
+        Write-WWLog -Data 'Mounting the offline registry hives...' -Class Information
 
         try {
             $Path = $WPFMISMountTextBox.text + '\Users\Default\NTUser.dat'
-            Update-Log -Data $path -Class Information
+            Write-WWLog -Data $path -Class Information
             Invoke-Command { reg load HKLM\OfflineDefaultUser $Path } -ErrorAction Stop | Out-Null
 
             $Path = $WPFMISMountTextBox.text + '\Windows\System32\Config\DEFAULT'
-            Update-Log -Data $path -Class Information
+            Write-WWLog -Data $path -Class Information
             Invoke-Command { reg load HKLM\OfflineDefault $Path } -ErrorAction Stop | Out-Null
 
             $Path = $WPFMISMountTextBox.text + '\Windows\System32\Config\SOFTWARE'
-            Update-Log -Data $path -Class Information
+            Write-WWLog -Data $path -Class Information
             Invoke-Command { reg load HKLM\OfflineSoftware $Path } -ErrorAction Stop | Out-Null
 
             $Path = $WPFMISMountTextBox.text + '\Windows\System32\Config\SYSTEM'
-            Update-Log -Data $path -Class Information
+            Write-WWLog -Data $path -Class Information
             Invoke-Command { reg load HKLM\OfflineSystem $Path } -ErrorAction Stop | Out-Null
         } catch {
-            Update-Log -Data "Failed to mount $Path" -Class Error
-            Update-Log -data $_.Exception.Message -Class Error
+            Write-WWLog -Data "Failed to mount $Path" -Class Error
+            Write-WWLog -data $_.Exception.Message -Class Error
         }
 
         #get reg files from list box
         $RegFiles = $WPFCustomLBRegistry.items
 
         #For Each to process Reg Files and Apply
-        Update-Log -Data 'Processing Reg Files...' -Class Information
+        Write-WWLog -Data 'Processing Reg Files...' -Class Information
         foreach ($RegFile in $Regfiles) {
 
-            Update-Log -Data $RegFile -Class Information
+            Write-WWLog -Data $RegFile -Class Information
             #write-host $RegFile
 
             Try {
                 $Destination = $Script:workdir + '\staging\'
-                Update-Log -Data 'Copying file to staging folder...' -Class Information
+                Write-WWLog -Data 'Copying file to staging folder...' -Class Information
                 Copy-Item -Path $regfile -Destination $Destination -Force -ErrorAction Stop  #Copy Source Registry File to staging
             } Catch {
-                Update-Log -Data "Couldn't copy reg file" -Class Error
-                Update-Log -data $_.Exception.Message -Class Error
+                Write-WWLog -Data "Couldn't copy reg file" -Class Error
+                Write-WWLog -data $_.Exception.Message -Class Error
             }
 
             $regtemp = Split-Path $regfile -Leaf #get file name
@@ -77,45 +77,45 @@ function Install-RegistryFile {
 
             # Write-Host $regpath
             Try {
-                Update-Log -Data 'Parsing reg file...'
-                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_CURRENT_USER', 
+                Write-WWLog -Data 'Parsing reg file...'
+                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_CURRENT_USER',
                     'HKEY_LOCAL_MACHINE\OfflineDefaultUser') | Set-Content -Path $regpath -ErrorAction Stop
-                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_LOCAL_MACHINE\\SOFTWARE', 
+                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_LOCAL_MACHINE\\SOFTWARE',
                     'HKEY_LOCAL_MACHINE\OfflineSoftware') | Set-Content -Path $regpath -ErrorAction Stop
-                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_LOCAL_MACHINE\\SYSTEM', 
+                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_LOCAL_MACHINE\\SYSTEM',
                     'HKEY_LOCAL_MACHINE\OfflineSystem') | Set-Content -Path $regpath -ErrorAction Stop
-                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_USERS\\.DEFAULT', 
+                ((Get-Content -Path $regpath -Raw) -replace 'HKEY_USERS\\.DEFAULT',
                     'HKEY_LOCAL_MACHINE\OfflineDefault') | Set-Content -Path $regpath -ErrorAction Stop
             } Catch {
-                Update-log -Data "Couldn't read or update reg file $regpath" -Class Error
-                Update-Log -data $_.Exception.Message -Class Error
+                Write-WWLog -Data "Couldn't read or update reg file $regpath" -Class Error
+                Write-WWLog -data $_.Exception.Message -Class Error
             }
 
-            Update-Log -Data 'Reg file has been parsed' -Class Information
+            Write-WWLog -Data 'Reg file has been parsed' -Class Information
 
             #import the registry file
             Try {
-                Update-Log -Data 'Importing registry file into mounted wim' -Class Information
+                Write-WWLog -Data 'Importing registry file into mounted wim' -Class Information
                 Start-Process reg -ArgumentList ('import', "`"$RegPath`"") -Wait -WindowStyle Hidden -ErrorAction stop
-                Update-Log -Data 'Import successful' -Class Information
+                Write-WWLog -Data 'Import successful' -Class Information
             } Catch {
-                Update-Log -Data "Couldn't import $Regpath" -Class Error
-                Update-Log -data $_.Exception.Message -Class Error
+                Write-WWLog -Data "Couldn't import $Regpath" -Class Error
+                Write-WWLog -data $_.Exception.Message -Class Error
             }
         }
 
         #dismount offline hives
         try {
-            Update-Log -Data 'Dismounting registry...' -Class Information
+            Write-WWLog -Data 'Dismounting registry...' -Class Information
             Invoke-Command { reg unload HKLM\OfflineDefaultUser } -ErrorAction Stop | Out-Null
             Invoke-Command { reg unload HKLM\OfflineDefault } -ErrorAction Stop | Out-Null
             Invoke-Command { reg unload HKLM\OfflineSoftware } -ErrorAction Stop | Out-Null
             Invoke-Command { reg unload HKLM\OfflineSystem } -ErrorAction Stop | Out-Null
-            Update-Log -Data 'Dismount complete' -Class Information
+            Write-WWLog -Data 'Dismount complete' -Class Information
         } catch {
-            Update-Log -Data "Couldn't dismount the registry hives" -Class Error
-            Update-Log -Data 'This will prevent the Windows image from properly dismounting' -Class Error
-            Update-Log -data $_.Exception.Message -Class Error
+            Write-WWLog -Data "Couldn't dismount the registry hives" -Class Error
+            Write-WWLog -Data 'This will prevent the Windows image from properly dismounting' -Class Error
+            Write-WWLog -data $_.Exception.Message -Class Error
         }
     }
 }

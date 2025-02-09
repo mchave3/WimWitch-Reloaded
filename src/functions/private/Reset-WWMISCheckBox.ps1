@@ -6,7 +6,7 @@
     This function is used to reset the MIS checkboxes.
 
 .NOTES
-    Name:        Reset-MISCheckBox.ps1
+    Name:        Reset-WWMISCheckBox.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,16 +20,16 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Reset-MISCheckBox
+    Reset-WWMISCheckBox
 #>
-function Reset-MISCheckBox {
+function Reset-WWMISCheckBox {
     [CmdletBinding()]
     param(
 
     )
 
     process {
-        Update-Log -data 'Refreshing MIS Values...' -class Information
+        Write-WWLog -data 'Refreshing MIS Values...' -class Information
 
         If ($WPFJSONEnableCheckBox.IsChecked -eq $true) {
             $WPFJSONButton.IsEnabled = $True

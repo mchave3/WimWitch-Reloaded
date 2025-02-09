@@ -36,6 +36,6 @@ function Select-MountDir {
         $MountDir = $browser.SelectedPath
         $WPFMISMountTextBox.text = $MountDir
         Test-MountPath -path $WPFMISMountTextBox.text
-        Update-Log -Data 'Mount directory selected' -Class Information
+        Write-WWLog -Data 'Mount directory selected' -Class Information
     }
 }

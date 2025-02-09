@@ -6,7 +6,7 @@
     This function updates an existing ConfigMgr image package.
 
 .NOTES
-    Name:        Update-CMImage.ps1
+    Name:        Invoke-WWCMImageUpdate.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Update-CMImage
+    Invoke-WWCMImageUpdate
 #>
-function Update-CMImage {
+function Invoke-WWCMImageUpdate {
     [CmdletBinding()]
     param(
 
@@ -36,13 +36,13 @@ function Update-CMImage {
                 -ComputerName $Script:SiteServer |
                 Where-Object { $_.PackageID -eq $WPFCMTBPackageID.text }
 
-        Update-Log -Data 'Updating images on the Distribution Points...'
+        Write-WWLog -Data 'Updating images on the Distribution Points...'
         Invoke-CimMethod -InputObject $cim -MethodName "RefreshPkgSource" | Out-Null
 
-        Update-Log -Data 'Refreshing image proprties from the WIM' -Class Information
+        Write-WWLog -Data 'Refreshing image proprties from the WIM' -Class Information
         Invoke-CimMethod -InputObject $cim -MethodName "ReloadImageProperties" | Out-Null
 
-        Set-ImagePropertie -PackageID $WPFCMTBPackageID.Text
+        Invoke-WWCMImagePropertyUpdate -PackageID $WPFCMTBPackageID.Text
         Save-Configuration -CM -filename $WPFCMTBPackageID.Text
 
         Set-Location $Script:workdir

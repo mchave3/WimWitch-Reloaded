@@ -3,7 +3,7 @@
     Select default application associations file.
 
 .DESCRIPTION
-    This function opens a file dialog to allow the user to select an XML file containing default application associations. 
+    This function opens a file dialog to allow the user to select an XML file containing default application associations.
     It validates the selected file and updates the UI accordingly.
 
 .NOTES
@@ -36,13 +36,12 @@ function Select-DefaultApplicationAssociation {
         }
         $null = $Sourcexml.ShowDialog()
         $WPFCustomTBDefaultApp.text = $Sourcexml.FileName
-    
-    
+
         if ($Sourcexml.FileName -notlike '*.xml') {
-            Update-Log -Data 'A XML file not selected. Please select a valid file to continue.' -Class Warning
+            Write-WWLog -Data 'A XML file not selected. Please select a valid file to continue.' -Class Warning
             return
         }
         $text = $WPFCustomTBDefaultApp.text + ' selected as the default application XML'
-        Update-Log -Data $text -class Information
+        Write-WWLog -Data $text -class Information
     }
 }

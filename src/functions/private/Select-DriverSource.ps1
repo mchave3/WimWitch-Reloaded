@@ -36,6 +36,6 @@ function Select-DriverSource {
         $null = $browser.ShowDialog()
         $DriverDir = $browser.SelectedPath
         $DriverTextBoxNumber.Text = $DriverDir
-        Update-Log -Data "Driver path selected: $DriverDir" -Class Information
+        Write-WWLog -Data "Driver path selected: $DriverDir" -Class Information
     }
 }
