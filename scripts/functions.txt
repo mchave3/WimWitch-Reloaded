@@ -57,10 +57,10 @@ Invoke-TextNotification             | Invoke-WWTextNotification
 Invoke-UpdateTabOption              | Invoke-WWUpdateTabOption
 Build-WWCMImagePackage                  | Build-WWCMImagePackage
 Build-WindowsISO                      | New-WWWindowsISO
-Deregister-WWAppx                         | Deregister-WWAppx
+Unregister-WWAppx                         | Unregister-WWAppx
 Clear-OSIndex                      | Remove-WWOSIndex
 Rename-Name                         | Rename-WWImage
-Refresh-WWMISCheckBox                   | Refresh-WWMISCheckBox
+Clear-WWMISCheckBox                   | Clear-WWMISCheckBox
 Save-Configuration                  | Save-WWConfiguration
 Select-Appx                         | Select-WWAppx
 Select-Config                       | Select-WWConfiguration

@@ -275,7 +275,7 @@ function Invoke-MakeItSo {
 
         #Remove AppX Packages
         if ($WPFAppxCheckBox.IsChecked -eq $true) {
-            Deregister-WWAppx -array $appx
+            Unregister-WWAppx -array $appx
         } Else {
             Write-WWLog -Data 'App removal not enabled' -Class Information
         }

@@ -159,7 +159,7 @@ function Get-Configuration {
             }
 
             # Final cleanup and reset
-            Refresh-WWMISCheckBox
+            Clear-WWMISCheckBox
         }
         catch {
             Update-Log -data "Could not import from $filename" -Class Error
