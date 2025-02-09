@@ -1,107 +1,110 @@
-Add-DotNet
-Backup-WIMWitch
-Compare-OSDBuilderVer
-Compare-OSDSUSVer
-Copy-OneDrive -> Copy-OneDriveInstaller
-Copy-OneDrivex64 -> Copy-OneDriveInstaller64
-Copy-StageIsoMedia
-Copy-UpgradePackage
-Deploy-LCU -> Install-LatestCumulativeUpdate
-Deploy-Updates -> Install-WindowsUpdates
-Enable-ConfigMgrOptions
-Find-ConfigManager
-Get-Configuration -> Get-WimWitchConfiguration
-Get-FormVariables
-Get-ImageInfo -> Get-WimImageInfo
-Get-OneDrive -> Get-OneDriveVersion
-Get-OSDBCurrentVer
-Get-OSDBInstallation
-Get-OSDSUSCurrentVer
-Get-OSDSUSInstallation
-Get-WindowsPatches -> Get-WindowsUpdateList
-Get-WindowsType
-Get-WinVersionNumber
-Get-WWAutopilotProfile
-Import-CMModule
-Import-FeatureOnDemand
-Import-ISO -> Import-ISOFile
-Import-LanguagePacks
-Import-LocalExperiencePack
-Import-WimInfo -> Import-WimImageInfo
-Install-DefaultApplicationAssociations
-Install-Driver
-Install-FeaturesOnDemand
-Install-LanguagePacks
-Install-LocalExperiencePack
-Install-RegistryFiles
-Install-StartLayout
-Install-WimWitchUpgrade
-Install-WWCMConsoleExtension
-Invoke-2XXXPreReq -> Test-2XXXPreRequisites
-Invoke-ArchitectureCheck -> Test-Architecture
-Invoke-CheckboxCleanup -> Reset-CheckboxState
-Invoke-DadJoke -> Show-DadJoke
-Invoke-MakeItSo -> Start-WimBuild
-Invoke-MEMCMUpdatecatalog
-Invoke-MEMCMUpdateSupersedence
-Invoke-MISUpdates -> Install-MakeItSoUpdates
-Invoke-MSUpdateItemDownload -> Start-MSUpdateDownload
-Invoke-OSDCheck -> Test-OSDRequirements
-Invoke-ParseJSON -> Convert-JSONContent
-Invoke-RemoveISOMount -> Dismount-ISOImage
-Invoke-RunConfigFile -> Start-ConfigFile
-Invoke-TextNotification -> Show-Notification
-Invoke-UpdateTabOptions -> Update-TabOptions
-New-CMImagePackage
-New-WindowsISO
-Remove-Appx
-Remove-OSIndex
-Rename-Name -> Rename-WimFile
-Reset-MISCheckBox -> Reset-MakeItSoCheckBox
-Save-Configuration
-Select-Appx
-Select-Config -> Select-Configuration
-Select-DefaultApplicationAssociations
-Select-DistributionPoints
-Select-DriverSource
-Select-FeaturesOnDemand
-Select-ImportOtherPath
-Select-ISO -> Select-ISOFile
-Select-ISODirectory
-Select-JSONFile
-Select-LanguagePacks
-Select-LocalExperiencePack
-Select-LPFODCriteria
-Select-MountDir
-Select-NewJSONDir
-Select-RegFiles
-Select-SourceWIM
-Select-StartMenu
-Select-TargetDir
-Select-WorkingDirectory
-Set-ConfigMgr -> Set-ConfigMgrSettings
-Set-ImageProperties
-Set-Logging
-Set-Version -> Set-WimWitchVersion
-Show-ClosingText
-Show-OpeningText
-Start-DriverInjection
-Start-Script -> Start-CustomScript
-Start-WimWitch
-Suspend-MakeItSo
-Test-Admin
-Test-DotNetExists
-Test-IsoBinariesExist
-Test-MountPath
-Test-Name -> Test-WimFileName
-Test-Superceded
-Test-WorkingDirectory
-Update-Autopilot
-Update-BootWIM
-Update-CMImage
-Update-ImportVersionCB
-Update-Log
-Update-OSDB
-Update-OSDSUS
-Update-PatchSource
-Update-WinReWim
+Old                                 | New
+------------------------------------|--------------------------------
+Add-DotNet                          | Add-WWNetFramework
+Backup-WIMWitch                     | Backup-WWImage
+Compare-OSDBuilderVer               | Compare-WWOSDBuilderVersion
+Compare-OSDSUSVer                   | Compare-WWOSDSUSVersion
+Copy-OneDrive                       | Copy-WWOneDrive
+Copy-OneDrivex64                    | Copy-WWOneDrive64
+Copy-StageIsoMedia                  | Copy-WWStagedISOMedia
+Copy-UpgradePackage                 | Copy-WWUpgradePackage
+Deploy-LCU                          | Deploy-WWLatestCU
+Deploy-Update                       | Deploy-WWUpdate
+Enable-ConfigMgrOption              | Enable-WWConfigMgrOption
+Find-ConfigManager                  | Find-WWConfigMgr
+Get-Configuration                    | Get-WWConfiguration
+Get-FormVariable                    | Get-WWFormVariable
+Get-ImageInfo                       | Get-WWImageInfo
+Get-OneDrive                        | Get-WWOneDrive
+Get-OSDBCurrentVer                  | Get-WWOSDBCurrentVersion
+Get-OSDBInstallation                | Get-WWOSDBInstallation
+Get-OSDSUSCurrentVer                | Get-WWOSDSUSCurrentVersion
+Get-OSDSUSInstallation              | Get-WWOSDSUSInstallation
+Get-WindowsPatch                    | Get-WWWindowsPatch
+Get-WindowsType                     | Get-WWWindowsType
+Get-WinVersionNumber                | Get-WWWindowsVersionNumber
+Get-WWAutopilotProfile              | Get-WWAutopilotProfile
+Import-CMModule                     | Import-WWConfigMgrModule
+Import-FeatureOnDemand              | Import-WWFeatureOnDemand
+Import-ISO                          | Import-WWISO
+Import-LanguagePack                 | Import-WWLanguagePack
+Import-LocalExperiencePack          | Import-WWLocalExperiencePack
+Import-WimInfo                      | Import-WWWimInfo
+Install-DefaultApplicationAssociation | Install-WWDefaultAppAssociation
+Install-Driver                      | Install-WWDriver
+Install-FeaturesOnDemand            | Install-WWFeaturesOnDemand
+Install-LanguagePack                | Install-WWLanguagePack
+Install-LocalExperiencePack         | Install-WWLocalExperiencePack
+Install-RegistryFile                | Install-WWRegistryFile
+Install-StartLayout                 | Install-WWStartLayout
+Install-WimWitchUpgrade             | Install-WWUpgrade
+Install-WWCMConsoleExtension        | Install-WWConfigMgrConsoleExtension
+Invoke-19041Select                  | Invoke-WWSelect19041
+Invoke-2XXXPreReq                   | Invoke-WW2XXXPreReq
+Invoke-ArchitectureCheck            | Invoke-WWArchitectureCheck
+Invoke-CheckboxCleanup              | Invoke-WWCheckboxCleanup
+Invoke-DadJoke                      | Invoke-WWDadJoke
+Invoke-MakeItSo                     | Invoke-WWMakeItSo
+Invoke-MEMCMUpdatecatalog           | Invoke-WWUpdateMEMCMCatalog
+Invoke-MEMCMUpdateSupersedence      | Invoke-WWUpdateMEMCMSupersedence
+Invoke-MISUpdate                    | Invoke-WWMISUpdate
+Invoke-MSUpdateItemDownload         | Invoke-WWDownloadMSUpdate
+Invoke-OSDCheck                     | Invoke-WWOSDCheck
+Invoke-ParseJSON                    | Invoke-WWParseJSON
+Invoke-RemoveISOMount               | Invoke-WWUnmountISO
+Invoke-RunConfigFile                | Invoke-WWRunConfigFile
+Invoke-TextNotification             | Invoke-WWTextNotification
+Invoke-UpdateTabOption              | Invoke-WWUpdateTabOption
+Build-WWCMImagePackage                  | Build-WWCMImagePackage
+Build-WindowsISO                      | New-WWWindowsISO
+Unregister-WWAppx                         | Unregister-WWAppx
+Clear-OSIndex                      | Remove-WWOSIndex
+Rename-Name                         | Rename-WWImage
+Clear-WWMISCheckBox                   | Clear-WWMISCheckBox
+Save-Configuration                  | Save-WWConfiguration
+Select-Appx                         | Select-WWAppx
+Select-Config                       | Select-WWConfiguration
+Select-DefaultApplicationAssociation | Select-WWDefaultAppAssociation
+Select-DistributionPoint            | Select-WWDistributionPoint
+Select-DriverSource                 | Select-WWDriverSource
+Select-FeaturesOnDemand             | Select-WWFeaturesOnDemand
+Select-ImportOtherPath              | Select-WWImportOtherPath
+Select-ISO                          | Select-WWISO
+Select-ISODirectory                 | Select-WWISODirectory
+Select-JSONFile                     | Select-WWJSONFile
+Select-LanguagePack                 | Select-WWLanguagePack
+Select-LocalExperiencePack          | Select-WWLocalExperiencePack
+Select-LPFODRequirement             | Select-WWLPFODRequirement
+Select-MountDir                     | Select-WWMountDirectory
+Select-NewJSONDir                   | Select-WWNewJSONDirectory
+Select-RegFile                      | Select-WWRegistryFile
+Select-SourceWIM                    | Select-WWSourceWIM
+Select-StartMenu                    | Select-WWStartMenu
+Select-TargetDir                    | Select-WWTargetDirectory
+Select-WorkingDirectory             | Select-WWWorkingDirectory
+Get-WWConfigMgrConnection                       | Get-WWConfigMgrConnection
+Invoke-WWCMImagePropertyUpdate                  | Set-WWImageProperties
+Initialize-WimWitchEnvironment                         | Set-WWLogging
+Get-WWWindowsReleaseFromWim                         | Set-WWVersion
+Show-ClosingText                    | Show-WWClosingText
+Show-OpeningText                    | Show-WWOpeningText
+Invoke-WWDriverInjection               | Invoke-WWDriverInjection
+Invoke-WWScript                        | Invoke-WWScript
+Start-WimWitch                      | Start-WimWitch
+Suspend-MakeItSo                    | Suspend-WWMakeItSo
+Test-Admin                          | Test-WWAdmin
+Test-DotNetExist                    | Test-WWNetFrameworkExist
+Test-IsoBinariesExist               | Test-WWISOBinariesExist
+Test-MountPath                      | Test-WWMountPath
+Test-Name                           | Test-WWImageName
+Test-Superceded                     | Test-WWSuperseded
+Test-WorkingDirectory               | Test-WWWorkingDirectory
+Install-WWAutopilotModule                    | Install-WWAutopilotModule
+Invoke-BootWimUpdate                      | Update-WWBootWIM
+Invoke-WWCMImageUpdate                      | Update-WWCMImage
+Invoke-ImportVersionCB              | Update-WWImportVersionCB
+Write-WWLog                          | Update-WWLog
+Install-OSDB                         | Update-WWOSDB
+Install-OSDSUS                       | Update-WWOSDSUS
+Sync-WindowsUpdateSource                  | Update-WWPatchSource
+Invoke-WinReUpdate                     | Update-WWWINREWIM

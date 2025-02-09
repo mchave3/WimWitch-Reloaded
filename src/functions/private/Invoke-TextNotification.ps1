@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display a text notification.
 
@@ -29,7 +29,8 @@ function Invoke-TextNotification {
     )
 
     process {
-        Update-Log -data '*********************************' -class Comment
-        Update-Log -data '*********************************' -class Comment
+        Write-WWLog -data '*********************************' -class Comment
+        Write-WWLog -data '*********************************' -class Comment
     }
 }
+

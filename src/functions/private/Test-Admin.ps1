@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check if the current user has administrative privileges.
 
@@ -31,12 +31,13 @@ function Test-Admin {
     process {
         $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
         $adminRole = [Security.Principal.WindowsBuiltInRole]::Administrator
-    
+
         if ($currentUser.IsInRole($adminRole)) {
-            Update-Log -Data 'User has admin privileges' -Class Information
+            Write-WWLog -Data 'User has admin privileges' -Class Information
         } else {
-            Update-Log -Data 'This script requires administrative privileges. Please run it as an administrator.' -Class Error
+            Write-WWLog -Data 'This script requires administrative privileges. Please run it as an administrator.' -Class Error
             Exit
         }
     }
 }
+

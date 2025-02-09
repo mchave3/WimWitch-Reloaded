@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the target directory for the WIM file.
 
@@ -35,6 +35,7 @@ function Select-TargetDir {
         $null = $browser.ShowDialog()
         $TargetDir = $browser.SelectedPath
         $WPFMISWimFolderTextBox.text = $TargetDir
-        Update-Log -Data 'Target directory selected' -Class Information
+        Write-WWLog -Data 'Target directory selected' -Class Information
     }
 }
+

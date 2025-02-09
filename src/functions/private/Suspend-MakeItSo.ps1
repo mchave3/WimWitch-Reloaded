@@ -1,9 +1,10 @@
-<#
+﻿<#
 .SYNOPSIS
     Pause the image build process.
 
 .DESCRIPTION
-    This function allows the user to pause the image build process and choose whether to continue or cancel the build. If cancelled, the WIM file will be discarded.
+    This function allows the user to pause the image build process and choose whether to continue or cancel the build.
+    If cancelled, the WIM file will be discarded.
 
 .NOTES
     Name:        Suspend-MakeItSo.ps1
@@ -24,24 +25,26 @@
 #>
 function Suspend-MakeItSo {
     [CmdletBinding()]
+    [OutputType([string])]
     param(
 
     )
 
     process {
         $MISPause = ([System.Windows.MessageBox]::Show(
-            'Click Yes to continue the image build. Click No to cancel and discard the wim file.', 
-            'WIM Witch Paused', 
-            'YesNo', 
+            'Click Yes to continue the image build. Click No to cancel and discard the wim file.',
+            'WIM Witch Paused',
+            'YesNo',
             'Warning'
         ))
-        
-        if ($MISPause -eq 'Yes') { 
-            return 'Yes' 
+
+        if ($MISPause -eq 'Yes') {
+            return 'Yes'
         }
 
-        if ($MISPause -eq 'No') { 
-            return 'No' 
+        if ($MISPause -eq 'No') {
+            return 'No'
         }
     }
 }
+

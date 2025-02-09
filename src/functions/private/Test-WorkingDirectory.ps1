@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Function to see if the folder WIM Witch was started in is an installation folder. If not, prompt for installation
 
@@ -44,15 +44,15 @@ function Test-WorkingDirectory {
             'Autopilot'
             'backup'
         )
-    
+
         $count = $null
-        Set-Location -Path $global:workdir
-        Write-Output "WimWitch Reloaded working directory selected: $global:workdir"
+        Set-Location -Path $Script:workdir
+        Write-Output "WimWitch Reloaded working directory selected: $Script:workdir"
         Write-Output 'Checking working directory for required folders...'
         foreach ($subfolder in $subfolders) {
             if ((Test-Path -Path .\$subfolder) -eq $true) { $count = $count + 1 }
         }
-    
+
         if ($null -eq $count) {
             Write-Output 'Creating missing folders...'
             foreach ($subfolder in $subfolders) {
@@ -71,6 +71,7 @@ function Test-WorkingDirectory {
                 }
             }
             Write-Output 'Preflight complete. Starting WIM Witch'
-        }    
+        }
     }
 }
+

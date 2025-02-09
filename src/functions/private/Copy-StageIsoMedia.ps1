@@ -1,9 +1,10 @@
-<#
+﻿<#
 .SYNOPSIS
     Copy ISO media files to the staging area.
 
 .DESCRIPTION
-    This function copies ISO media files to the staging area, preparing them for ISO creation. It handles different Windows versions and their specific requirements.
+    This function copies ISO media files to the staging area, preparing them for ISO creation.
+    It handles different Windows versions and their specific requirements.
 
 .NOTES
     Name:        Copy-StageIsoMedia.ps1
@@ -35,26 +36,27 @@ function Copy-StageIsoMedia {
         $OS = Get-WindowsType
 
         #$Ver = (Get-WinVersionNumber)
-        $Ver = $MISWinVer
+        $Ver = $Script:MISWinVer
 
         #create staging folder
         try {
-            Update-Log -Data 'Creating staging folder for media' -Class Information
-            New-Item -Path $global:workdir\staging -Name 'Media' -ItemType Directory -ErrorAction Stop | Out-Null
-            Update-Log -Data 'Media staging folder has been created' -Class Information
+            Write-WWLog -Data 'Creating staging folder for media' -Class Information
+            New-Item -Path $Script:workdir\staging -Name 'Media' -ItemType Directory -ErrorAction Stop | Out-Null
+            Write-WWLog -Data 'Media staging folder has been created' -Class Information
         } catch {
-            Update-Log -Data 'Could not create staging folder' -Class Error
-            Update-Log -data $_.Exception.Message -class Error
+            Write-WWLog -Data 'Could not create staging folder' -Class Error
+            Write-WWLog -data $_.Exception.Message -class Error
         }
 
         #copy source to staging
         try {
-            Update-Log -data 'Staging media binaries...' -Class Information
-            Copy-Item -Path $global:workdir\imports\iso\$OS\$Ver\* -Destination $global:workdir\staging\media -Force -Recurse -ErrorAction Stop
-            Update-Log -data 'Media files have been staged' -Class Information
+            Write-WWLog -data 'Staging media binaries...' -Class Information
+            Copy-Item -Path $Script:workdir\imports\iso\$OS\$Ver\* -Destination $Script:workdir\staging\media -Force -Recurse -ErrorAction Stop
+            Write-WWLog -data 'Media files have been staged' -Class Information
         } catch {
-            Update-Log -Data 'Failed to stage media binaries...' -Class Error
-            Update-Log -data $_.Exception.Message -class Error
+            Write-WWLog -Data 'Failed to stage media binaries...' -Class Error
+            Write-WWLog -data $_.Exception.Message -class Error
         }
     }
 }
+

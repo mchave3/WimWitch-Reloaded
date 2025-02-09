@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check if the specified path is suitable for mounting an image.
 
@@ -50,42 +50,43 @@ function Test-MountPath {
         }
 
         if ($HasFiles -eq $true) {
-            Update-Log -Data 'Folder is not empty' -Class Warning
+            Write-WWLog -Data 'Folder is not empty' -Class Warning
             if ($clean -eq $true) {
                 try {
-                    Update-Log -Data 'Cleaning folder...' -Class Warning
+                    Write-WWLog -Data 'Cleaning folder...' -Class Warning
                     Remove-Item -Path $path\* -Recurse -Force -ErrorAction Stop
-                    Update-Log -Data "$path cleared" -Class Warning
+                    Write-WWLog -Data "$path cleared" -Class Warning
                 }
 
                 catch {
-                    Update-Log -Data "Couldn't delete contents of $path" -Class Error
-                    Update-Log -Data 'Select a different folder to continue.' -Class Error
+                    Write-WWLog -Data "Couldn't delete contents of $path" -Class Error
+                    Write-WWLog -Data 'Select a different folder to continue.' -Class Error
                     return
                 }
             }
         }
 
         if ($IsMountPoint -eq $true) {
-            Update-Log -Data "$path is currently a mount point" -Class Warning
+            Write-WWLog -Data "$path is currently a mount point" -Class Warning
             if (($IsMountPoint -eq $true) -and ($clean -eq $true)) {
 
                 try {
-                    Update-Log -Data 'Attempting to dismount image from mount point' -Class Warning
+                    Write-WWLog -Data 'Attempting to dismount image from mount point' -Class Warning
                     Dismount-WindowsImage -Path $path -Discard | Out-Null -ErrorAction Stop
                     $IsMountPoint = $null
-                    Update-Log -Data 'Dismounting was successful' -Class Warning
+                    Write-WWLog -Data 'Dismounting was successful' -Class Warning
                 }
 
                 catch {
-                    Update-Log -Data "Couldn't completely dismount the folder. Ensure" -Class Error
-                    Update-Log -data 'all connections to the path are closed, then try again' -Class Error
+                    Write-WWLog -Data "Couldn't completely dismount the folder. Ensure" -Class Error
+                    Write-WWLog -data 'all connections to the path are closed, then try again' -Class Error
                     return
                 }
             }
         }
         if (($null -eq $IsMountPoint) -and ($null -eq $HasFiles)) {
-            Update-Log -Data "$path is suitable for mounting" -Class Information
+            Write-WWLog -Data "$path is suitable for mounting" -Class Information
         }
     }
 }
+

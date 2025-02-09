@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display the opening text of the script.
 
@@ -36,6 +36,7 @@ function Show-OpeningText {
         Write-Output "                      version $WWScriptVer"
         Write-Output ' '
         Write-Output '##########################################################'
-        Write-Output ' ' 
+        Write-Output ' '
     }
 }
+

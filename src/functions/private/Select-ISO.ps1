@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select an ISO file to import from.
 
@@ -35,13 +35,13 @@ function Select-ISO {
         }
         $null = $SourceISO.ShowDialog()
         $WPFImportISOTextBox.text = $SourceISO.FileName
-    
-    
+
         if ($SourceISO.FileName -notlike '*.iso') {
-            Update-Log -Data 'An ISO file not selected. Please select a valid file to continue.' -Class Warning
+            Write-WWLog -Data 'An ISO file not selected. Please select a valid file to continue.' -Class Warning
             return
         }
         $text = $WPFImportISOTextBox.text + ' selected as the ISO to import from'
-        Update-Log -Data $text -class Information
+        Write-WWLog -Data $text -class Information
     }
 }
+

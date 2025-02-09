@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Load the configuration file and run the MakeItSo function.
 
@@ -30,12 +30,13 @@ function Invoke-RunConfigFile {
     )
 
     process {
-        Update-Log -Data "Loading the config file: $filename" -Class Information
+        Write-WWLog -Data "Loading the config file: $filename" -Class Information
         Get-Configuration -filename $filename
-        Update-Log -Data $WWScriptVer
-        Invoke-MakeItSo -appx $global:SelectedAppx
+        Write-WWLog -Data $WWScriptVer
+        Invoke-MakeItSo -appx $Script:SelectedAppx
         Write-Output ' '
         Write-Output '##########################################################'
         Write-Output ' '
     }
 }
+

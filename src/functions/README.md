@@ -11,7 +11,7 @@ This directory contains the PowerShell functions that power WimWitch. The functi
 
 ### 🖥️ UI Functions
 Functions that handle user interface interactions and form management:
-- `Get-FormVariables` - Manages form variables and controls
+- `Get-FormVariable` - Manages form variables and controls
 - `Select-Config` - Handles configuration selection
 - `Select-SourceWIM` - Manages WIM source selection
 - `Select-Mountdir` - Handles mount directory selection
@@ -21,7 +21,7 @@ Functions that handle user interface interactions and form management:
 
 ### 🔧 Core Functions
 Essential functions for WimWitch operations:
-- `Update-Log` - Handles logging operations
+- `Write-WWLog` - Handles logging operations
 - `Save-Configuration` - Saves current configuration
 - `Get-Configuration` - Retrieves configuration settings
 - `Import-WimInfo` - Imports Windows image information
@@ -32,8 +32,8 @@ Essential functions for WimWitch operations:
 
 ### 🔄 Update Management
 Functions for handling Windows updates:
-- `Get-WindowsPatches` - Retrieves available Windows patches
-- `Deploy-Updates` - Handles update deployment
+- `Get-WindowsPatch` - Retrieves available Windows patches
+- `Deploy-Update` - Handles update deployment
 - `Deploy-LCU` - Manages Latest Cumulative Update deployment
 - `Invoke-MSUpdateItemDownload` - Handles Microsoft Update downloads
 - `Invoke-MEMCMUpdatecatalog` - Manages MEMCM update catalog operations
@@ -49,8 +49,8 @@ Functions for Windows image manipulation:
 
 ### 🌐 Language Support
 Functions for language management:
-- `Import-LanguagePacks` - Imports language packs
-- `Install-LanguagePacks` - Installs language packs
+- `Import-LanguagePack` - Imports language packs
+- `Install-LanguagePack` - Installs language packs
 - `Import-LocalExperiencePack` - Imports Local Experience Packs
 - `Install-LocalExperiencePack` - Installs Local Experience Packs
 

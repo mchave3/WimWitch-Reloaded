@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Get the Windows version number from the image description.
 
@@ -33,7 +33,7 @@ function Get-WinVersionNumber {
 
         # Latest 10 Windows 10 version checks
         switch -Regex ($WPFSourceWimVerTextBox.text) {
-            
+
             #Windows 10 version checks
             '10\.0\.19044\.\d+' { $buildnum = '21H2' }
             '10\.0\.19045\.\d+' { $buildnum = '22H2' }
@@ -70,22 +70,23 @@ function Get-WinVersionNumber {
             }
 
             If ($IsMountPoint -eq $False) {
-                $global:Win10VerDet = $null
+                $Script:Win10VerDet = $null
 
-                Update-Log -data 'Prompting user for Win10 version confirmation...' -class Information
+                Write-WWLog -data 'Prompting user for Win10 version confirmation...' -class Information
 
                 Invoke-19041Select
 
-                if ($null -eq $global:Win10VerDet) { return }
+                if ($null -eq $Script:Win10VerDet) { return }
 
-                $temp = $global:Win10VerDet
+                $temp = $Script:Win10VerDet
 
                 $buildnum = $temp
-                Update-Log -data "User selected $buildnum" -class Information
+                Write-WWLog -data "User selected $buildnum" -class Information
 
-                $global:Win10VerDet = $null
+                $Script:Win10VerDet = $null
             }
         }
         return $buildnum
     }
 }
+

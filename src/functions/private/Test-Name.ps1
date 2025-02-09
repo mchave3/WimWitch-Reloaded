@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Test the name of a WIM file
 
@@ -27,6 +27,7 @@
 #>
 function Test-Name {
     [CmdletBinding()]
+    [OutputType([string])]
     param(
         [parameter(mandatory = $false, HelpMessage = 'what to do')]
         [ValidateSet('stop', 'append', 'backup', 'overwrite')]
@@ -36,22 +37,20 @@ function Test-Name {
     process {
         If ($WPFMISWimNameTextBox.Text -like '*.wim') {
             #$WPFLogging.Focus()
-            #Update-Log -Data "New WIM name is valid" -Class Information
+            #Write-WWLog -Data "New WIM name is valid" -Class Information
         }
-    
+
         If ($WPFMISWimNameTextBox.Text -notlike '*.wim') {
-    
             $WPFMISWimNameTextBox.Text = $WPFMISWimNameTextBox.Text + '.wim'
-            Update-Log -Data 'Appending new file name with an extension' -Class Information
+            Write-WWLog -Data 'Appending new file name with an extension' -Class Information
         }
-    
+
         $WIMpath = $WPFMISWimFolderTextBox.text + '\' + $WPFMISWimNameTextBox.Text
         $FileCheck = Test-Path -Path $WIMpath
-    
-    
+
         #append,overwrite,stop
-    
-        if ($FileCheck -eq $false) { Update-Log -data 'Target WIM file name not in use. Continuing...' -class Information }
+
+        if ($FileCheck -eq $false) { Write-WWLog -data 'Target WIM file name not in use. Continuing...' -class Information }
         else {
             if ($conflict -eq 'append') {
                 $renamestatus = (Rename-Name -file $WIMpath -extension '.wim')
@@ -63,10 +62,11 @@ function Test-Name {
             }
             if ($conflict -eq 'stop') {
                 $string = $WPFMISWimNameTextBox.Text + ' already exists. Rename the target WIM and try again'
-                Update-Log -Data $string -Class Warning
+                Write-WWLog -Data $string -Class Warning
                 return 'stop'
             }
         }
-        Update-Log -Data 'New WIM name is valid' -Class Information    
+        Write-WWLog -Data 'New WIM name is valid' -Class Information
     }
 }
+

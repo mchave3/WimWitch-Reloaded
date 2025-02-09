@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Compare the OSDSUS module version to the current version of the module.
 
@@ -29,18 +29,18 @@ function Compare-OSDSUSVer {
     )
 
     process {
-        Update-Log -data 'Comparing OSDSUS module versions' -Class Information
+        Write-WWLog -data 'Comparing OSDSUS module versions' -Class Information
         if ($WPFUpdatesOSDSUSVersion.Text -eq 'Not Installed') {
             Return
         }
         If ($WPFUpdatesOSDSUSVersion.Text -eq $WPFUpdatesOSDSUSCurrentVerTextBox.Text) {
-            Update-Log -Data 'OSDSUS is up to date' -class Information
+            Write-WWLog -Data 'OSDSUS is up to date' -class Information
             Return
         }
         #$WPFUpdatesOSDBOutOfDateTextBlock.Visibility = "Visible"
         $WPFUpdatesOSDListBox.items.add('A software update module is out of date. Please click the Install / Update button to update it.') | Out-Null
-        Update-Log -Data 'OSDSUS appears to be out of date. Run the upgrade Function from within WIM Witch to resolve' -class Warning
-    
+        Write-WWLog -Data 'OSDSUS appears to be out of date. Run the upgrade Function from within WIM Witch to resolve' -class Warning
         Return
     }
 }
+

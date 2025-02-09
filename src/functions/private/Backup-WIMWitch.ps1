@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Backup the existing WIM Witch script before upgrading to a new version.
 
@@ -29,31 +29,29 @@ function Backup-WIMWitch {
     )
 
     process {
-        Update-log -data 'Backing up existing WIM Witch script...' -Class Information
+        Write-WWLog -data 'Backing up existing WIM Witch script...' -Class Information
 
         $scriptname = Split-Path $MyInvocation.PSCommandPath -Leaf #Find local script name
-        Update-Log -data 'The script to be backed up is: ' -Class Information
-        Update-Log -data $MyInvocation.PSCommandPath -Class Information
-    
+        Write-WWLog -data 'The script to be backed up is: ' -Class Information
+        Write-WWLog -data $MyInvocation.PSCommandPath -Class Information
         try {
-            Update-Log -data 'Copy script to backup folder...' -Class Information
-            Copy-Item -Path $scriptname -Destination $global:workdir\backup -ErrorAction Stop
-            Update-Log -Data 'Successfully copied...' -Class Information
+            Write-WWLog -data 'Copy script to backup folder...' -Class Information
+            Copy-Item -Path $scriptname -Destination $Script:workdir\backup -ErrorAction Stop
+            Write-WWLog -Data 'Successfully copied...' -Class Information
         } catch {
-            Update-Log -data "Couldn't copy the WIM Witch script. My guess is a permissions issue" -Class Error
-            Update-Log -Data 'Exiting out of an over abundance of caution' -Class Error
+            Write-WWLog -data "Couldn't copy the WIM Witch script. My guess is a permissions issue" -Class Error
+            Write-WWLog -Data 'Exiting out of an over abundance of caution' -Class Error
             exit
         }
-    
         try {
-            Update-Log -data 'Renaming archived script...' -Class Information
-            Rename-Name -file $global:workdir\backup\$scriptname -extension '.ps1'
-            Update-Log -data 'Backup successfully renamed for archiving' -class Information
+            Write-WWLog -data 'Renaming archived script...' -Class Information
+            Rename-Name -file $Script:workdir\backup\$scriptname -extension '.ps1'
+            Write-WWLog -data 'Backup successfully renamed for archiving' -class Information
         } catch {
-    
-            Update-Log -Data "Backed-up script couldn't be renamed. This isn't a critical error" -Class Warning
-            Update-Log -Data "You may want to change it's name so it doesn't get overwritten." -Class Warning
-            Update-Log -Data 'Continuing with WIM Witch upgrade...' -Class Warning
+            Write-WWLog -Data "Backed-up script couldn't be renamed. This isn't a critical error" -Class Warning
+            Write-WWLog -Data "You may want to change it's name so it doesn't get overwritten." -Class Warning
+            Write-WWLog -Data 'Continuing with WIM Witch upgrade...' -Class Warning
         }
     }
 }
+

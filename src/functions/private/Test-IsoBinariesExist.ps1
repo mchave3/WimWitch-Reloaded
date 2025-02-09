@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Test if required ISO creation binaries exist.
 
@@ -24,6 +24,7 @@
 #>
 function Test-IsoBinariesExist {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
 
     )
@@ -32,14 +33,15 @@ function Test-IsoBinariesExist {
         $buildnum = Get-WinVersionNumber
         $OSType = get-Windowstype
 
-        $ISOFiles = $global:workdir + '\imports\iso\' + $OSType + '\' + $buildnum + '\'
+        $ISOFiles = $Script:workdir + '\imports\iso\' + $OSType + '\' + $buildnum + '\'
 
         Test-Path -Path $ISOFiles\*
         if ((Test-Path -Path $ISOFiles\*) -eq $false) {
             $text = 'ISO Binaries are not present for ' + $OSType + ' ' + $buildnum
-            Update-Log -Data $text -Class Warning
-            Update-Log -data 'Import ISO Binaries from an ISO or disable ISO/Upgrade Package creation' -Class Warning
+            Write-WWLog -Data $text -Class Warning
+            Write-WWLog -data 'Import ISO Binaries from an ISO or disable ISO/Upgrade Package creation' -Class Warning
             return $false
         }
     }
 }
+

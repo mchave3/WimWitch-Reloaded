@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Run the OSDSUS and OSDUpdate checks to determine if an update is available.
 
@@ -37,3 +37,4 @@ function Invoke-OSDCheck {
         Compare-OSDSUSVer #determines if an update of OSDSUS can be applied
     }
 }
+

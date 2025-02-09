@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the configuration file to load.
 
@@ -30,7 +30,7 @@ function Select-Config {
 
     process {
         $SourceXML = New-Object System.Windows.Forms.OpenFileDialog -Property @{
-            InitialDirectory = "$global:workdir\Configs"
+            InitialDirectory = "$Script:workdir\Configs"
             Filter           = 'XML (*.XML)|'
         }
         $null = $SourceXML.ShowDialog()
@@ -38,3 +38,4 @@ function Select-Config {
         Get-Configuration -filename $WPFSLLoadTextBox.text
     }
 }
+

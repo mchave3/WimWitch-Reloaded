@@ -1,11 +1,13 @@
-<#
+﻿<#
 .SYNOPSIS
     This function will prompt the user to upgrade WIM Witch.
 
 .DESCRIPTION
-    This function will prompt the user to upgrade WIM Witch. 
-    If the user chooses to upgrade, the script will backup the current version of WIM Witch, save the current version of WIM Witch to the working directory, and exit WIM Witch. 
-    The user will need to restart WIM Witch to apply the upgrade. If the user chooses not to upgrade, the script will log the decision and continue to start WIM Witch.
+    This function will prompt the user to upgrade WIM Witch.
+    If the user chooses to upgrade, the script will backup the current version of WIM Witch, save the current
+    version of WIM Witch to the working directory, and exit WIM Witch.
+    The user will need to restart WIM Witch to apply the upgrade. If the user chooses not to upgrade, the script
+    will log the decision and continue to start WIM Witch.
 
 .NOTES
     Name:        Install-WimWitchUpgrade.ps1
@@ -38,12 +40,12 @@ function Install-WimWitchUpgrade {
             Write-Output 'Invalid entry, try again.'
             Install-WimWitchUpgrade
         }
-    
+
         if ($yesno -eq 'y') {
             Backup-WIMWitch
-    
+
             try {
-                Save-Script -Name 'WIMWitch' -Path $global:workdir -Force -ErrorAction Stop
+                Save-Script -Name 'WIMWitch' -Path $Script:workdir -Force -ErrorAction Stop
                 Write-Output 'New version has been applied. WIM Witch will now exit.'
                 Write-Output 'Please restart WIM Witch'
                 exit
@@ -51,14 +53,13 @@ function Install-WimWitchUpgrade {
                 Write-Output "Couldn't upgrade. Try again when teh tubes are clear"
                 return
             }
-    
+
         }
-    
-    
         if ($yesno -eq 'n') {
             Write-Output "You'll want to upgrade at some point."
-            Update-Log -Data 'Upgrade to new version was declined' -Class Warning
-            Update-Log -Data 'Continuing to start WIM Witch...' -Class Warning
-        } 
+            Write-WWLog -Data 'Upgrade to new version was declined' -Class Warning
+            Write-WWLog -Data 'Continuing to start WIM Witch...' -Class Warning
+        }
     }
 }
+

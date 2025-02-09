@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Remove ISO mount points.
 
@@ -35,6 +35,7 @@ function Invoke-RemoveISOMount {
         }
         while (Dismount-DiskImage -InputObject $inputObject)
         #He's dead Jim!
-        Update-Log -data 'Dismount complete' -class Information
+        Write-WWLog -data 'Dismount complete' -class Information
     }
 }
+

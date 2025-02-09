@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Download the latest OneDrive agent installers.
 
@@ -34,30 +34,31 @@ function Get-OneDrive {
         #https://go.microsoft.com/fwlink/p/?LinkID=844652 -Possible new link location.
         #https://go.microsoft.com/fwlink/?linkid=2181064 - x64 installer
 
-        Update-Log -Data 'Downloading latest 32-bit OneDrive agent installer...' -class Information
+        Write-WWLog -Data 'Downloading latest 32-bit OneDrive agent installer...' -class Information
         $DownloadUrl = 'https://go.microsoft.com/fwlink/p/?LinkId=248256'
-        $DownloadPath = "$global:workdir\updates\OneDrive"
+        $DownloadPath = "$Script:workdir\updates\OneDrive"
         $DownloadFile = 'OneDriveSetup.exe'
 
         if (!(Test-Path "$DownloadPath")) { New-Item -Path $DownloadPath -ItemType Directory -Force | Out-Null }
         Invoke-WebRequest -Uri $DownloadUrl -OutFile "$DownloadPath\$DownloadFile"
         if (Test-Path "$DownloadPath\$DownloadFile") {
-            Update-Log -Data 'OneDrive Download Complete' -Class Information
+            Write-WWLog -Data 'OneDrive Download Complete' -Class Information
         } else {
-            Update-log -Data 'OneDrive could not be downloaded' -Class Error
+            Write-WWLog -Data 'OneDrive could not be downloaded' -Class Error
         }
 
-        Update-Log -Data 'Downloading latest 64-bit OneDrive agent installer...' -class Information
+        Write-WWLog -Data 'Downloading latest 64-bit OneDrive agent installer...' -class Information
         $DownloadUrl = 'https://go.microsoft.com/fwlink/?linkid=2181064'
-        $DownloadPath = "$global:workdir\updates\OneDrive\x64"
+        $DownloadPath = "$Script:workdir\updates\OneDrive\x64"
         $DownloadFile = 'OneDriveSetup.exe'
 
         if (!(Test-Path "$DownloadPath")) { New-Item -Path $DownloadPath -ItemType Directory -Force | Out-Null }
         Invoke-WebRequest -Uri $DownloadUrl -OutFile "$DownloadPath\$DownloadFile"
         if (Test-Path "$DownloadPath\$DownloadFile") {
-            Update-Log -Data 'OneDrive Download Complete' -Class Information
+            Write-WWLog -Data 'OneDrive Download Complete' -Class Information
         } else {
-            Update-log -Data 'OneDrive could not be downloaded' -Class Error
+            Write-WWLog -Data 'OneDrive could not be downloaded' -Class Error
         }
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the folder to save the Autopilot JSON file.
 
@@ -36,6 +36,7 @@ function Select-NewJSONDir {
         $SaveDir = $browser.SelectedPath
         $WPFJSONTextBoxSavePath.text = $SaveDir
         $text = "Autopilot profile save path selected: $SaveDir"
-        Update-Log -Data $text -Class Information
+        Write-WWLog -Data $text -Class Information
     }
 }
+

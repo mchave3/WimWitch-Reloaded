@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Function to select a JSON file.
 
@@ -35,9 +35,10 @@ function Select-JSONFile {
         }
         $null = $JSON.ShowDialog()
         $WPFJSONTextBox.Text = $JSON.FileName
-    
+
         $text = 'JSON file selected: ' + $JSON.FileName
-        Update-Log -Data $text -Class Information
+        Write-WWLog -Data $text -Class Information
         Invoke-ParseJSON -file $JSON.FileName
     }
 }
+

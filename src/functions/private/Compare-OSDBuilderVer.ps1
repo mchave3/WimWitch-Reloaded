@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Compare the OSD Builder version to the current version of the module.
 
@@ -29,18 +29,18 @@ function Compare-OSDBuilderVer {
     )
 
     process {
-        Update-Log -data 'Comparing OSD Update module versions' -Class Information
+        Write-WWLog -data 'Comparing OSD Update module versions' -Class Information
         if ($WPFUpdatesOSDBVersion.Text -eq 'Not Installed') {
             Return
         }
         If ($WPFUpdatesOSDBVersion.Text -eq $WPFUpdatesOSDBCurrentVerTextBox.Text) {
-            Update-Log -Data 'OSD Update is up to date' -class Information
+            Write-WWLog -Data 'OSD Update is up to date' -class Information
             Return
         }
         #$WPFUpdatesOSDBOutOfDateTextBlock.Visibility = "Visible"
         $WPFUpdatesOSDListBox.items.add('A software update module is out of date. Please click the Install / Update button to update it.')
-        Update-Log -Data 'OSD Update appears to be out of date. Run the upgrade Function from within WIM Witch to resolve' -class Warning
-    
+        Write-WWLog -Data 'OSD Update appears to be out of date. Run the upgrade Function from within WIM Witch to resolve' -class Warning
         Return
     }
 }
+
