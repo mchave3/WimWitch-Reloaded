@@ -55,12 +55,12 @@ Invoke-RemoveISOMount               | Invoke-WWUnmountISO
 Invoke-RunConfigFile                | Invoke-WWRunConfigFile
 Invoke-TextNotification             | Invoke-WWTextNotification
 Invoke-UpdateTabOption              | Invoke-WWUpdateTabOption
-New-WWCMImagePackage                  | New-WWCMImagePackage
-New-WindowsISO                      | New-WWWindowsISO
-Remove-WWAppx                         | Remove-WWAppx
-Remove-OSIndex                      | Remove-WWOSIndex
+Build-WWCMImagePackage                  | Build-WWCMImagePackage
+Build-WindowsISO                      | New-WWWindowsISO
+Deregister-WWAppx                         | Deregister-WWAppx
+Clear-OSIndex                      | Remove-WWOSIndex
 Rename-Name                         | Rename-WWImage
-Reset-WWMISCheckBox                   | Reset-WWMISCheckbox
+Refresh-WWMISCheckBox                   | Refresh-WWMISCheckBox
 Save-Configuration                  | Save-WWConfiguration
 Select-Appx                         | Select-WWAppx
 Select-Config                       | Select-WWConfiguration

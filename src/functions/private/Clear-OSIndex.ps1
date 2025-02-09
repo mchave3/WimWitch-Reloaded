@@ -6,7 +6,7 @@
     This function is used to remove unwanted image indexes from the WIM.
 
 .NOTES
-    Name:        remove-OSIndex.ps1
+    Name:        Clear-OSIndex.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Remove-OSIndex
+    Clear-OSIndex
 #>
-function Remove-OSIndex {
+function Clear-OSIndex {
     [CmdletBinding()]
     param(
 
@@ -31,7 +31,7 @@ function Remove-OSIndex {
     process {
         Write-WWLog -Data 'Attempting to remove unwanted image indexes' -Class Information
         $wimname = Get-Item -Path $Script:workdir\Staging\*.wim
-    
+
         Write-WWLog -Data "Found Image $wimname" -Class Information
         $IndexesAll = Get-WindowsImage -ImagePath $wimname | ForEach-Object { $_.ImageName }
         $IndexSelected = $WPFSourceWIMImgDesTextBox.Text
@@ -42,7 +42,7 @@ function Remove-OSIndex {
             } else {
                 Write-WWLog -data "Deleting $Index from WIM" -Class Information
                 Remove-WindowsImage -ImagePath $wimname -Name $Index -InformationAction SilentlyContinue | Out-Null
-    
+
             }
         }
     }

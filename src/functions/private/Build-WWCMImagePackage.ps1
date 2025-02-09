@@ -6,7 +6,7 @@
     This function creates a new ConfigMgr image package based on the selected WIM file.
 
 .NOTES
-    Name:        New-WWCMImagePackage.ps1
+    Name:        Build-WWCMImagePackage.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    New-WWCMImagePackage
+    Build-WWCMImagePackage
 #>
-function New-WWCMImagePackage {
+function Build-WWCMImagePackage {
     [CmdletBinding()]
     param(
 

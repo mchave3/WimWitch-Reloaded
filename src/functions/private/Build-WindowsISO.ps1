@@ -3,11 +3,11 @@
     Create a new Windows ISO file.
 
 .DESCRIPTION
-    This function creates a new Windows ISO file from the modified WIM file and staged content. 
+    This function creates a new Windows ISO file from the modified WIM file and staged content.
     It handles the ISO creation process using oscdimg and manages any errors that occur during the process.
 
 .NOTES
-    Name:        New-WindowsISO.ps1
+    Name:        Build-WindowsISO.ps1
     Author:      Mickaël CHAVE
     Created:     2025-02-02
     Version:     1.0.0
@@ -21,9 +21,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    New-WindowsISO
+    Build-WindowsISO
 #>
-function New-WindowsISO {
+function Build-WindowsISO {
     [CmdletBinding()]
     param(
 
@@ -36,12 +36,12 @@ function New-WindowsISO {
             Write-WWLog -Data 'The file oscdimg.exe was not found. Skipping ISO creation...' -Class Error
             return
         }
-    
+
         If ($WPFMISTBISOFileName.Text -notlike '*.iso') {
             $WPFMISTBISOFileName.Text = $WPFMISTBISOFileName.Text + '.iso'
             Write-WWLog -Data 'Appending new file name with an extension' -Class Information
         }
-    
+
         $Location = ${env:ProgramFiles(x86)}
         $executable = $location + 
             '\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe'
@@ -51,7 +51,7 @@ function New-WindowsISO {
         $file = $WPFMISTBISOFileName.text
         $dest = "$folder\$file"
         $text = "-b$bootbin"
-    
+
         if ((Test-Path -Path $dest) -eq $true) { Rename-Name -file $dest -extension '.iso' }
         try {
             Write-WWLog -Data 'Starting to build ISO...' -Class Information

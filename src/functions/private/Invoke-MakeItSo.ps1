@@ -116,7 +116,7 @@ function Invoke-MakeItSo {
         }
 
         #Remove the unwanted indexes
-        Remove-OSIndex
+        Clear-OSIndex
 
         #Mount the WIM File
         $wimname = Get-Item -Path $Script:workdir\Staging\*.wim
@@ -275,7 +275,7 @@ function Invoke-MakeItSo {
 
         #Remove AppX Packages
         if ($WPFAppxCheckBox.IsChecked -eq $true) {
-            Remove-WWAppx -array $appx
+            Deregister-WWAppx -array $appx
         } Else {
             Write-WWLog -Data 'App removal not enabled' -Class Information
         }
@@ -364,7 +364,7 @@ function Invoke-MakeItSo {
             #  "New Image","Update Existing Image"
             if ($WPFCMCBImageType.SelectedItem -eq 'New Image') {
                 Write-WWLog -data 'Creating a new image in ConfigMgr...' -class Information
-                New-WWCMImagePackage
+                Build-WWCMImagePackage
             }
 
             if ($WPFCMCBImageType.SelectedItem -eq 'Update Existing Image') {
@@ -396,7 +396,7 @@ function Invoke-MakeItSo {
 
         #Create ISO if selected
         if ($WPFMISCBISO.IsChecked -eq $true) {
-            New-WindowsISO
+            Build-WindowsISO
         } else {
             Write-WWLog -Data 'ISO Creation skipped or not applicable' -Class Information
         }

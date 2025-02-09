@@ -6,7 +6,7 @@
     This function is used to reset the MIS checkboxes.
 
 .NOTES
-    Name:        Reset-WWMISCheckBox.ps1
+    Name:        Refresh-WWMISCheckBox.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Reset-WWMISCheckBox
+    Refresh-WWMISCheckBox
 #>
-function Reset-WWMISCheckBox {
+function Refresh-WWMISCheckBox {
     [CmdletBinding()]
     param(
 
