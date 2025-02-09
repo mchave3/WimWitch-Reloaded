@@ -40,7 +40,6 @@ function Compare-OSDBuilderVer {
         #$WPFUpdatesOSDBOutOfDateTextBlock.Visibility = "Visible"
         $WPFUpdatesOSDListBox.items.add('A software update module is out of date. Please click the Install / Update button to update it.')
         Update-Log -Data 'OSD Update appears to be out of date. Run the upgrade Function from within WIM Witch to resolve' -class Warning
-    
         Return
     }
 }

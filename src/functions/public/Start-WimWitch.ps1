@@ -30,7 +30,7 @@ function Start-WimWitch {
     # Requires -RunAsAdministrator
     #-- Requires -PSSnapin <PSSnapin-Name> [-Version <N>[.<n>]]
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [parameter(mandatory = $false, HelpMessage = 'enable auto')]
         [switch]$auto,
@@ -80,8 +80,8 @@ function Start-WimWitch {
 
     process {
         # Retrieve available versions
-        $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } | 
-            Sort-Object Version -Descending | 
+        $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } |
+            Sort-Object Version -Descending |
             Select-Object -First 1
 
         # Check version and include pre-release if available
