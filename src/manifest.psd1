@@ -1,4 +1,4 @@
-# This file always wins!
+﻿# This file always wins!
 # Use this file to override any of the framework defaults and generated values.
 @{
     Author            = 'Mickaël CHAVE'
