@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check for update supersedence against ConfigMgr.
 
@@ -121,3 +121,4 @@ function Invoke-MEMCMUpdateSupersedence {
         Write-WWLog -data 'Supersedence check complete' -class Information
     }
 }
+

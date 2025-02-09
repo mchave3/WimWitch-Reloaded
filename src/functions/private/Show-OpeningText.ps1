@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display the opening text of the script.
 
@@ -39,3 +39,4 @@ function Show-OpeningText {
         Write-Output ' '
     }
 }
+

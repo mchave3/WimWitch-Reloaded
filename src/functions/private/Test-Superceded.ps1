@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check the WIM Witch Update store for superseded updates.
 
@@ -72,3 +72,4 @@ function Test-Superceded {
         Write-WWLog -data 'Supercedense check complete.' -Class Information
     }
 }
+

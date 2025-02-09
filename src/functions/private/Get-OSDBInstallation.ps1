@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Get the OSD Update version.
 
@@ -49,3 +49,4 @@ function Get-OSDBInstallation {
         }
     }
 }
+

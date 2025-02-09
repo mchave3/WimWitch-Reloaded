@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import the ConfigMgr PowerShell module.
 
@@ -45,3 +45,4 @@ function Import-CMModule {
         }
     }
 }
+

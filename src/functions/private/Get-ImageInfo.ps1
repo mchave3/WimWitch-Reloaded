@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Retrieve information about an existing ConfigMgr image package.
 
@@ -93,3 +93,4 @@ function Get-ImageInfo {
         Set-Location $Script:workdir
     }
 }
+

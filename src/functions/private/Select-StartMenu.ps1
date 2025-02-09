@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select start menu layout file.
 
@@ -67,3 +67,4 @@ function Select-StartMenu {
         Write-WWLog -Data $text -class Information
     }
 }
+

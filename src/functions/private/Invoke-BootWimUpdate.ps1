@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update the boot.wim file in the staging area.
 
@@ -105,3 +105,4 @@ function Invoke-BootWimUpdate {
         }
     }
 }
+

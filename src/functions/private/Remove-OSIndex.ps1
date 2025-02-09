@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Remove unwanted image indexes from the WIM.
 
@@ -47,3 +47,4 @@ function Remove-OSIndex {
         }
     }
 }
+

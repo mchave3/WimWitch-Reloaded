@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Get the OSDSUS installation information.
 
@@ -50,3 +50,4 @@ function Get-OSDSUSInstallation {
         }
     }
 }
+

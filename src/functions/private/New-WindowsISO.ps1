@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Create a new Windows ISO file.
 
@@ -71,3 +71,4 @@ function New-WindowsISO {
         }
     }
 }
+

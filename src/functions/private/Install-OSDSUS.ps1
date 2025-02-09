@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update the OSDSUS module.
 
@@ -70,3 +70,4 @@ function Install-OSDSUS {
         }
     }
 }
+

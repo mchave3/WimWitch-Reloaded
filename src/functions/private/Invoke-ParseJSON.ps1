@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Parse a JSON file and populate the WPF fields with the data.
 
@@ -46,3 +46,4 @@ function Invoke-ParseJSON {
         }
     }
 }
+

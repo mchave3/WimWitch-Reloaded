@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     This function will prompt the user to upgrade WIM Witch.
 
@@ -62,3 +62,4 @@ function Install-WimWitchUpgrade {
         }
     }
 }
+

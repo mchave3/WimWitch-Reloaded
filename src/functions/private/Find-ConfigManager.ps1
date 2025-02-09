@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Detect and set ConfigMgr Site Code and Site Server.
 
@@ -81,3 +81,4 @@ function Find-ConfigManager {
         Return $false
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Get Windows patches for a specific OS and build
 
@@ -137,3 +137,4 @@ function Get-WindowsPatch {
         Write-WWLog -Data "Downloading completed for $OS $build" -Class Information
     }
 }
+

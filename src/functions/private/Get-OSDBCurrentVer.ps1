@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Get the most current version of OSDUpdate available on the PowerShell Gallery.
 
@@ -42,3 +42,4 @@ function Get-OSDBCurrentVer {
         }
     }
 }
+

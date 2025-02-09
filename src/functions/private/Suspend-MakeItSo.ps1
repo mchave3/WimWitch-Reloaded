@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Pause the image build process.
 
@@ -47,3 +47,4 @@ function Suspend-MakeItSo {
         }
     }
 }
+

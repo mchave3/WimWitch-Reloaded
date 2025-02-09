@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Reset the MIS checkboxes.
 
@@ -58,3 +58,4 @@ function Reset-WWMISCheckBox {
         }
     }
 }
+

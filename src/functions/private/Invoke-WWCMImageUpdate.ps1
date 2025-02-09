@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Updates an existing ConfigMgr image package.
 
@@ -48,3 +48,4 @@ function Invoke-WWCMImageUpdate {
         Set-Location $Script:workdir
     }
 }
+

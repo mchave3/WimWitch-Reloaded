@@ -1,9 +1,28 @@
-﻿$rootPath = Split-Path $PSScriptRoot -Parent
+﻿# Determine root path with fallback mechanism
+$rootPath = if ($PSScriptRoot) {
+    Split-Path $PSScriptRoot -Parent
+} else {
+    # Fallback to current directory's parent when running directly in console
+    Split-Path (Get-Location) -Parent
+}
+
 $functionPath = Join-Path $rootPath "src\functions"
+
+# Verify path exists
+if (-not (Test-Path $functionPath)) {
+    Write-Error "Functions path not found: $functionPath"
+    exit 1
+}
 
 # Get all .ps1 files
 $files = Get-ChildItem -Path $functionPath -Filter "*.ps1" -Recurse
 $totalFiles = $files.Count
+
+if ($totalFiles -eq 0) {
+    Write-Warning "No .ps1 files found in $functionPath"
+    exit 0
+}
+
 $counter = 0
 
 Write-Host "Starting conversion of $totalFiles .ps1 files to UTF-8 BOM..." -ForegroundColor Cyan

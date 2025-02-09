@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Return the Windows version based on the WIM version.
 
@@ -58,3 +58,4 @@ function Get-WWWindowsReleaseFromWim {
         return $version
     }
 }
+

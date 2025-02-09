@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import the Windows Image Info metadata from the WIM file to populate the Source WIM Info fields in the Source tab.
 
@@ -78,3 +78,4 @@ function Import-WimInfo {
         }
     }
 }
+

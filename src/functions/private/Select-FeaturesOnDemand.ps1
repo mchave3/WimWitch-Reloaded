@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select Features on Demand (FODs) for Windows images
 
@@ -1740,3 +1740,4 @@ function Select-FeaturesOnDemand {
         }
     }
 }
+

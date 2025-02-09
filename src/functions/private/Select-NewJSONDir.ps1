@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the folder to save the Autopilot JSON file.
 
@@ -39,3 +39,4 @@ function Select-NewJSONDir {
         Write-WWLog -Data $text -Class Information
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Main function to build and customize the Windows image.
 
@@ -439,3 +439,4 @@ function Invoke-MakeItSo {
         Write-WWLog -Data "Job's done." -Class Information
     }
 }
+

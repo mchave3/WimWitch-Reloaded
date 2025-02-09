@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import the WimWitch configuration from a file.
 
@@ -32,11 +32,11 @@ function Get-Configuration {
 
     process {
         # Log the start of configuration import
-        Write-WWLog -data "Importing config from $filename" -Class Information
+        Update-Log -data "Importing config from $filename" -Class Information
         try {
             # Import the XML configuration file
             $settings = Import-Clixml -Path $filename -ErrorAction Stop
-            Write-WWLog -data 'Config file read...' -Class Information
+            Update-Log -data 'Config file read...' -Class Information
 
             # Set source WIM configuration
             $WPFSourceWIMSelectWIMTextBox.text = $settings.SourcePath
@@ -128,10 +128,10 @@ function Get-Configuration {
             $FODs = $settings.FODListBox
             $DPs = $settings.CMDPList
             $REGs = $settings.RegFilesLB
-            Write-WWLog -data 'Configuration set' -class Information
+            Update-Log -data 'Configuration set' -class Information
 
             # Clear and repopulate list boxes
-            Write-WWLog -data 'Clearing list boxes...' -Class Information
+            Update-Log -data 'Clearing list boxes...' -Class Information
             $WPFCustomLBLangPacks.Items.Clear()
             $WPFCustomLBLEP.Items.Clear()
             $WPFCustomLBFOD.Items.Clear()
@@ -139,7 +139,7 @@ function Get-Configuration {
             $WPFCustomLBRegistry.Items.Clear()
 
             # Populate list boxes with saved values
-            Write-WWLog -data 'Populating list boxes...' -class Information
+            Update-Log -data 'Populating list boxes...' -class Information
             foreach ($LEP in $LEPs) { $WPFCustomLBLangPacks.Items.Add($LEP) | Out-Null }
             foreach ($LXP in $LXPs) { $WPFCustomLBLEP.Items.Add($LXP) | Out-Null }
             foreach ($FOD in $FODs) { $WPFCustomLBFOD.Items.Add($FOD) | Out-Null }
@@ -162,11 +162,12 @@ function Get-Configuration {
             Reset-WWMISCheckBox
         }
         catch {
-            Write-WWLog -data "Could not import from $filename" -Class Error
+            Update-Log -data "Could not import from $filename" -Class Error
         }
 
         # Perform final cleanup and validation
         Invoke-CheckboxCleanup
-        Write-WWLog -data 'Config file loaded successfully' -Class Information
+        Update-Log -data 'Config file loaded successfully' -Class Information
     }
 }
+

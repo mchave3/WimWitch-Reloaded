@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the directory where the ISO will be saved.
 
@@ -39,3 +39,4 @@ function Select-ISODirectory {
         Write-WWLog -Data 'ISO directory selected' -Class Information
     }
 }
+

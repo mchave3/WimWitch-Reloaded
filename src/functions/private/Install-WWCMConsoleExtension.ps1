@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Install WimWitch ConfigMgr console extension.
 
@@ -105,3 +105,4 @@ function Install-WWCMConsoleExtension {
         Write-WWLog -Data 'Console extension installation complete!' -Class Information
     }
 }
+

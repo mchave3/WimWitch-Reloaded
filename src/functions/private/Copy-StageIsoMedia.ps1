@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Copy ISO media files to the staging area.
 
@@ -59,3 +59,4 @@ function Copy-StageIsoMedia {
         }
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import selected Local Experience Packs into the imports folder.
 
@@ -74,3 +74,4 @@ function Import-LocalExperiencePack {
         Write-WWLog -Data 'Importation complete' -Class Information
     }
 }
+

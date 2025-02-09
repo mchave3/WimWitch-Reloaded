@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update Windows RE WIM file.
 
@@ -75,3 +75,4 @@ function Invoke-WinReUpdate {
         }
     }
 }
+

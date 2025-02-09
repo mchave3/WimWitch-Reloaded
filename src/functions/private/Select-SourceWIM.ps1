@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select a WIM file and then select an index from that WIM file.
 
@@ -53,3 +53,4 @@ function Select-SourceWIM {
         Import-WimInfo -IndexNumber $IndexNumber
     }
 }
+

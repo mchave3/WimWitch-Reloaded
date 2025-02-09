@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Remove superceded updates and download the latest updates for the selected OS and build.
 
@@ -181,3 +181,4 @@ function Update-PatchSource {
         Write-WWLog -data 'All downloads complete' -class Information
     }
 }
+

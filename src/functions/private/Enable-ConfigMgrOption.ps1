@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Enable or disable ConfigMgr-related options in the UI.
 
@@ -105,3 +105,4 @@ function Enable-ConfigMgrOption {
         }
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import selected Language Packs into the Imports folder.
 
@@ -63,3 +63,4 @@ function Import-LanguagePack {
         Write-WWLog -Data 'Importation Complete' -Class Information
     }
 }
+

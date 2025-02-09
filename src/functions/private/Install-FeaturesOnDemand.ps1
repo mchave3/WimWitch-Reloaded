@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Apply selected Features On Demand to the mounted WIM.
 
@@ -61,3 +61,4 @@ function Install-FeaturesOnDemand {
         Write-WWLog -Data 'Feature on Demand injections complete' -Class Information
     }
 }
+

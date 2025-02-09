@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Test if required ISO creation binaries exist.
 
@@ -44,3 +44,4 @@ function Test-IsoBinariesExist {
         }
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select registry files to import.
 
@@ -53,3 +53,4 @@ function Select-RegFile {
         #Fix this shit, then you can release her.
     }
 }
+

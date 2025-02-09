@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select an ISO file to import from.
 
@@ -44,3 +44,4 @@ function Select-ISO {
         Write-WWLog -Data $text -class Information
     }
 }
+

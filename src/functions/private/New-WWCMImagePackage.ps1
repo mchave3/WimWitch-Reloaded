@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Creates a new ConfigMgr image package.
 
@@ -68,3 +68,4 @@ function New-WWCMImagePackage {
         Set-Location $Script:workdir
     }
 }
+

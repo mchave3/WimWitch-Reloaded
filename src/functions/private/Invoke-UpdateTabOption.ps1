@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update the options in the Updates tab based on selections.
 
@@ -67,3 +67,4 @@ function Invoke-UpdateTabOption {
         }
     }
 }
+

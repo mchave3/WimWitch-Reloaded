@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Get the most current OSDSUS version available.
 
@@ -42,3 +42,4 @@ function Get-OSDSUSCurrentVer {
         }
     }
 }
+

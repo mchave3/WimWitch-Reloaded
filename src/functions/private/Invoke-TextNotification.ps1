@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display a text notification.
 
@@ -33,3 +33,4 @@ function Invoke-TextNotification {
         Write-WWLog -data '*********************************' -class Comment
     }
 }
+

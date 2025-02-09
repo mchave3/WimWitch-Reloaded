@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Function to select the mount folder.
 
@@ -39,3 +39,4 @@ function Select-MountDir {
         Write-WWLog -Data 'Mount directory selected' -Class Information
     }
 }
+

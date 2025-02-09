@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select default application associations file.
 
@@ -45,3 +45,4 @@ function Select-DefaultApplicationAssociation {
         Write-WWLog -Data $text -class Information
     }
 }
+

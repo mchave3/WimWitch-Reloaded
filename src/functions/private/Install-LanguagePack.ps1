@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Install Language Packs into a mounted WIM file.
 
@@ -61,3 +61,4 @@ function Install-LanguagePack {
         Write-WWLog -Data 'Language Pack injections complete' -Class Information
     }
 }
+

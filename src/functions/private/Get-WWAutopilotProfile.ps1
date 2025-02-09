@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Retrieve the Autopilot profile from Intune.
 
@@ -103,3 +103,4 @@ function Get-WWAutopilotProfile {
         Write-WWLog -data "Profile successfully created at $text" -Class Information
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update the OSD Update module.
 
@@ -72,3 +72,4 @@ function Install-OSDB {
         }
     }
 }
+

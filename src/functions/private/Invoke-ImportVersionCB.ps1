@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update the Windows version combo box based on the selected OS.
 
@@ -48,3 +48,4 @@ function Invoke-ImportVersionCB {
         }
     }
 }
+

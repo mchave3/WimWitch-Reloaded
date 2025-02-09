@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Apply registry files to the mounted image.
 
@@ -119,3 +119,4 @@ function Install-RegistryFile {
         }
     }
 }
+

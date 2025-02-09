@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Function to select a JSON file.
 
@@ -41,3 +41,4 @@ function Select-JSONFile {
         Invoke-ParseJSON -file $JSON.FileName
     }
 }
+

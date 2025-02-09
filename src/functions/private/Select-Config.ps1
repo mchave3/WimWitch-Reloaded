@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the configuration file to load.
 
@@ -38,3 +38,4 @@ function Select-Config {
         Get-Configuration -filename $WPFSLLoadTextBox.text
     }
 }
+

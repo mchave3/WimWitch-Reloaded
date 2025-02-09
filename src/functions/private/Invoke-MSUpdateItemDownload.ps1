@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Download Microsoft update items from ConfigMgr.
 
@@ -199,3 +199,4 @@ function Invoke-MSUpdateItemDownload {
         return $ReturnValue | Out-Null
     }
 }
+

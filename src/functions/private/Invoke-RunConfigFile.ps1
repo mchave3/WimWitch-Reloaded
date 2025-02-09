@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Load the configuration file and run the MakeItSo function.
 
@@ -39,3 +39,4 @@ function Invoke-RunConfigFile {
         Write-Output ' '
     }
 }
+

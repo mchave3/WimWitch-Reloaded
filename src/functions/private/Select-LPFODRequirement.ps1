@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the criteria for Language Packs, Local Experience Packs and Features on Demand.
 
@@ -65,3 +65,4 @@ function Select-LPFODRequirement {
         }
     }
 }
+

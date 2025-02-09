@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the target directory for the WIM file.
 
@@ -38,3 +38,4 @@ function Select-TargetDir {
         Write-WWLog -Data 'Target directory selected' -Class Information
     }
 }
+

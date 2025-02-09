@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Apply updates to the mounted image.
 
@@ -116,3 +116,4 @@ function Deploy-Update {
         }
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check for updates against ConfigMgr and download them to the working directory.
 
@@ -145,3 +145,4 @@ function Invoke-MEMCMUpdatecatalog {
         Set-Location $Script:workdir
     }
 }
+

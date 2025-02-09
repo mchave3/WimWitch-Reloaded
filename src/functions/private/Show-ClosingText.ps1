@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display a closing message to the user.
 
@@ -37,3 +37,4 @@ function Show-ClosingText {
         Write-Host '##########################################################'
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Inject .Net 3.5 binaries into the WIM file.
 
@@ -50,3 +50,4 @@ function Add-DotNet {
         Write-WWLog -Data '.Net 3.5 injection complete' -Class Information
     }
 }
+

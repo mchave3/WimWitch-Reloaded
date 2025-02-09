@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Apply the start menu layout to the mounted image.
 
@@ -60,3 +60,4 @@ function Install-StartLayout {
         }
     }
 }
+

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Copy the updated OneDrive client x64 to the mounted image.
 
@@ -69,3 +69,4 @@ function Copy-OneDrivex64 {
         }
     }
 }
+

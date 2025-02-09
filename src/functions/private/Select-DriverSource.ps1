@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Function to select the driver source folder.
 
@@ -39,3 +39,4 @@ function Select-DriverSource {
         Write-WWLog -Data "Driver path selected: $DriverDir" -Class Information
     }
 }
+

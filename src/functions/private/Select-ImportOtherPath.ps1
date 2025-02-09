@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select a source folder for importing objects.
 
@@ -38,3 +38,4 @@ function Select-ImportOtherPath {
         $WPFImportOtherTBPath.text = $ImportPath
     }
 }
+
