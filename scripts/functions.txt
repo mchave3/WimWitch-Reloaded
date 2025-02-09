@@ -106,5 +106,5 @@ Invoke-ImportVersionCB              | Update-WWImportVersionCB
 Write-WWLog                          | Update-WWLog
 Install-OSDB                         | Update-WWOSDB
 Install-OSDSUS                       | Update-WWOSDSUS
-Update-PatchSource                  | Update-WWPatchSource
+Sync-WindowsUpdateSource                  | Update-WWPatchSource
 Invoke-WinReUpdate                     | Update-WWWINREWIM

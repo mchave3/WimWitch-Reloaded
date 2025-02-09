@@ -480,7 +480,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #Update patch source
-        $WPFUpdatesDownloadNewButton.Add_Click( { Update-PatchSource })
+        $WPFUpdatesDownloadNewButton.Add_Click( { Sync-WindowsUpdateSource })
 
         #Select Appx packages to remove
         $WPFAppxButton.Add_Click( { $Script:SelectedAppx = Select-Appx })

@@ -6,7 +6,7 @@
     This function is used to remove superceded updates and download the latest updates for the selected OS and build.
 
 .NOTES
-    Name:        Update-PatchSource.ps1
+    Name:        Sync-WindowsUpdateSource.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Update-PatchSource
+    Sync-WindowsUpdateSource
 #>
-function Update-PatchSource {
+function Sync-WindowsUpdateSource {
     [CmdletBinding()]
     param(
 
@@ -85,7 +85,7 @@ function Update-PatchSource {
                 Test-Superceded -action delete -build 21H2 -OS 'Windows Server'
                 Get-WindowsPatch -build 21H2 -OS 'Windows Server'
             }
-    
+
             if ($WPFUpdatesW11Main.IsChecked -eq $true) {
                 if ($WPFUpdatesW11_22H2.IsChecked -eq $true) {
                     Test-Superceded -action delete -build 22H2 -OS 'Windows 11'
@@ -101,11 +101,11 @@ function Update-PatchSource {
                     Test-Superceded -action delete -build 23H2 -OS 'Windows 11'
                     Get-WindowsPatch -build 23H2 -OS 'Windows 11'
                 }
-    
+
             }
             Get-OneDrive
         }
-    
+
         if ($WPFUSCBSelectCatalogSource.SelectedItem -eq 'ConfigMgr') {
             if ($WPFUpdatesW10Main.IsChecked -eq $true) {
                 if ($WPFUpdatesW10_22H2.IsChecked -eq $true) {
