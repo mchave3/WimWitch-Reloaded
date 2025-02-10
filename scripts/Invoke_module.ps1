@@ -1,3 +1,5 @@
+#Requires -RunAsAdministrator
+
 <#
 .SYNOPSIS
     Install required modules, uninstall existing modules, and import the WimWitch-Reloaded module.
@@ -20,9 +22,16 @@
     Invoke_module.ps1
 #>
 
-Clear-Host
+#Region Variables
+$moduleName = "WimWitch-Reloaded"
+$requiredModules = @('OSDSUS', 'OSDUpdate')
+$modulesToUninstall = $requiredModules + @($moduleName)
+$moduleOutput = Join-Path (Split-Path -Parent $PSScriptRoot) "outputs\$moduleName"
+#EndRegion Variables
 
+#Region Functions
 function Show-BuildBanner {
+    param()
     $banner = @"
 ===========================================================
                 WimWitch-Reloaded Module Setup
@@ -33,8 +42,11 @@ function Show-BuildBanner {
 }
 
 function Write-WWLog {
+    [CmdletBinding()]
     param(
+        [Parameter(Mandatory)]
         [string]$Message,
+        [Parameter()]
         [ValidateSet('Info', 'Warning', 'Error', 'Success', 'Stage')]
         [string]$Type = 'Info'
     )
@@ -59,36 +71,17 @@ function Write-WWLog {
     Write-Host "[$timestamp] $prefix $Message" -ForegroundColor $color
 }
 
-$moduleName = "WimWitch-Reloaded"
-$requiredModules = @('OSDSUS', 'OSDUpdate')
-$modulesToUninstall = $requiredModules + @($moduleName)
-
-# Define module path
-$moduleOutput = Join-Path (Split-Path -Parent $PSScriptRoot) "outputs\$moduleName"
-
-# Initialize setup
-Show-BuildBanner
-Write-WWLog "Starting module setup process" -Type Stage
-
-# Phase 1: Environment Validation
-Write-WWLog "Validating environment" -Type Stage
-
-# Verify module exists
-if (!(Test-Path $moduleOutput)) {
-    Write-WWLog "Module not found at: $moduleOutput" -Type Error
-    Write-WWLog "Please build the module first using Build_module.ps1" -Type Error
-    exit 1
-}
-
 function Install-RequiredModule {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory)]
         [string]$ModuleName
     )
 
     if (!(Get-Module -ListAvailable -Name $ModuleName)) {
         try {
             Write-WWLog "Installing module $ModuleName..." -Type Warning
-            Install-Module -Name $ModuleName -Force -Scope CurrentUser
+            Install-Module -Name $ModuleName -Force -Scope CurrentUser -ErrorAction Stop
 
             if (!(Get-Module -ListAvailable -Name $ModuleName)) {
                 Write-WWLog "Module $ModuleName installation failed" -Type Error
@@ -110,11 +103,28 @@ function Install-RequiredModule {
         return $false
     }
 }
+#EndRegion Functions
 
-# Phase 2: Module Cleanup
+#Region Main
+Clear-Host
+
+# Initialize setup
+Show-BuildBanner
+Write-WWLog "Starting module setup process" -Type Stage
+
+#Region Environment Validation
+Write-WWLog "Validating environment" -Type Stage
+
+if (!(Test-Path $moduleOutput)) {
+    Write-WWLog "Module not found at: $moduleOutput" -Type Error
+    Write-WWLog "Please build the module first using Build_module.ps1" -Type Error
+    exit 1
+}
+#EndRegion Environment Validation
+
+#Region Module Cleanup
 Write-WWLog "Cleaning up existing modules" -Type Stage
 
-# Uninstall existing modules
 foreach ($module in $modulesToUninstall) {
     if (Get-Module -Name $module) {
         Write-WWLog "Removing loaded module: $module" -Type Info
@@ -131,11 +141,11 @@ foreach ($module in $modulesToUninstall) {
         }
     }
 }
+#EndRegion Module Cleanup
 
-# Phase 3: Dependencies Installation
+#Region Dependencies Installation
 Write-WWLog "Installing required modules" -Type Stage
 
-# Install required modules
 foreach ($module in $requiredModules) {
     Write-WWLog "Processing module: $module" -Type Info
     if (!(Install-RequiredModule -ModuleName $module)) {
@@ -143,11 +153,11 @@ foreach ($module in $requiredModules) {
         exit 1
     }
 }
+#EndRegion Dependencies Installation
 
-# Phase 4: Module Import
+#Region Module Import
 Write-WWLog "Importing WimWitch-Reloaded module" -Type Stage
 
-# Import and verify the new module
 try {
     Import-Module $moduleOutput -Force -ErrorAction Stop
     if (Get-Module -Name $moduleName) {
@@ -164,7 +174,11 @@ catch {
     Write-WWLog "Error loading module: $_" -Type Error
     exit 1
 }
+#EndRegion Module Import
 
-# Phase 5: Launch Application
-Write-WWLog "Launching WimWitch-Reloaded" -Type Stage
+#Region Launch Application
+# Press enter 
 Start-WimWitch
+#EndRegion Launch Application
+
+#EndRegion Main
