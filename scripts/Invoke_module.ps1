@@ -177,7 +177,7 @@ catch {
 #EndRegion Module Import
 
 #Region Launch Application
-# Press enter 
+Read-Host "Press Enter to start WimWitch-Reloaded"
 Start-WimWitch
 #EndRegion Launch Application
 
