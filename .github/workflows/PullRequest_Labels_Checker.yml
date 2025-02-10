@@ -21,5 +21,5 @@
             with:
               github-token: "${{ secrets.GITHUB_TOKEN }}"
               pull-request-number: '${{ github.event.pull_request.number }}'
-              valid-labels: Major, Minor, Patch, Prerelease
+              valid-labels: Major, Minor, Patch, Prerelease, ignore-for-release, NoRelease
               disable-reviews: true
