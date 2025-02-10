@@ -1,18 +1,35 @@
-# Build script for WimWitch-Reloaded
-[CmdletBinding()]
-param (
-    [switch]$Force
-)
+<#
+.SYNOPSIS
+    Build the WimWitch-Reloaded module by combining public and private functions into a single module file.
+
+.DESCRIPTION
+    This script builds the WimWitch-Reloaded module by combining public and private functions into a single module file.
+
+.NOTES
+    Name:        Build_module.ps1
+    Author:      Mickaël CHAVE
+    Created:     2025-02-10
+    Version:     1.0.0
+    Repository:  https://github.com/mchave3/WimWitch-Reloaded
+    License:     MIT License
+
+.LINK
+    https://github.com/mchave3/WimWitch-Reloaded
+
+.EXAMPLE
+    Build_module.ps1
+#>
 
 Clear-Host
 
-function Write-Log {
+#region Functions
+function Write-WWLog {
     param(
         [string]$Message,
         [ValidateSet('Info', 'Warning', 'Error', 'Success', 'Stage')]
         [string]$Type = 'Info'
     )
-    
+
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $prefix = switch ($Type) {
         'Info'    { "[INFO]   " }
@@ -21,7 +38,7 @@ function Write-Log {
         'Success' { "[SUCCESS]" }
         'Stage'   { "[STAGE]  " }
     }
-    
+
     $color = switch ($Type) {
         'Info'    { 'White' }
         'Warning' { 'Yellow' }
@@ -29,132 +46,135 @@ function Write-Log {
         'Success' { 'Green' }
         'Stage'   { 'Cyan' }
     }
-    
+
     Write-Host "[$timestamp] $prefix $Message" -ForegroundColor $color
 }
-
-# Configuration with hardcoded values
-$moduleName = "WimWitch-Reloaded"
-$moduleVersion = "1.0.0"
-$projectRoot = Split-Path -Parent $PSScriptRoot
-$sourceDir = Join-Path $projectRoot "src\functions"
-$outputDir = Join-Path $projectRoot "outputs"
-$binariesDir = Join-Path $outputDir "binaries"
-$moduleOutput = Join-Path $outputDir $moduleName  # Add this line to define moduleOutput
-
-# Remove configuration loading section since we're using hardcoded values
-
-# Validate source directory
-if (!(Test-Path $sourceDir)) {
-    Write-Log "Source directory not found: $sourceDir" -Type Error
-    exit 1
-}
-
-# Validate required source folders
-@('public', 'private') | ForEach-Object {
-    $path = Join-Path $sourceDir $_
-    if (!(Test-Path $path)) {
-        Write-Log "Required folder not found: $path" -Type Error
-        exit 1
-    }
-}
-
-# Add file logging
-$logPath = Join-Path $outputDir "build.log"
 
 function Show-BuildBanner {
     $banner = @"
 ===========================================================
-                WimWitch-Reloaded Build Script              
-                $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')               
+                WimWitch-Reloaded Build Script
+                $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 ===========================================================
 "@
     Write-Host $banner -ForegroundColor Cyan
 }
 
-# Start build process
-Show-BuildBanner
-Write-Log "Starting build process for $moduleName" -Type Stage
-
-# 1. Environment preparation
-Write-Log "Preparing build environment" -Type Stage
-
-# Clean or create output folder
-if (Test-Path $outputDir) {
-    Write-Log "Cleaning existing outputs folder..."
-    Get-ChildItem -Path $outputDir -Recurse | Remove-Item -Force -Recurse
-} else {
-    New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
-}
-
-# Enhanced folder creation with error handling
-function New-ModuleDirectory {
+function Initialize-BuildDirectory {
     param (
         [string]$Path,
         [string]$Description
     )
-    
+
     try {
         if (!(Test-Path $Path)) {
             $null = New-Item -ItemType Directory -Path $Path -Force -ErrorAction Stop
-            Write-Log "Created $Description directory: $Path" -Type Info
+            Write-WWLog "Created $Description directory: $Path" -Type Info
         }
     }
     catch {
-        Write-Log "Failed to create $Description directory: $Path" -Type Error
-        Write-Log "Error: $_" -Type Error
+        Write-WWLog "Failed to create $Description directory: $Path" -Type Error
+        Write-WWLog "Error: $_" -Type Error
         exit 1
     }
 }
+#endregion Functions
 
-# Create required directories with error handling
-New-ModuleDirectory -Path $outputDir -Description "output"
-New-ModuleDirectory -Path $moduleOutput -Description "module"
-New-ModuleDirectory -Path $binariesDir -Description "binaries"
+#region Configuration
+# Core module settings
+$moduleName = "WimWitch-Reloaded"
+$moduleVersion = "1.0.0"
 
-# 2. Module build
-Write-Log "Building module" -Type Stage
+# Directory structure
+$projectRoot = Split-Path -Parent $PSScriptRoot
+$sourceDir = Join-Path $projectRoot "src"
+$functionsDir = Join-Path $sourceDir "functions"
+$outputDir = Join-Path $projectRoot "outputs"
+$binariesDir = Join-Path $outputDir "binaries"
+$moduleOutput = Join-Path $outputDir $moduleName
 
-# Generate module content
-$moduleContent = @"
-# Module $moduleName
-# Generated on $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+# Build configuration
+$requiredFolders = @('public', 'private')
+$manifestFile = Join-Path $moduleOutput "$moduleName.psd1"
+#endregion Configuration
 
-"@
+#region Validation
+# Verify source directory existence
+if (!(Test-Path $sourceDir)) {
+    Write-WWLog "Source directory not found: $sourceDir" -Type Error
+    exit 1
+}
 
-# Validate PS1 files before module build
-Write-Log "Validating PS1 files" -Type Stage
+# Verify required function folders
+foreach ($folder in $requiredFolders) {
+    $path = Join-Path $functionsDir $folder
+    if (!(Test-Path $path)) {
+        Write-WWLog "Required folder not found: $path" -Type Error
+        exit 1
+    }
+}
+#endregion Validation
+
+#region Build Process
+# Initialize build
+Show-BuildBanner
+Write-WWLog "Starting build process for $moduleName" -Type Stage
+
+# Phase 1: Environment Preparation
+Write-WWLog "Preparing build environment" -Type Stage
+
+# Setup build directories
+if (Test-Path $outputDir) {
+    Write-WWLog "Cleaning existing build directory..."
+    Get-ChildItem -Path $outputDir -Recurse | Remove-Item -Force -Recurse
+}
+
+Initialize-BuildDirectory -Path $outputDir -Description "output"
+Initialize-BuildDirectory -Path $moduleOutput -Description "module"
+Initialize-BuildDirectory -Path $binariesDir -Description "binaries"
+
+# Phase 2: Code Validation
+Write-WWLog "Validating PowerShell files" -Type Stage
 $invalidFiles = @()
 
 foreach ($folder in $requiredFolders) {
-    $folderPath = Join-Path $sourceDir $folder
+    $folderPath = Join-Path $functionsDir $folder
     $ps1Files = Get-ChildItem -Path $folderPath -Filter "*.ps1" -Recurse -ErrorAction SilentlyContinue
-    
+
     if (!$ps1Files) {
-        Write-Log "No PS1 files found in $folder folder" -Type Warning
+        Write-WWLog "No PS1 files found in $folder folder" -Type Warning
         continue
     }
-    
+
     foreach ($file in $ps1Files) {
         try {
             $null = [System.Management.Automation.PSParser]::Tokenize((Get-Content $file.FullName -Raw), [ref]$null)
         }
         catch {
             $invalidFiles += $file.FullName
-            Write-Log "Invalid PS1 file: $($file.FullName)" -Type Error
-            Write-Log "Error: $_" -Type Error
+            Write-WWLog "Invalid PS1 file: $($file.FullName)" -Type Error
+            Write-WWLog "Error: $_" -Type Error
         }
     }
 }
 
 if ($invalidFiles.Count -gt 0) {
-    Write-Log "$($invalidFiles.Count) invalid PS1 files found. Build cancelled." -Type Error
+    Write-WWLog "$($invalidFiles.Count) invalid PS1 files found. Build cancelled." -Type Error
     exit 1
 }
 
-# Add public and private functions
-@('public', 'private') | ForEach-Object {
-    $functionPath = Join-Path $sourceDir $_
+# Phase 3: Module Assembly
+Write-WWLog "Assembling module components" -Type Stage
+
+$moduleContent = @"
+# Module: $moduleName
+# Generated: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+# Auto-generated file - Do not modify
+"@
+
+# Combine function files
+foreach ($folder in $requiredFolders) {
+    $functionPath = Join-Path $functionsDir $folder
     if (Test-Path $functionPath) {
         Get-ChildItem -Path $functionPath -Recurse -File -Filter "*.ps1" | ForEach-Object {
             $moduleContent += "`n# Source: $($_.FullName)`n"
@@ -164,27 +184,59 @@ if ($invalidFiles.Count -gt 0) {
     }
 }
 
-# Write module files
 $moduleFile = Join-Path $moduleOutput "$moduleName.psm1"
 $moduleContent | Out-File -FilePath $moduleFile -Encoding UTF8
-Write-Log "Module file created: $moduleFile"
+Write-WWLog "Core module file generated: $moduleFile"
 
-# Create module manifest
-$manifestFile = Join-Path $moduleOutput "$moduleName.psd1"
+# Phase 4: Resource Processing
+Write-WWLog "Processing additional resources" -Type Stage
+
+# Handle resource folders
+$resourceFolders = Get-ChildItem -Path $sourceDir -Directory |
+    Where-Object { $_.Name -ne 'functions' } |
+    ForEach-Object {
+        $targetPath = Join-Path $moduleOutput $_.Name
+        # Copy folder content to module output
+        Copy-Item -Path $_.FullName -Destination $targetPath -Recurse -Force
+        # Return relative path for FileList
+        Get-ChildItem -Path $targetPath -Recurse -File |
+            Select-Object -ExpandProperty FullName |
+            ForEach-Object { $_.Replace($moduleOutput + '\', '') }
+    }
+
+# Process DLL dependencies
+$dllFiles = Get-ChildItem -Path $sourceDir -Recurse -Filter "*.dll" |
+    ForEach-Object {
+        $targetPath = Join-Path $moduleOutput $_.Name
+        Copy-Item -Path $_.FullName -Destination $targetPath -Force
+        $_.Name
+    }
+
+# Phase 5: Manifest Generation
+Write-WWLog "Generating module manifest" -Type Stage
+
 $manifestParams = @{
-    Path = $manifestFile
-    RootModule = "$moduleName.psm1"
-    ModuleVersion = $moduleVersion  # Use hardcoded version
-    Author = "WimWitch Team"
-    Description = "WimWitch-Reloaded Module"
-    PowerShellVersion = "5.1"
-    RequiredModules = @('OSDSUS', 'OSDUpdate')
+    Path               = $manifestFile
+    RootModule         = "$moduleName.psm1"
+    ModuleVersion      = $moduleVersion
+    Author             = "WimWitch Team"
+    Description        = "WimWitch-Reloaded Module"
+    PowerShellVersion  = "5.1"
+    RequiredModules    = @('OSDSUS', 'OSDUpdate')
+    FileList           = @($resourceFolders)
+    RequiredAssemblies = $dllFiles
 }
 
-New-ModuleManifest @manifestParams
-Write-Log "Module manifest created: $manifestFile"
+try {
+    New-ModuleManifest @manifestParams -ErrorAction Stop
+    Write-WWLog "Module manifest generated successfully" -Type Success
+}
+catch {
+    Write-WWLog "Failed to generate module manifest" -Type Error
+    Write-WWLog "Error details: $_" -Type Error
+    exit 1
+}
+#endregion Build Process
 
-Write-Log "Build completed successfully" -Type Success
-
-# Return the module path for Invoke_module.ps1
+Write-WWLog "Build process completed successfully" -Type Success
 return $moduleOutput
