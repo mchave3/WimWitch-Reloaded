@@ -22,6 +22,16 @@
 
 Clear-Host
 
+function Show-BuildBanner {
+    $banner = @"
+===========================================================
+                WimWitch-Reloaded Module Setup
+                $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+===========================================================
+"@
+    Write-Host $banner -ForegroundColor Cyan
+}
+
 function Write-WWLog {
     param(
         [string]$Message,
@@ -55,6 +65,13 @@ $modulesToUninstall = $requiredModules + @($moduleName)
 
 # Define module path
 $moduleOutput = Join-Path (Split-Path -Parent $PSScriptRoot) "outputs\$moduleName"
+
+# Initialize setup
+Show-BuildBanner
+Write-WWLog "Starting module setup process" -Type Stage
+
+# Phase 1: Environment Validation
+Write-WWLog "Validating environment" -Type Stage
 
 # Verify module exists
 if (!(Test-Path $moduleOutput)) {
@@ -94,14 +111,20 @@ function Install-RequiredModule {
     }
 }
 
+# Phase 2: Module Cleanup
+Write-WWLog "Cleaning up existing modules" -Type Stage
+
 # Uninstall existing modules
 foreach ($module in $modulesToUninstall) {
     if (Get-Module -Name $module) {
+        Write-WWLog "Removing loaded module: $module" -Type Info
         Remove-Module -Name $module -Force -ErrorAction SilentlyContinue
     }
     if (Get-Module -ListAvailable -Name $module) {
         try {
+            Write-WWLog "Uninstalling module: $module" -Type Info
             Uninstall-Module -Name $module -Force -AllVersions -ErrorAction SilentlyContinue
+            Write-WWLog "Successfully uninstalled: $module" -Type Success
         }
         catch {
             Write-WWLog "Warning: Unable to completely uninstall $module" -Type Warning
@@ -109,20 +132,27 @@ foreach ($module in $modulesToUninstall) {
     }
 }
 
+# Phase 3: Dependencies Installation
+Write-WWLog "Installing required modules" -Type Stage
+
 # Install required modules
 foreach ($module in $requiredModules) {
+    Write-WWLog "Processing module: $module" -Type Info
     if (!(Install-RequiredModule -ModuleName $module)) {
         Write-WWLog "Failed to process required module: $module" -Type Error
         exit 1
     }
 }
 
+# Phase 4: Module Import
+Write-WWLog "Importing WimWitch-Reloaded module" -Type Stage
+
 # Import and verify the new module
 try {
     Import-Module $moduleOutput -Force -ErrorAction Stop
     if (Get-Module -Name $moduleName) {
         Write-WWLog "Module successfully loaded" -Type Success
-        Write-WWLog "`nLoaded modules:" -Type Info
+        Write-WWLog "Loaded modules:" -Type Info
         Get-Module | Where-Object { $_.Name -match 'OSDSUS|OSDUpdate|WimWitch-Reloaded' } |
             Format-Table -AutoSize Name, Version, ModuleType, Path
     } else {
@@ -135,5 +165,6 @@ catch {
     exit 1
 }
 
-Write-WWLog "Starting WimWitch" -Type Stage
+# Phase 5: Launch Application
+Write-WWLog "Launching WimWitch-Reloaded" -Type Stage
 Start-WimWitch
