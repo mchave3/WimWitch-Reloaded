@@ -29,6 +29,7 @@ param(
 
 Clear-Host
 
+#region Functions
 function Write-WWLog {
     param(
         [string]$Message,
@@ -56,8 +57,8 @@ function Write-WWLog {
     Write-Host "[$timestamp] $prefix $Message" -ForegroundColor $color
 }
 
-function Update-ProjectFiles {
-    [CmdletBinding()]
+function Update-ProjectFile {
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory = $true)]
         [hashtable]$Mappings
@@ -71,6 +72,114 @@ function Update-ProjectFiles {
     $totalFiles = $files.Count
     $currentFile = 0
 
+    #region Content Parser
+    function Update-FunctionNameInContent {
+        [CmdletBinding(SupportsShouldProcess)]
+        param (
+            [Parameter(Mandatory = $true)]
+            [string]$Content,
+            [Parameter(Mandatory = $true)]
+            [string]$OldName,
+            [Parameter(Mandatory = $true)]
+            [string]$NewName
+        )
+
+        $modified = $Content
+        $positions = @()
+
+        # Parser state
+        $inSingleQuoteString = $false
+        $inDoubleQuoteString = $false
+        $inComment = $false
+        $inMultilineComment = $false
+        $length = $Content.Length
+        $i = 0
+
+        while ($i -lt $length) {
+            $char = $Content[$i]
+            $nextChar = if ($i + 1 -lt $length) { $Content[$i + 1] } else { $null }
+
+            # Comment handling
+            if (-not ($inSingleQuoteString -or $inDoubleQuoteString)) {
+                # Single line comment
+                if ($char -eq '#' -and -not $inMultilineComment) {
+                    $inComment = $true
+                    $i++
+                    while ($i -lt $length -and $Content[$i] -ne "`n") {
+                        $i++
+                    }
+                    continue
+                }
+                # Multi-line comment start
+                elseif ($char -eq '<' -and $nextChar -eq '#') {
+                    $inMultilineComment = $true
+                    $i += 2
+                    continue
+                }
+                # Multi-line comment end
+                elseif ($inMultilineComment -and $char -eq '#' -and $nextChar -eq '>') {
+                    $inMultilineComment = $false
+                    $i += 2
+                    continue
+                }
+            }
+
+            # String handling
+            if ($char -eq '"' -and -not $inSingleQuoteString -and -not $inMultilineComment) {
+                $inDoubleQuoteString = -not $inDoubleQuoteString
+            }
+            elseif ($char -eq "'" -and -not $inDoubleQuoteString -and -not $inMultilineComment) {
+                $inSingleQuoteString = -not $inSingleQuoteString
+            }
+
+            # Process code outside comments and strings
+            if (-not ($inComment -or $inMultilineComment -or $inSingleQuoteString -or $inDoubleQuoteString)) {
+                # Check for function name match
+                if ($i + $OldName.Length -le $length) {
+                    $potentialMatch = $Content.Substring($i, $OldName.Length)
+                    if ($potentialMatch -eq $OldName) {
+                        # Verify isolated function name
+                        $prevChar = if ($i -gt 0) { $Content[$i - 1] } else { ' ' }
+                        $nextCharAfterName = if ($i + $OldName.Length -lt $length) {
+                            $Content[$i + $OldName.Length]
+                        } else { ' ' }
+
+                        # Ensure it's a complete word and not part of a variable
+                        if (-not [char]::IsLetterOrDigit($prevChar) -and
+                            -not ($prevChar -eq '_') -and
+                            -not [char]::IsLetterOrDigit($nextCharAfterName) -and
+                            -not ($nextCharAfterName -eq '_') -and
+                            -not ($prevChar -eq '$')) {
+                            $positions += @{
+                                Start = $i
+                                Length = $OldName.Length
+                            }
+                        }
+                    }
+                }
+            }
+
+            # Reset single-line comment state on newline
+            if ($char -eq "`n") {
+                $inComment = $false
+            }
+
+            $i++
+        }
+
+        # Apply replacements from end to start to preserve indexes
+        [array]::Reverse($positions)
+        if ($positions.Count -gt 0 -and $PSCmdlet.ShouldProcess($OldName, "Replace with $NewName")) {
+            foreach ($pos in $positions) {
+                $modified = $modified.Remove($pos.Start, $pos.Length).Insert($pos.Start, $NewName)
+            }
+        }
+
+        return $modified
+    }
+    #endregion Content Parser
+
+    #region File Processing
     foreach ($file in $files) {
         $currentFile++
         Write-Progress -Activity "Processing files" -Status "Processing: $($file.Name)" -PercentComplete (($currentFile / $totalFiles) * 100)
@@ -81,17 +190,17 @@ function Update-ProjectFiles {
         $contentChanged = $false
         $nameChanged = $false
 
-        # Check each mapping for both filename and content replacements
         foreach ($old in $Mappings.Keys) {
             $new = $Mappings[$old]
 
-            # Use regex replace to ensure exact match for function names
-            if ($content -match "\b$old\b") {
-                $content = $content -creplace "\b$old\b", $new
+            # Process content with custom parser
+            $newContent = Update-FunctionNameInContent -Content $content -OldName $old -NewName $new
+            if ($newContent -ne $content) {
+                $content = $newContent
                 $contentChanged = $true
             }
 
-            # Update filename if it contains the old name
+            # Process filename
             if ($newName -like "*$old*") {
                 $newName = $newName.Replace($old, $new)
                 $nameChanged = $true
@@ -100,20 +209,26 @@ function Update-ProjectFiles {
 
         # Apply changes if needed
         if ($contentChanged) {
-            Write-WWLog -Message "Updating content in: $($file.FullName)" -Type 'Info'
-            Set-Content -Path $file.FullName -Value $content -Encoding UTF8 -Force
+            if ($PSCmdlet.ShouldProcess($file.FullName, "Update file content")) {
+                Write-WWLog -Message "Updating content in: $($file.FullName)" -Type 'Info'
+                Set-Content -Path $file.FullName -Value $content -Encoding UTF8 -Force
+            }
         }
 
         if ($nameChanged) {
             $newPath = Join-Path $file.Directory.FullName $newName
-            Write-WWLog -Message "Renaming: $originalName -> $newName" -Type 'Info'
-            Rename-Item -Path $file.FullName -NewName $newName -Force
+            if ($PSCmdlet.ShouldProcess($originalName, "Rename to $newName")) {
+                Write-WWLog -Message "Renaming: $originalName -> $newName" -Type 'Info'
+                Move-Item -Path $file.FullName -Destination $newPath -Force
+            }
         }
     }
     Write-Progress -Activity "Processing files" -Status "Completed" -Completed
+    #endregion File Processing
 }
+#endregion Functions
 
-# Main execution
+#region Main Execution
 try {
     Write-WWLog -Message "Starting function name update process" -Type 'Stage'
 
@@ -146,7 +261,7 @@ try {
     Write-WWLog -Message "Loaded $($mappings.Count) name mappings" -Type 'Info'
 
     # Process all files
-    Update-ProjectFiles -Mappings $mappings
+    Update-ProjectFile -Mappings $mappings
 
     Write-WWLog -Message "Function name update completed successfully" -Type 'Success'
 }
@@ -155,3 +270,4 @@ catch {
     Write-WWLog -Message "Stack trace: $($_.ScriptStackTrace)" -Type 'Error'
     exit 1
 }
+#endregion Main Execution
