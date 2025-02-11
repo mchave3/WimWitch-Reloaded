@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Download and apply the required SSU for 2004/20H2 June '21 LCU.
 
@@ -124,5 +124,6 @@ function Invoke-WW2XXXPreReq {
         return $false
     }
 }
+
 
 

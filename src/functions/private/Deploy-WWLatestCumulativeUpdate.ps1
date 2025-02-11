@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Deploy the latest Cumulative Update (LCU) for Windows 10 and Windows 11.
 
@@ -92,5 +92,6 @@ function Deploy-WWLatestCumulativeUpdate {
         }
     }
 }
+
 
 

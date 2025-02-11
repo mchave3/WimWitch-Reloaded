@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import selected Local Experience Packs into the imports folder.
 
@@ -74,5 +74,6 @@ function Import-WWLocalExperiencePack {
         Write-WimWitchLog -Data 'Importation complete' -Class Information
     }
 }
+
 
 

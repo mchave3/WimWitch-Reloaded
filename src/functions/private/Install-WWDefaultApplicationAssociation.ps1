@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Install default application associations.
 
@@ -57,5 +57,6 @@ function Install-WWDefaultApplicationAssociation {
         }
     }
 }
+
 
 

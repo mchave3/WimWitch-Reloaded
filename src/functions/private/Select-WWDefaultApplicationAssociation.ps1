@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select default application associations file.
 
@@ -45,5 +45,6 @@ function Select-WWDefaultApplicationAssociation {
         Write-WimWitchLog -Data $text -class Information
     }
 }
+
 
 

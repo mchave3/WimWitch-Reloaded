@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display a dialog box to select the correct version of Windows 10 v2XXX.
 
@@ -98,5 +98,6 @@ function Invoke-WW19041Select {
         $Form.ShowDialog() | Out-Null
     }
 }
+
 
 

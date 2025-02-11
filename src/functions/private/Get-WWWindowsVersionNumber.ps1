@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Get the Windows version number from the image description.
 
@@ -89,5 +89,6 @@ function Get-WWWindowsVersionNumber {
         return $buildnum
     }
 }
+
 
 

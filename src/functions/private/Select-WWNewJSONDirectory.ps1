@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the folder to save the Autopilot JSON file.
 
@@ -39,5 +39,6 @@ function Select-WWNewJSONDirectory {
         Write-WimWitchLog -Data $text -Class Information
     }
 }
+
 
 

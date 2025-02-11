@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display a closing message to the user.
 
@@ -37,5 +37,6 @@ function Write-WWClosingMessage {
         Write-Host '##########################################################'
     }
 }
+
 
 

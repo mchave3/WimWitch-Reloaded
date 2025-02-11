@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Compare the OSDSUS module version to the current version of the module.
 
@@ -43,5 +43,6 @@ function Compare-WWOSDSUSVersion {
         Return
     }
 }
+
 
 

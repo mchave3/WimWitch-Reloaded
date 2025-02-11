@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the directory where the ISO will be saved.
 
@@ -39,5 +39,6 @@ function Select-WWISODirectory {
         Write-WimWitchLog -Data 'ISO directory selected' -Class Information
     }
 }
+
 
 

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Pause the image build process.
 
@@ -47,5 +47,6 @@ function Suspend-WWMakeItSo {
         }
     }
 }
+
 
 

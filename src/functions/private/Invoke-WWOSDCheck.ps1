@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Run the OSDSUS and OSDUpdate checks to determine if an update is available.
 
@@ -37,5 +37,6 @@ function Invoke-WWOSDCheck {
         Compare-WWOSDSUSVersion #determines if an update of OSDSUS can be applied
     }
 }
+
 
 

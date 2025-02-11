@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Remove ISO mount points.
 
@@ -38,5 +38,6 @@ function Invoke-WWRemoveISOMount {
         Write-WimWitchLog -data 'Dismount complete' -class Information
     }
 }
+
 
 

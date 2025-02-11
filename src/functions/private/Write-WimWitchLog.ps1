@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update the log file and write to the console.
 
@@ -78,5 +78,6 @@ function Write-WimWitchLog {
         }
     }
 }
+
 
 

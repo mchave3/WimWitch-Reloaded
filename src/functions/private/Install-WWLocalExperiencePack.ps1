@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Install Local Experience Packs to the mounted WIM file.
 
@@ -63,5 +63,6 @@ function Install-WWLocalExperiencePack {
         Write-WimWitchLog -Data 'Local Experience Pack injections complete' -Class Information
     }
 }
+
 
 

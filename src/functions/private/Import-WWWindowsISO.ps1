@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import an ISO file into WimWitch.
 
@@ -265,5 +265,6 @@ function Import-WWWindowsISO {
         Write-WimWitchLog -data 'Importing complete' -class Information
     }
 }
+
 
 

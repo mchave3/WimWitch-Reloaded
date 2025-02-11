@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Compare the OSD Builder version to the current version of the module.
 
@@ -43,5 +43,6 @@ function Compare-WWOSDBuilderVersion {
         Return
     }
 }
+
 
 

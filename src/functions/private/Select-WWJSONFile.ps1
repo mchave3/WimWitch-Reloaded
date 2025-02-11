@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Function to select a JSON file.
 
@@ -41,5 +41,6 @@ function Select-WWJSONFile {
         Convert-WWJSONToObject -file $JSON.FileName
     }
 }
+
 
 

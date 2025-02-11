@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Initializes the required folder structure and logging for WIMWitch.
 
@@ -65,5 +65,6 @@ function Initialize-WimWitchEnvironment {
         }
     }
 }
+
 
 

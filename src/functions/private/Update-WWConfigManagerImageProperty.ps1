@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update image version, properties and binary differential replication settings.
 
@@ -94,5 +94,6 @@ function Update-WWConfigManagerImageProperty {
         }
     }
 }
+
 
 

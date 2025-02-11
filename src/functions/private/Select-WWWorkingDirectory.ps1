@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select the working directory.
 
@@ -41,5 +41,6 @@ function Select-WWWorkingDirectory {
         return $selectWorkingDirectory.SelectedPath
     }
 }
+
 
 

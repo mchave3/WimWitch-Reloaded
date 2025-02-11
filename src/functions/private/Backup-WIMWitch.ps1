@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Backup the existing WIM Witch script before upgrading to a new version.
 
@@ -54,5 +54,6 @@ function Backup-WIMWitch {
         }
     }
 }
+
 
 

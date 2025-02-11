@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Clean up checkbox states.
 
@@ -41,5 +41,6 @@ function Invoke-WWCheckboxCleanup {
         }
     }
 }
+
 
 

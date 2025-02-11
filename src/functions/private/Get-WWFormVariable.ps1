@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Get all the variables that are used in the WPF forms.
 
@@ -35,5 +35,6 @@ function Get-WWFormVariable {
         Get-Variable WPF*
     }
 }
+
 
 

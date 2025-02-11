@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Select ConfigMgr distribution points.
 
@@ -46,5 +46,6 @@ function Select-WWDistributionPoint {
         Set-Location $Script:workdir
     }
 }
+
 
 

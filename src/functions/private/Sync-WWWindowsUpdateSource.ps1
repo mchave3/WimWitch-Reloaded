@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Remove superceded updates and download the latest updates for the selected OS and build.
 
@@ -181,5 +181,6 @@ function Sync-WWWindowsUpdateSource {
         Write-WimWitchLog -data 'All downloads complete' -class Information
     }
 }
+
 
 

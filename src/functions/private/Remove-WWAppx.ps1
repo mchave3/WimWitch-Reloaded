@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Remove Appx packages from the WIM.
 
@@ -44,5 +44,6 @@ function Remove-WWAppx {
         return
     }
 }
+
 
 

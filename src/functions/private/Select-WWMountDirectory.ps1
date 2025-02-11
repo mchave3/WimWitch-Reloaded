@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Function to select the mount folder.
 
@@ -39,5 +39,6 @@ function Select-WWMountDirectory {
         Write-WimWitchLog -Data 'Mount directory selected' -Class Information
     }
 }
+
 
 

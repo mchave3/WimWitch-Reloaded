@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Function to see if the folder WIM Witch was started in is an installation folder. If not, prompt for installation
 
@@ -74,5 +74,6 @@ function Test-WWWorkingDirectory {
         }
     }
 }
+
 
 

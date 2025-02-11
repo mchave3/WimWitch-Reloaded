@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update the OSDSUS module.
 
@@ -70,5 +70,6 @@ function Install-WWOSDServiceUpdateStack {
         }
     }
 }
+
 
 

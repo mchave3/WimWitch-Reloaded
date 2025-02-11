@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update Windows RE WIM file.
 
@@ -75,5 +75,6 @@ function Update-WWWindowsRe {
         }
     }
 }
+
 
 

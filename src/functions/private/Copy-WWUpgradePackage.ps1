@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Copy staged installation media to the CM package folder.
 
@@ -40,5 +40,6 @@ function Copy-WWUpgradePackage {
         }
     }
 }
+
 
 

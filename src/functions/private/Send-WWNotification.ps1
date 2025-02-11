@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display a text notification.
 
@@ -33,5 +33,6 @@ function Send-WWNotification {
         Write-WimWitchLog -data '*********************************' -class Comment
     }
 }
+
 
 

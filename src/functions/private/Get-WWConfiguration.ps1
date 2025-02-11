@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import the WimWitch configuration from a file.
 
@@ -170,5 +170,6 @@ function Get-WWConfiguration {
         Update-Log -data 'Config file loaded successfully' -Class Information
     }
 }
+
 
 

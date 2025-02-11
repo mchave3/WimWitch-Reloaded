@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Test the name of a WIM file
 
@@ -69,5 +69,6 @@ function Test-WWValidName {
         Write-WimWitchLog -Data 'New WIM name is valid' -Class Information
     }
 }
+
 
 

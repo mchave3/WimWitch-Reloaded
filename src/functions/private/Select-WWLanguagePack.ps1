@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     List language packs in the WPF GUI.
 
@@ -38,5 +38,6 @@ function Select-WWLanguagePack {
         foreach ($item in $items) { $WPFCustomLBLangPacks.Items.Add($item.name) }
     }
 }
+
 
 

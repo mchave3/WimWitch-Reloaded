@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Download the latest OneDrive agent installers.
 
@@ -61,5 +61,6 @@ function Get-WWOneDrive {
         }
     }
 }
+
 
 

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check if the current user has administrative privileges.
 
@@ -40,5 +40,6 @@ function Test-WWAdministrator {
         }
     }
 }
+
 
 

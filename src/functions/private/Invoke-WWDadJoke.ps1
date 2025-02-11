@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display a random dad joke.
 
@@ -34,5 +34,6 @@ function Invoke-WWDadJoke {
         return $joke.joke
     }
 }
+
 
 

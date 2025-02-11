@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Execute Windows updates on the mounted image.
 
@@ -40,5 +40,6 @@ function Invoke-WWMISUpdate {
         #fucking 2009 to 20h2
     }
 }
+
 
 

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Update the WindowsAutopilotIntune module.
 
@@ -45,5 +45,6 @@ function Install-WWAutopilotModule {
         }
     }
 }
+
 
 

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Manually set the ConfigMgr site information in the GUI.
 
@@ -69,5 +69,6 @@ function Get-WWConfigManagerConnection {
         }
     }
 }
+
 
 

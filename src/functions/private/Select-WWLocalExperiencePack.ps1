@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     List local experience packs in the WPF GUI.
 
@@ -38,5 +38,6 @@ function Select-WWLocalExperiencePack {
         foreach ($item in $items) { $WPFCustomLBLEP.Items.Add($item.name) }
     }
 }
+
 
 

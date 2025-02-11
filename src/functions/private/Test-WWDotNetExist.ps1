@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check if the .Net binaries are present in the import folder for the current build of Windows.
 
@@ -49,5 +49,6 @@ function Test-WWDotNetExist {
         }
     }
 }
+
 
 

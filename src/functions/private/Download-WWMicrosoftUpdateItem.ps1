@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Download Microsoft update items from ConfigMgr.
 
@@ -199,5 +199,6 @@ function Download-WWMicrosoftUpdateItem {
         return $ReturnValue | Out-Null
     }
 }
+
 
 

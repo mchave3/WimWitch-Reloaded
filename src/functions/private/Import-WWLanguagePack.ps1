@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import selected Language Packs into the Imports folder.
 
@@ -63,5 +63,6 @@ function Import-WWLanguagePack {
         Write-WimWitchLog -Data 'Importation Complete' -Class Information
     }
 }
+
 
 

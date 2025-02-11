@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check the current PowerShell session architecture and relaunch as 64-bit if needed.
 
@@ -57,5 +57,6 @@ function Invoke-WWArchitectureCheck {
         }
     }
 }
+
 
 

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Run a PowerShell script with supplied parameters.
 
@@ -43,5 +43,6 @@ function Invoke-WWScript {
         }
     }
 }
+
 
 

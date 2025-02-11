@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Rename a file by adding the last write time to the filename.
 
@@ -49,5 +49,6 @@ function Rename-WWName {
         }
     }
 }
+
 
 

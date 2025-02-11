@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Determines the Windows type from the image description.
 
@@ -45,5 +45,6 @@ function Get-WWWindowsType {
         }
     }
 }
+
 
 

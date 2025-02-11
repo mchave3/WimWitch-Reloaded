@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Load the configuration file and run the MakeItSo function.
 
@@ -39,5 +39,6 @@ function Execute-WWConfigFile {
         Write-Output ' '
     }
 }
+
 
 

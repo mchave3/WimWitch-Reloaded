@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Display the opening text of the script.
 
@@ -39,5 +39,6 @@ function Write-WWOpeningMessage {
         Write-Output ' '
     }
 }
+
 
 

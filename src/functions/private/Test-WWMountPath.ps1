@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check if the specified path is suitable for mounting an image.
 
@@ -89,5 +89,6 @@ function Test-WWMountPath {
         }
     }
 }
+
 
 

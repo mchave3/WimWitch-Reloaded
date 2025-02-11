@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Check for update supersedence against ConfigMgr.
 
@@ -121,5 +121,6 @@ function Invoke-WWConfigManagerUpdateSupersedence {
         Write-WimWitchLog -data 'Supersedence check complete' -class Information
     }
 }
+
 
 
