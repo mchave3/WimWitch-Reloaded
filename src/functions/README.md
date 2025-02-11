@@ -24,7 +24,7 @@
 
 ## 📁 Directory Structure
 
-```
+```powershell
 src/functions/
 ├── 📂 public/               # User-exposed functions
 └── 📂 private/              # Internal module functions
@@ -835,6 +835,7 @@ graph TB
 ## 📝 Usage Guidelines
 
 ### 🏷️ Naming Conventions
+
 | Type | Convention | Example | Description |
 |------|------------|---------|-------------|
 | Public Functions | `Verb-WW*` | `Start-WimWitch` | Main user-facing commands |
@@ -846,6 +847,7 @@ graph TB
 | Temp Files | *_tmp | `image_tmp.wim` | Temporary resources |
 
 ### 📁 Project Structure
+
 | Directory | Purpose | Example Functions |
 |-----------|---------|-------------------|
 | `public/` | Main commands | `Start-WimWitch`, `New-WimWitchImage` |
