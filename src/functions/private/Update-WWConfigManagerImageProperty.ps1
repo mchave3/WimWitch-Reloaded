@@ -23,27 +23,25 @@
     Update-WWConfigManagerImageProperty -PackageID "ABC00001"
 #>
 function Update-WWConfigManagerImageProperty {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $true)]
         [string]$PackageID
     )
 
     process {
-        #write-host $PackageID
-        #set-ConfigMgrConnection
         Set-Location $CMDrive
 
-        #Version Text Box
         if ($WPFCMCBImageVerAuto.IsChecked -eq $true) {
             $string = 'Built ' + (Get-Date -DisplayHint Date)
-            Write-WimWitchLog -Data "Updating image version to $string" -Class Information
-            Set-CMOperatingSystemImage -Id $PackageID -Version $string
+            if ($PSCmdlet.ShouldProcess("Image version", "Update to $string")) {
+                Write-WimWitchLog -Data "Updating image version to $string" -Class Information
+                Set-CMOperatingSystemImage -Id $PackageID -Version $string
+            }
         }
 
-        if ($WPFCMCBImageVerAuto.IsChecked -eq $false) {
-
-            if ($null -ne $WPFCMTBImageVer.text) {
+        if (($WPFCMCBImageVerAuto.IsChecked -eq $false) -and ($null -ne $WPFCMTBImageVer.text)) {
+            if ($PSCmdlet.ShouldProcess("Image version", "Update to $($WPFCMTBImageVer.text)")) {
                 Write-WimWitchLog -Data 'Updating version of the image...' -Class Information
                 Set-CMOperatingSystemImage -Id $PackageID -Version $WPFCMTBImageVer.text
             }
@@ -77,11 +75,15 @@ function Update-WWConfigManagerImageProperty {
         #Check Box properties
         #Binary Differnential Replication
         if ($WPFCMCBBinDirRep.IsChecked -eq $true) {
-            Write-WimWitchLog -Data 'Enabling Binary Differential Replication' -Class Information
-            Set-CMOperatingSystemImage -Id $PackageID -EnableBinaryDeltaReplication $true
+            if ($PSCmdlet.ShouldProcess("Binary Differential Replication", "Enable")) {
+                Write-WimWitchLog -Data 'Enabling Binary Differential Replication' -Class Information
+                Set-CMOperatingSystemImage -Id $PackageID -EnableBinaryDeltaReplication $true
+            }
         } else {
-            Write-WimWitchLog -Data 'Disabling Binary Differential Replication' -Class Information
-            Set-CMOperatingSystemImage -Id $PackageID -EnableBinaryDeltaReplication $false
+            if ($PSCmdlet.ShouldProcess("Binary Differential Replication", "Disable")) {
+                Write-WimWitchLog -Data 'Disabling Binary Differential Replication' -Class Information
+                Set-CMOperatingSystemImage -Id $PackageID -EnableBinaryDeltaReplication $false
+            }
         }
 
         #Package Share

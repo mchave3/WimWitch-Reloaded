@@ -23,27 +23,32 @@
     Update-WWConfigManagerImage
 #>
 function Update-WWConfigManagerImage {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
 
     )
 
     process {
-        #set-ConfigMgrConnection
         Set-Location $CMDrive
         $cim = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
                 -ClassName SMS_ImagePackage `
                 -ComputerName $Script:SiteServer |
                 Where-Object { $_.PackageID -eq $WPFCMTBPackageID.text }
 
-        Write-WimWitchLog -Data 'Updating images on the Distribution Points...'
-        Invoke-CimMethod -InputObject $cim -MethodName "RefreshPkgSource" | Out-Null
+        if ($PSCmdlet.ShouldProcess("Distribution Points", "Update images")) {
+            Write-WimWitchLog -Data 'Updating images on the Distribution Points...'
+            Invoke-CimMethod -InputObject $cim -MethodName "RefreshPkgSource" | Out-Null
+        }
 
-        Write-WimWitchLog -Data 'Refreshing image proprties from the WIM' -Class Information
-        Invoke-CimMethod -InputObject $cim -MethodName "ReloadImageProperties" | Out-Null
+        if ($PSCmdlet.ShouldProcess("Image properties", "Refresh from WIM")) {
+            Write-WimWitchLog -Data 'Refreshing image proprties from the WIM' -Class Information
+            Invoke-CimMethod -InputObject $cim -MethodName "ReloadImageProperties" | Out-Null
+        }
 
-        Update-WWConfigManagerImageProperty -PackageID $WPFCMTBPackageID.Text
-        Save-WWSetting -CM -filename $WPFCMTBPackageID.Text
+        if ($PSCmdlet.ShouldProcess("Image properties", "Update package properties")) {
+            Update-WWConfigManagerImageProperty -PackageID $WPFCMTBPackageID.Text
+            Save-WWSetting -CM -filename $WPFCMTBPackageID.Text
+        }
 
         Set-Location $Script:workdir
     }
