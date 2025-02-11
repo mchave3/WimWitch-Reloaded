@@ -2,6 +2,11 @@
 
 run-name: "➕ Add to project - ${{ github.event.issue.title || github.event.pull_request.title }} (#${{ github.event.number }}) by @${{ github.actor }}"
 
+permissions:
+  issues: write
+  pull-requests: write
+  repository-projects: write
+
 on:
   issues:
     types:
