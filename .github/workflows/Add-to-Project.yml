@@ -9,6 +9,7 @@ on:
   pull_request:
     types:
       - opened
+      - labeled
 
 jobs:
   add-to-project:
