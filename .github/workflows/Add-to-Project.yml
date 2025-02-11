@@ -18,4 +18,4 @@ jobs:
       - uses: actions/add-to-project@main
         with:
           project-url: https://github.com/users/mchave3/projects/3
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
