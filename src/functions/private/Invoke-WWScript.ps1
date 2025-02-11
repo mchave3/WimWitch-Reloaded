@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Run a PowerShell script with supplied parameters.
 
@@ -35,12 +35,13 @@ function Invoke-WWScript {
     process {
         $string = "$File $Parameter"
         try {
-            Write-WWLog -Data 'Running script' -Class Information
+            Write-WimWitchLog -Data 'Running script' -Class Information
             Invoke-Expression -Command $string -ErrorAction Stop
-            Write-WWLog -data 'Script complete' -Class Information
+            Write-WimWitchLog -data 'Script complete' -Class Information
         } catch {
-            Write-WWLog -Data 'Script failed' -Class Error
+            Write-WimWitchLog -Data 'Script failed' -Class Error
         }
     }
 }
+
 
