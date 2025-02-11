@@ -137,9 +137,6 @@ function Test-CsvContent {
             if ([string]::IsNullOrWhiteSpace($row.NewName)) {
                 $validationErrors += "Row $index : Missing NewName"
             }
-            if ($row.OldName -eq $row.NewName) {
-                $validationErrors += "Row $index : OldName and NewName are identical"
-            }
             if ($row.OldName -match '[^\w\-]' -or $row.NewName -match '[^\w\-]') {
                 $validationErrors += "Row $index : Names can only contain letters, numbers, and hyphens"
             }
