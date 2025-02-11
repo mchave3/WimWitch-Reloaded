@@ -29,9 +29,9 @@ function Install-WWAutopilotModule {
     )
 
     process {
-        Write-WWLog -Data 'Uninstalling old WindowsAutopilotIntune module...' -Class Warning
+        Write-WimWitchLog -Data 'Uninstalling old WindowsAutopilotIntune module...' -Class Warning
         Uninstall-Module -Name WindowsAutopilotIntune -AllVersions
-        Write-WWLog -Data 'Installing new WindowsAutopilotIntune module...' -Class Warning
+        Write-WimWitchLog -Data 'Installing new WindowsAutopilotIntune module...' -Class Warning
         Install-Module -Name WindowsAutopilotIntune -Force
         $AutopilotUpdate = ([System.Windows.MessageBox]::Show(
             'WIM Witch needs to close and PowerShell needs to be restarted. Click OK to close WIM Witch.',
@@ -45,4 +45,7 @@ function Install-WWAutopilotModule {
         }
     }
 }
+
+
+
 

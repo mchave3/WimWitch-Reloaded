@@ -29,7 +29,7 @@ function Clear-WWMISCheckBox {
     )
 
     process {
-        Write-WWLog -data 'Refreshing MIS Values...' -class Information
+        Write-WimWitchLog -data 'Refreshing MIS Values...' -class Information
 
         If ($WPFJSONEnableCheckBox.IsChecked -eq $true) {
             $WPFJSONButton.IsEnabled = $True
@@ -58,4 +58,7 @@ function Clear-WWMISCheckBox {
         }
     }
 }
+
+
+
 

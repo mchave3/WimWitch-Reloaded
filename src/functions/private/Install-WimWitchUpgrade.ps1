@@ -57,9 +57,12 @@ function Install-WimWitchUpgrade {
         }
         if ($yesno -eq 'n') {
             Write-Output "You'll want to upgrade at some point."
-            Write-WWLog -Data 'Upgrade to new version was declined' -Class Warning
-            Write-WWLog -Data 'Continuing to start WIM Witch...' -Class Warning
+            Write-WimWitchLog -Data 'Upgrade to new version was declined' -Class Warning
+            Write-WimWitchLog -Data 'Continuing to start WIM Witch...' -Class Warning
         }
     }
 }
+
+
+
 

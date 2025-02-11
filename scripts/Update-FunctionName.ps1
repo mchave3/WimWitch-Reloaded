@@ -34,7 +34,7 @@ param(
         }
         return $true
     })]
-    [string]$CsvPath = ".\function-mapping.csv",
+    [string]$CsvPath = ".\scripts\function-mapping.csv",
 
     [Parameter(Mandatory = $false)]
     [ValidateScript({
@@ -96,7 +96,7 @@ function New-FileBackup {
     )
 
     try {
-        $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+        $timestamp = Get-Date -Format "yyyyMMdd_HHmm"
         $fileName = Split-Path $FilePath -Leaf
         $backupDir = Join-Path $BackupPath $timestamp
         $backupFile = Join-Path $backupDir $fileName
@@ -136,9 +136,6 @@ function Test-CsvContent {
             }
             if ([string]::IsNullOrWhiteSpace($row.NewName)) {
                 $validationErrors += "Row $index : Missing NewName"
-            }
-            if ($row.OldName -eq $row.NewName) {
-                $validationErrors += "Row $index : OldName and NewName are identical"
             }
             if ($row.OldName -match '[^\w\-]' -or $row.NewName -match '[^\w\-]') {
                 $validationErrors += "Row $index : Names can only contain letters, numbers, and hyphens"
@@ -288,9 +285,15 @@ function Update-ProjectFile {
 
             if ($nameChanged) {
                 $newPath = Join-Path $file.Directory.FullName $newName
-                if ($PSCmdlet.ShouldProcess($originalName, "Rename to $newName")) {
-                    Write-WWLog -Message "Renaming: $originalName -> $newName" -Type 'Info'
-                    Move-Item -Path $file.FullName -Destination $newPath -Force
+                # Check if the new name is different from the original
+                if ($newName -ne $originalName) {
+                    if ($PSCmdlet.ShouldProcess($originalName, "Rename to $newName")) {
+                        Write-WWLog -Message "Renaming: $originalName -> $newName" -Type 'Info'
+                        Move-Item -Path $file.FullName -Destination $newPath -Force
+                    }
+                } else {
+                    Write-WWLog -Message "Skipping rename for $originalName (same name)" -Type 'Info'
+                    $nameChanged = $false # Reset flag
                 }
             }
 

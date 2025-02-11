@@ -148,17 +148,17 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         # Calls fuction to display the opening text blurb
 
-        Show-OpeningText
+        Write-WWOpeningMessage
 
-        # Get-FormVariable #lists all WPF variables
-        $Script:workdir = Select-WorkingDirectory
-        Test-WorkingDirectory
+        # Get-WWFormVariable #lists all WPF variables
+        $Script:workdir = Select-WWWorkingDirectory
+        Test-WWWorkingDirectory
 
         # Clears out old logs from previous builds and checks for other folders
         Initialize-WimWitchEnvironment
 
         # Test for admin and exit if not
-        Test-Admin
+        Test-WWAdministrator
 
         # Setting default values for the WPF form
         $WPFMISWimFolderTextBox.Text = "$Script:workdir\CompletedWIMs"
@@ -170,10 +170,10 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         # Prereq Check segment
 
         #Check for installed PowerShell version
-        if ($PSVersionTable.PSVersion.Major -ge 5) { Write-WWLog -Data 'PowerShell v5 or greater installed.' -Class Information }
+        if ($PSVersionTable.PSVersion.Major -ge 5) { Write-WimWitchLog -Data 'PowerShell v5 or greater installed.' -Class Information }
         else {
-            Write-WWLog -data 'PowerShell v5 or greater is required. Please upgrade PowerShell and try again.' -Class Error
-            Show-ClosingText
+            Write-WimWitchLog -data 'PowerShell v5 or greater is required. Please upgrade PowerShell and try again.' -Class Error
+            Write-WWClosingMessage
             exit 0
         }
 
@@ -182,7 +182,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         #Invoke-AdminCheck
 
         #Check for 32 bit architecture
-        Invoke-ArchitectureCheck
+        Invoke-WWArchitectureCheck
 
         #End Prereq segment
         ###################
@@ -232,77 +232,77 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFCMCBImageType.SelectedIndex = 0
 
 
-        Enable-ConfigMgrOption
+        Enable-WWConfigManagerOption
 
         #Software Update Catalog Source combo box
         $UpdateSourceCombos = @('None', 'OSDSUS', 'ConfigMgr')
         foreach ($UpdateSourceCombo in $UpdateSourceCombos) { $WPFUSCBSelectCatalogSource.Items.Add($UpdateSourceCombo) | Out-Null }
         $WPFUSCBSelectCatalogSource.SelectedIndex = 0
-        Invoke-UpdateTabOption
+        Update-WWTabOption
 
         #Check for ConfigMgr and set integration
-        if ((Find-ConfigManager) -eq $true) {
+        if ((Find-WWConfigManager) -eq $true) {
 
-            if ((Import-CMModule) -eq $true) {
+            if ((Import-WWConfigManagerModule) -eq $true) {
                 $WPFUSCBSelectCatalogSource.SelectedIndex = 2
-                Invoke-UpdateTabOption
+                Update-WWTabOption
             }
         } else
-        { Write-WWLog -Data 'Skipping ConfigMgr PowerShell module importation' }
+        { Write-WimWitchLog -Data 'Skipping ConfigMgr PowerShell module importation' }
 
         #Set OSDSUS to Patch Catalog if CM isn't integratedg
 
         if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 0) {
-            Write-WWLog -Data 'Setting OSDSUS as the Update Catalog' -Class Information
+            Write-WimWitchLog -Data 'Setting OSDSUS as the Update Catalog' -Class Information
             $WPFUSCBSelectCatalogSource.SelectedIndex = 1
-            Invoke-UpdateTabOption
+            Update-WWTabOption
         }
 
-        #Function Get-WindowsPatch($build,$OS)
+        #Function Get-WWWindowsPatch($build,$OS)
 
         if ($DownloadUpdates -eq $true) {
             #    If (($UpdatePoShModules -eq $true) -and ($WPFUpdatesOSDBOutOfDateTextBlock.Visibility -eq "Visible")) {
             If ($UpdatePoShModules -eq $true ) {
-                Install-OSDB
-                Install-OSDSUS
+                Install-WWOSDeployment
+                Install-WWOSDServiceUpdateStack
             }
 
 
             if ($Server2016 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows Server' -Build 1607
-                    Get-WindowsPatch -OS 'Windows Server' -build 1607
+                    Test-WWSuperseded -action delete -OS 'Windows Server' -Build 1607
+                    Get-WWWindowsPatch -OS 'Windows Server' -build 1607
                 }
 
 
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 1607
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 1607
+                    Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows Server' -Ver 1607
+                    Invoke-WWConfigManagerUpdateCatalog -prod 'Windows Server' -Ver 1607
                 }
             }
 
             if ($Server2019 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows Server' -Build 1809
-                    Get-WindowsPatch -OS 'Windows Server' -build 1809
+                    Test-WWSuperseded -action delete -OS 'Windows Server' -Build 1809
+                    Get-WWWindowsPatch -OS 'Windows Server' -build 1809
                 }
 
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 1809
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 1809
+                    Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows Server' -Ver 1809
+                    Invoke-WWConfigManagerUpdateCatalog -prod 'Windows Server' -Ver 1809
                 }
             }
 
             if ($Server2022 -eq $true) {
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                    Test-Superceded -action delete -OS 'Windows Server' -Build 21H2
-                    Get-WindowsPatch -OS 'Windows Server' -build 21H2
+                    Test-WWSuperseded -action delete -OS 'Windows Server' -Build 21H2
+                    Get-WWWindowsPatch -OS 'Windows Server' -build 21H2
                 }
 
 
                 if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                    Invoke-MEMCMUpdateSupersedence -prod 'Windows Server' -Ver 21H2
-                    Invoke-MEMCMUpdatecatalog -prod 'Windows Server' -Ver 21H2
+                    Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows Server' -Ver 21H2
+                    Invoke-WWConfigManagerUpdateCatalog -prod 'Windows Server' -Ver 21H2
                 }
             }
 
@@ -311,35 +311,35 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if (($Win10Version -eq '1709')) {
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 1709
-                        Get-WindowsPatch -OS 'Windows 10' -build 1709
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 1709
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 1709
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1709
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1709
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 1709
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 1709
                     }
                 }
 
                 if (($Win10Version -eq '1803')) {
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 1803
-                        Get-WindowsPatch -OS 'Windows 10' -build 1803
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 1803
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 1803
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1803
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1803
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 1803
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 1803
                     }
                 }
 
                 if (($Win10Version -eq '1809') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 1809
-                        Get-WindowsPatch -OS 'Windows 10' -build 1809
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 1809
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 1809
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1809
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1809
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 1809
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 1809
                     }
                 }
 
@@ -347,103 +347,103 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 if (($Win10Version -eq '1903')) {
                     # -or ($Win10Version -eq "all")){
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 1903
-                        Get-WindowsPatch -OS 'Windows 10' -build 1903
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 1903
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 1903
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1903
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1903
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 1903
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 1903
                     }
                 }
 
 
                 if (($Win10Version -eq '1909') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 1909
-                        Get-WindowsPatch -OS 'Windows 10' -build 1909
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 1909
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 1909
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 1909
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 1909
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 1909
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 1909
                     }
                 }
 
                 if (($Win10Version -eq '2004') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 2004
-                        Get-WindowsPatch -OS 'Windows 10' -build 2004
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 2004
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 2004
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2004
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 2004
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 2004
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 2004
                     }
                 }
 
                 if (($Win10Version -eq '20H2') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 2009
-                        Get-WindowsPatch -OS 'Windows 10' -build 2009
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 2009
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 2009
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 2009
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 2009
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 2009
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 2009
                     }
                 }
 
                 if (($Win10Version -eq '21H1') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 21H1
-                        Get-WindowsPatch -OS 'Windows 10' -build 21H1
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 21H1
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 21H1
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H1
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 21H1
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 21H1
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 21H1
                     }
                 }
 
                 if (($Win10Version -eq '21H2') -or ($Win10Version -eq 'all')) {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 10' -Build 21H2
-                        Get-WindowsPatch -OS 'Windows 10' -build 21H2
+                        Test-WWSuperseded -action delete -OS 'Windows 10' -Build 21H2
+                        Get-WWWindowsPatch -OS 'Windows 10' -build 21H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 10' -Ver 21H2
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 10' -Ver 21H2
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 10' -Ver 21H2
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 10' -Ver 21H2
                     }
                 }
 
                 if ($Win11Version -eq '21H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 11' -Build 21H2
-                        Get-WindowsPatch -OS 'Windows 11' -build 21H2
+                        Test-WWSuperseded -action delete -OS 'Windows 11' -Build 21H2
+                        Get-WWWindowsPatch -OS 'Windows 11' -build 21H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 21H2
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 21H2
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 11' -Ver 21H2
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 11' -Ver 21H2
                     }
                 }
                 if ($Win11Version -eq '22H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 11' -Build 22H2
-                        Get-WindowsPatch -OS 'Windows 11' -build 22H2
+                        Test-WWSuperseded -action delete -OS 'Windows 11' -Build 22H2
+                        Get-WWWindowsPatch -OS 'Windows 11' -build 22H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 22H2
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 22H2
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 11' -Ver 22H2
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 11' -Ver 22H2
                     }
                 }
                 if ($Win11Version -eq '23H2') {
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 1) {
-                        Test-Superceded -action delete -OS 'Windows 11' -Build 23H2
-                        Get-WindowsPatch -OS 'Windows 11' -build 23H2
+                        Test-WWSuperseded -action delete -OS 'Windows 11' -Build 23H2
+                        Get-WWWindowsPatch -OS 'Windows 11' -build 23H2
                     }
                     if ($WPFUSCBSelectCatalogSource.SelectedIndex -eq 2) {
-                        Invoke-MEMCMUpdateSupersedence -prod 'Windows 11' -Ver 23H2
-                        Invoke-MEMCMUpdatecatalog -prod 'Windows 11' -Ver 23H2
+                        Invoke-WWConfigManagerUpdateSupersedence -prod 'Windows 11' -Ver 23H2
+                        Invoke-WWConfigManagerUpdateCatalog -prod 'Windows 11' -Ver 23H2
                     }
                 }
 
-                Get-OneDrive
+                Get-WWOneDrive
             }
         }
 
@@ -452,62 +452,62 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         #===========================================================================
 
         #Mount Dir Button
-        $WPFMISMountSelectButton.Add_Click( { Select-Mountdir })
+        $WPFMISMountSelectButton.Add_Click( { Select-WWMountDirectory })
 
         #Source WIM File Button
-        $WPFSourceWIMSelectButton.Add_Click( { Select-SourceWIM })
+        $WPFSourceWIMSelectButton.Add_Click( { Select-WWSourceWIM })
 
         #JSON File selection Button
-        $WPFJSONButton.Add_Click( { Select-JSONFile })
+        $WPFJSONButton.Add_Click( { Select-WWJSONFile })
 
         #Target Folder selection Button
-        $WPFMISFolderButton.Add_Click( { Select-TargetDir })
+        $WPFMISFolderButton.Add_Click( { Select-WWTargetDirectory })
 
         #Driver Directory Buttons
-        $WPFDriverDir1Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir1TextBox })
-        $WPFDriverDir2Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir2TextBox })
-        $WPFDriverDir3Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir3TextBox })
-        $WPFDriverDir4Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir4TextBox })
-        $WPFDriverDir5Button.Add_Click( { Select-DriverSource -DriverTextBoxNumber $WPFDriverDir5TextBox })
+        $WPFDriverDir1Button.Add_Click( { Select-WWDriverSource -DriverTextBoxNumber $WPFDriverDir1TextBox })
+        $WPFDriverDir2Button.Add_Click( { Select-WWDriverSource -DriverTextBoxNumber $WPFDriverDir2TextBox })
+        $WPFDriverDir3Button.Add_Click( { Select-WWDriverSource -DriverTextBoxNumber $WPFDriverDir3TextBox })
+        $WPFDriverDir4Button.Add_Click( { Select-WWDriverSource -DriverTextBoxNumber $WPFDriverDir4TextBox })
+        $WPFDriverDir5Button.Add_Click( { Select-WWDriverSource -DriverTextBoxNumber $WPFDriverDir5TextBox })
 
         #Make it So Button, which builds the WIM file
-        $WPFMISMakeItSoButton.Add_Click( { Invoke-MakeItSo -appx $Script:SelectedAppx })
+        $WPFMISMakeItSoButton.Add_Click( { Invoke-WWMakeItSo -appx $Script:SelectedAppx })
 
         #Update OSDBuilder Button
         $WPFUpdateOSDBUpdateButton.Add_Click( {
-                Install-OSDB
-                Install-OSDSUS
+                Install-WWOSDeployment
+                Install-WWOSDServiceUpdateStack
             })
 
         #Update patch source
-        $WPFUpdatesDownloadNewButton.Add_Click( { Sync-WindowsUpdateSource })
+        $WPFUpdatesDownloadNewButton.Add_Click( { Sync-WWWindowsUpdateSource })
 
         #Select Appx packages to remove
-        $WPFAppxButton.Add_Click( { $Script:SelectedAppx = Select-Appx })
+        $WPFAppxButton.Add_Click( { $Script:SelectedAppx = Select-WWAppx })
 
         #Select Autopilot path to save button
-        $WPFJSONButtonSavePath.Add_Click( { Select-NewJSONDir })
+        $WPFJSONButtonSavePath.Add_Click( { Select-WWNewJSONDirectory })
 
         #retrieve autopilot profile from intune
         $WPFJSONButtonRetrieve.Add_click( { get-wwautopilotprofile -login $WPFJSONTextBoxAADID.Text -path $WPFJSONTextBoxSavePath.Text })
 
         #Button to save configuration file
-        $WPFSLSaveButton.Add_click( { Save-Configuration -filename $WPFSLSaveFileName.text })
+        $WPFSLSaveButton.Add_click( { Save-WWSetting -filename $WPFSLSaveFileName.text })
 
         #Button to load configuration file
-        $WPFSLLoadButton.Add_click( { Select-Config })
+        $WPFSLLoadButton.Add_click( { Select-WWConfig })
 
         #Button to select ISO for importation
-        $WPFImportImportSelectButton.Add_click( { Select-ISO })
+        $WPFImportImportSelectButton.Add_click( { Select-WWISO })
 
         #Button to import content from iso
-        $WPFImportImportButton.Add_click( { Import-ISO })
+        $WPFImportImportButton.Add_click( { Import-WWWindowsISO })
 
         #Combo Box dynamic change for Winver combo box
-        $WPFImportOtherCBWinOS.add_SelectionChanged({ Invoke-ImportVersionCB })
+        $WPFImportOtherCBWinOS.add_SelectionChanged({ Import-WWVersionCallback })
 
         #Button to select the import path in the other components
-        $WPFImportOtherBSelectPath.add_click({ Select-ImportOtherPath
+        $WPFImportOtherBSelectPath.add_click({ Select-WWImportPath
 
             if ($WPFImportOtherCBType.SelectedItem -ne 'Feature On Demand') {
                 if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') {
@@ -551,13 +551,13 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             }
 
             if ($wpfImportOtherCBType.SelectedItem -eq 'Language Pack') {
-                Write-WWLog -data "$count Language Packs selected from $path" -Class Information
+                Write-WimWitchLog -data "$count Language Packs selected from $path" -Class Information
             }
             if ($wpfImportOtherCBType.SelectedItem -eq 'Local Experience Pack') {
-                Write-WWLog -data "$count Local Experience Packs selected from $path" -Class Information
+                Write-WimWitchLog -data "$count Local Experience Packs selected from $path" -Class Information
             }
             if ($wpfImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
-                Write-WWLog -data "Features On Demand source selected from $path" -Class Information
+                Write-WimWitchLog -data "Features On Demand source selected from $path" -Class Information
             }
         })
 
@@ -570,27 +570,27 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 }
 
                 if ($WPFImportOtherCBType.SelectedItem -eq 'Language Pack') {
-                    Import-LanguagePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                    Import-WWLanguagePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
                         -LPSourceFolder $WPFImportOtherTBPath.text
                 }
                 if ($WPFImportOtherCBType.SelectedItem -eq 'Local Experience Pack') {
-                    Import-LocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                    Import-WWLocalExperiencePack -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
                         -LPSourceFolder $WPFImportOtherTBPath.text
                 }
                 if ($WPFImportOtherCBType.SelectedItem -eq 'Feature On Demand') {
-                    Import-FeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
+                    Import-WWFeatureOnDemand -Winver $WinVerConversion -WinOS $WPFImportOtherCBWinOS.SelectedItem `
                         -LPSourceFolder $WPFImportOtherTBPath.text
                 }
         })
 
         #Button Select LP's for importation
-        $WPFCustomBLangPacksSelect.add_click({ Select-LPFODRequirement -type 'LP' })
+        $WPFCustomBLangPacksSelect.add_click({ Select-WWLanguageFeature -type 'LP' })
 
         #Button to select FODs for importation
-        $WPFCustomBFODSelect.add_click({ Select-LPFODRequirement -type 'FOD' })
+        $WPFCustomBFODSelect.add_click({ Select-WWLanguageFeature -type 'FOD' })
 
         #Button to select LXPs for importation
-        $WPFCustomBLEPSelect.add_click({ Select-LPFODRequirement -type 'LXP' })
+        $WPFCustomBLEPSelect.add_click({ Select-WWLanguageFeature -type 'LXP' })
 
         #Button to select PS1 script
         $WPFCustomBSelectPath.add_click({
@@ -610,9 +610,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
             $path = $workdir + '\ConfigMgr\PackageInfo\' + $image.packageid
             if ((Test-Path -Path $path ) -eq $True) {
-                Get-Configuration -filename $path
+                Get-WWConfiguration -filename $path
             } else {
-                Get-ImageInfo -PackID $image.PackageID
+                Get-WWImageInformation -PackID $image.PackageID
             }
         })
 
@@ -620,7 +620,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         #$WPFCMBFilePathSelect.Add_Click({ })
 
         #Button to add DP/DPG to list box on ConfigMgr tab
-        $WPFCMBAddDP.Add_Click({ Select-DistributionPoint })
+        $WPFCMBAddDP.Add_Click({ Select-WWDistributionPoint })
 
         #Button to remove DP/DPG from list box on ConfigMgr tab
         $WPFCMBRemoveDP.Add_Click({
@@ -632,10 +632,10 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #Combo Box dynamic change ConfigMgr type
-        $WPFCMCBImageType.add_SelectionChanged({ Enable-ConfigMgrOption })
+        $WPFCMCBImageType.add_SelectionChanged({ Enable-WWConfigManagerOption })
 
         #Combo Box Software Update Catalog source
-        $WPFUSCBSelectCatalogSource.add_SelectionChanged({ Invoke-UpdateTabOption })
+        $WPFUSCBSelectCatalogSource.add_SelectionChanged({ Update-WWTabOption })
 
         #Button to remove items from Language Packs List Box
         $WPFCustomBLangPacksRemove.Add_Click({
@@ -664,13 +664,13 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #Button to select default app association XML
-        $WPFCustomBDefaultApp.Add_Click({ Select-DefaultApplicationAssociation })
+        $WPFCustomBDefaultApp.Add_Click({ Select-WWDefaultApplicationAssociation })
 
         #Button to select start menu XML
-        $WPFCustomBStartMenu.Add_Click({ Select-StartMenu })
+        $WPFCustomBStartMenu.Add_Click({ Select-WWStartMenu })
 
         #Button to select registry files
-        $WPFCustomBRegistryAdd.Add_Click({ Select-RegFile })
+        $WPFCustomBRegistryAdd.Add_Click({ Select-WWRegistryFile })
 
         #Button to remove registry files
         $WPFCustomBRegistryRemove.Add_Click({
@@ -682,15 +682,15 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #Button to select ISO save folder
-        $WPFMISISOSelectButton.Add_Click({ Select-ISODirectory })
+        $WPFMISISOSelectButton.Add_Click({ Select-WWISODirectory })
 
         #Button to install CM Console Extension
-        $WPFCMBInstallExtensions.Add_Click({ Install-WWCMConsoleExtension })
+        $WPFCMBInstallExtensions.Add_Click({ Install-WWConfigManagerConsoleExtension })
 
         #Button to set CM Site and Server properties
         $WPFCMBSetCM.Add_Click({
-                Get-WWConfigMgrConnection
-                Import-CMModule
+                Get-WWConfigManagerConnection
+                Import-WWConfigManagerModule
 
             })
 
@@ -986,48 +986,52 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Runs WIM Witch from a single file, bypassing the GUI
         if (($auto -eq $true) -and ($autofile -ne '')) {
-            Invoke-RunConfigFile -filename $autofile
-            Show-ClosingText
+            Invoke-WWConfigFile -filename $autofile
+            Write-WWClosingMessage
             exit 0
         }
 
         #Runs WIM from a path with multiple files, bypassing the GUI
         if (($auto -eq $true) -and ($autopath -ne '')) {
-            Write-WWLog -data "Running batch job from config folder $autopath" -Class Information
+            Write-WimWitchLog -data "Running batch job from config folder $autopath" -Class Information
             $files = Get-ChildItem -Path $autopath
-            Write-WWLog -data 'Setting batch job for the folling configs:' -Class Information
-            foreach ($file in $files) { Write-WWLog -Data $file -Class Information }
+            Write-WimWitchLog -data 'Setting batch job for the folling configs:' -Class Information
+            foreach ($file in $files) { Write-WimWitchLog -Data $file -Class Information }
             foreach ($file in $files) {
                 $fullpath = $autopath + '\' + $file
-                Invoke-RunConfigFile -filename $fullpath
+                Invoke-WWConfigFile -filename $fullpath
             }
-            Write-WWLog -Data 'Work complete' -Class Information
-            Show-ClosingText
+            Write-WimWitchLog -Data 'Work complete' -Class Information
+            Write-WWClosingMessage
             exit 0
         }
 
         #Loads the specified ConfigMgr config file from CM Console
         if (($CM -eq 'Edit') -and ($autofile -ne '')) {
-            Write-WWLog -Data 'Loading ConfigMgr OS Image Package information...' -Class Information
-            Get-Configuration -filename $autofile
+            Write-WimWitchLog -Data 'Loading ConfigMgr OS Image Package information...' -Class Information
+            Get-WWConfiguration -filename $autofile
         }
 
         #Closing action for the WPF form
-        Register-ObjectEvent -InputObject $form -EventName Closed -Action ( { Show-ClosingText }) | Out-Null
+        Register-ObjectEvent -InputObject $form -EventName Closed -Action ( { Write-WWClosingMessage }) | Out-Null
 
         #display text information to the user
-        Invoke-TextNotification
+        Send-WWNotification
 
         if ($HiHungryImDad -eq $true) {
-            $string = Invoke-DadJoke
-            Write-WWLog -Data $string -Class Comment
+            $string = Invoke-WWDadJoke
+            Write-WimWitchLog -Data $string -Class Comment
             $WPFImportBDJ.Visibility = 'Visible'
         }
 
         #Start GUI
-        Write-WWLog -data 'Starting WIM Witch GUI' -class Information
+        Write-WimWitchLog -data 'Starting WIM Witch GUI' -class Information
         $Form.ShowDialog() | Out-Null #This starts the GUI
 
         #endregion Main
     }
 }
+
+
+
+

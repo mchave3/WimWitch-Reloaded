@@ -2,6 +2,11 @@
 
 run-name: "➕ Add to project - ${{ github.event.issue.title || github.event.pull_request.title }} (#${{ github.event.number }}) by @${{ github.actor }}"
 
+permissions:
+  issues: write
+  pull-requests: write
+  repository-projects: write
+
 on:
   issues:
     types:
@@ -18,4 +23,4 @@ jobs:
       - uses: actions/add-to-project@main
         with:
           project-url: https://github.com/users/mchave3/projects/3
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
