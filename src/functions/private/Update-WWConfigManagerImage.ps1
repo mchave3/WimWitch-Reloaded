@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Updates an existing ConfigMgr image package.
 
@@ -43,11 +43,12 @@ function Update-WWConfigManagerImage {
         Invoke-CimMethod -InputObject $cim -MethodName "ReloadImageProperties" | Out-Null
 
         Update-WWConfigManagerImageProperty -PackageID $WPFCMTBPackageID.Text
-        Save-WWSettings -CM -filename $WPFCMTBPackageID.Text
+        Save-WWSetting -CM -filename $WPFCMTBPackageID.Text
 
         Set-Location $Script:workdir
     }
 }
+
 
 
 

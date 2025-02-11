@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Load the configuration file and run the MakeItSo function.
 
@@ -6,7 +6,7 @@
     This function is used to load the configuration file and run the MakeItSo function.
 
 .NOTES
-    Name:        Execute-WWConfigFile.ps1
+    Name:        Invoke-WWConfigFile.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,9 +20,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Execute-WWConfigFile -filename $filename
+    Invoke-WWConfigFile -filename $filename
 #>
-function Execute-WWConfigFile {
+function Invoke-WWConfigFile {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
@@ -39,6 +39,7 @@ function Execute-WWConfigFile {
         Write-Output ' '
     }
 }
+
 
 
 

@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Creates a new ConfigMgr image package.
 
@@ -64,10 +64,11 @@ function Build-WWConfigManagerImagePackage {
             Write-WimWitchLog -Data 'Content has been distributed.' -Class Information
         }
 
-        Save-WWSettings -CM $PackageID
+        Save-WWSetting -CM $PackageID
         Set-Location $Script:workdir
     }
 }
+
 
 
 

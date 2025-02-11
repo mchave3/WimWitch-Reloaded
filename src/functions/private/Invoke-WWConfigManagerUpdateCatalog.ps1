@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Check for updates against ConfigMgr and download them to the working directory.
 
@@ -137,7 +137,7 @@ function Invoke-WWConfigManagerUpdateCatalog {
                 #write-host "Display Name"
                 #write-host $update.LocalizedDisplayName
                 #            if ($ver -eq  "20H2"){$ver = "2009"} #Another 20H2 naming work around
-                Download-WWMicrosoftUpdateItem -FilePath "$Script:workdir\updates\$Prod\$ver\" `
+                Get-WWMicrosoftUpdateItem -FilePath "$Script:workdir\updates\$Prod\$ver\" `
                 -UpdateName $update.LocalizedDisplayName
             }
         }
@@ -145,6 +145,7 @@ function Invoke-WWConfigManagerUpdateCatalog {
         Set-Location $Script:workdir
     }
 }
+
 
 
 

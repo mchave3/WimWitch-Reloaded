@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Save the current WimWitch configuration to a file.
 
@@ -6,7 +6,7 @@
     This function is used to save the current WimWitch configuration to a file.
 
 .NOTES
-    Name:        Save-WWSettings.ps1
+    Name:        Save-WWSetting.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-27
     Version:     1.0.0
@@ -20,12 +20,12 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Save-WWSettings
-    Save-WWSettings -filename "config.xml"
-    Save-WWSettings -CM
-    Save-WWSettings -filename "config.xml" -CM
+    Save-WWSetting
+    Save-WWSetting -filename "config.xml"
+    Save-WWSetting -CM
+    Save-WWSetting -filename "config.xml" -CM
 #>
-function Save-WWSettings {
+function Save-WWSetting {
     [CmdletBinding()]
     param(
         [parameter(mandatory = $false, HelpMessage = 'config file')]
@@ -139,6 +139,7 @@ function Save-WWSettings {
         }
     }
 }
+
 
 
 

@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Start the WimWitch-Reloaded GUI
 
@@ -492,7 +492,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFJSONButtonRetrieve.Add_click( { get-wwautopilotprofile -login $WPFJSONTextBoxAADID.Text -path $WPFJSONTextBoxSavePath.Text })
 
         #Button to save configuration file
-        $WPFSLSaveButton.Add_click( { Save-WWSettings -filename $WPFSLSaveFileName.text })
+        $WPFSLSaveButton.Add_click( { Save-WWSetting -filename $WPFSLSaveFileName.text })
 
         #Button to load configuration file
         $WPFSLLoadButton.Add_click( { Select-WWConfig })
@@ -986,7 +986,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Runs WIM Witch from a single file, bypassing the GUI
         if (($auto -eq $true) -and ($autofile -ne '')) {
-            Execute-WWConfigFile -filename $autofile
+            Invoke-WWConfigFile -filename $autofile
             Write-WWClosingMessage
             exit 0
         }
@@ -999,7 +999,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             foreach ($file in $files) { Write-WimWitchLog -Data $file -Class Information }
             foreach ($file in $files) {
                 $fullpath = $autopath + '\' + $file
-                Execute-WWConfigFile -filename $fullpath
+                Invoke-WWConfigFile -filename $fullpath
             }
             Write-WimWitchLog -Data 'Work complete' -Class Information
             Write-WWClosingMessage
@@ -1031,5 +1031,6 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         #endregion Main
     }
 }
+
 
 
