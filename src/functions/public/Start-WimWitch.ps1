@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Start the WimWitch-Reloaded GUI
 
@@ -1031,6 +1031,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         #endregion Main
     }
 }
+
 
 
 

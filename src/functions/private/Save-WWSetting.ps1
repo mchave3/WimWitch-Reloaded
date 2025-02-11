@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Save the current WimWitch configuration to a file.
 
@@ -139,6 +139,7 @@ function Save-WWSetting {
         }
     }
 }
+
 
 
 
