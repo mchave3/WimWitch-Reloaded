@@ -1,4 +1,4 @@
-﻿name: ➕ Add to project
+name: ➕ Add to project
 
 run-name: "➕ Add to project - ${{ github.event.issue.title || github.event.pull_request.title }} (#${{ github.event.number }}) by @${{ github.actor }}"
 
