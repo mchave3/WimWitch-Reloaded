@@ -784,6 +784,69 @@ src/functions/
 
 ---
 
+### 📱 Intune Module
+
+<details open>
+<summary><b>Intune Integration Functions</b></summary>
+
+#### [`Connect-WWIntuneService`](private/Intune/Connect-WWIntuneService.ps1)
+> Establishes connection to Intune service.
+
+**Purpose:**
+- Authenticates with Intune
+- Manages service connection
+- Ensures secure connectivity
+
+**Dependencies:**
+- [`Write-WimWitchLog`](private/Core/Write-WimWitchLog.ps1)
+- Microsoft.Graph.Intune module
+
+<hr style="border-top: 1px dashed #ccc">
+
+#### [`New-WWIntuneDeployment`](private/Intune/New-WWIntuneDeployment.ps1)
+> Creates Intune deployment packages.
+
+**Purpose:**
+- Packages images for Intune
+- Manages deployment settings
+- Ensures deployment consistency
+
+**Dependencies:**
+- [`Write-WimWitchLog`](private/Core/Write-WimWitchLog.ps1)
+- [`Connect-WWIntuneService`](private/Intune/Connect-WWIntuneService.ps1)
+
+<hr style="border-top: 1px dashed #ccc">
+
+#### [`Update-WWIntuneImage`](private/Intune/Update-WWIntuneImage.ps1)
+> Updates Intune image packages.
+
+**Purpose:**
+- Updates existing packages
+- Manages version control
+- Ensures package integrity
+
+**Dependencies:**
+- [`Write-WimWitchLog`](private/Core/Write-WimWitchLog.ps1)
+- [`Connect-WWIntuneService`](private/Intune/Connect-WWIntuneService.ps1)
+
+<hr style="border-top: 1px dashed #ccc">
+
+#### [`Get-WWIntuneDeploymentStatus`](private/Intune/Get-WWIntuneDeploymentStatus.ps1)
+> Monitors deployment status.
+
+**Purpose:**
+- Tracks deployment progress
+- Reports deployment metrics
+- Ensures deployment monitoring
+
+**Dependencies:**
+- [`Write-WimWitchLog`](private/Core/Write-WimWitchLog.ps1)
+- [`Connect-WWIntuneService`](private/Intune/Connect-WWIntuneService.ps1)
+
+</details>
+
+---
+
 ## 📊 Dependency Flow Diagram
 
 ```mermaid
