@@ -10,14 +10,14 @@
     Author:      Mickaël CHAVE
     Created:     2025-01-31
     Version:     1.0.0
-    Repository:  https://github.com/mchave3/WimWitch-Reloaded
+    Repository:  [Wimwitch Reloaded](https://github.com/mchave3/WimWitch-Reloaded)
     License:     MIT License
 
     Based on original WIM-Witch by TheNotoriousDRR :
-    <https://github.com/thenotoriousdrr/WIM-Witch>
+    [Link](https://github.com/thenotoriousdrr/WIM-Witch)
 
 .LINK
-    <https://github.com/mchave3/WimWitch-Reloaded>
+    [Wimwitch Reloaded](https://github.com/mchave3/WimWitch-Reloaded)
 
 .EXAMPLE
     Start-WimWitch
