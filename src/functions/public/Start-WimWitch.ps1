@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Start the WimWitch-Reloaded GUI
 
@@ -14,10 +14,10 @@
     License:     MIT License
 
     Based on original WIM-Witch by TheNotoriousDRR :
-    https://github.com/thenotoriousdrr/WIM-Witch
+    <https://github.com/thenotoriousdrr/WIM-Witch>
 
 .LINK
-    https://github.com/mchave3/WimWitch-Reloaded
+    <https://github.com/mchave3/WimWitch-Reloaded>
 
 .EXAMPLE
     Start-WimWitch
