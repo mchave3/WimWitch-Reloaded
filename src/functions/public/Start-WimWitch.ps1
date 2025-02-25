@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Start the WimWitch-Reloaded GUI
 
