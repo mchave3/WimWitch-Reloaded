@@ -30,9 +30,9 @@ function Update-WWConfigManagerImage {
 
     process {
         Set-Location $CMDrive
-        $cim = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
+        $cim = Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" `
                 -ClassName SMS_ImagePackage `
-                -ComputerName $Script:SiteServer |
+                -ComputerName $script:SiteServer |
                 Where-Object { $_.PackageID -eq $WPFCMTBPackageID.text }
 
         if ($PSCmdlet.ShouldProcess("Distribution Points", "Update images")) {
@@ -50,7 +50,7 @@ function Update-WWConfigManagerImage {
             Save-WWSetting -CM -filename $WPFCMTBPackageID.Text
         }
 
-        Set-Location $Script:workdir
+        Set-Location $script:workingDirectory
     }
 }
 

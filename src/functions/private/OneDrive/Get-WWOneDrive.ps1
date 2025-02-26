@@ -36,7 +36,7 @@ function Get-WWOneDrive {
 
         Write-WimWitchLog -Data 'Downloading latest 32-bit OneDrive agent installer...' -class Information
         $DownloadUrl = 'https://go.microsoft.com/fwlink/p/?LinkId=248256'
-        $DownloadPath = "$Script:workdir\updates\OneDrive"
+        $DownloadPath = "$script:workingDirectory\updates\OneDrive"
         $DownloadFile = 'OneDriveSetup.exe'
 
         if (!(Test-Path "$DownloadPath")) { New-Item -Path $DownloadPath -ItemType Directory -Force | Out-Null }
@@ -49,7 +49,7 @@ function Get-WWOneDrive {
 
         Write-WimWitchLog -Data 'Downloading latest 64-bit OneDrive agent installer...' -class Information
         $DownloadUrl = 'https://go.microsoft.com/fwlink/?linkid=2181064'
-        $DownloadPath = "$Script:workdir\updates\OneDrive\x64"
+        $DownloadPath = "$script:workingDirectory\updates\OneDrive\x64"
         $DownloadFile = 'OneDriveSetup.exe'
 
         if (!(Test-Path "$DownloadPath")) { New-Item -Path $DownloadPath -ItemType Directory -Force | Out-Null }

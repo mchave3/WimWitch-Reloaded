@@ -32,8 +32,8 @@ function Get-WWImageInformation {
     process {
         #set-ConfigMgrConnection
         Set-Location $CMDrive
-        $image = (Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
-            -ClassName SMS_ImagePackage -ComputerName $Script:SiteServer) |
+        $image = (Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" `
+            -ClassName SMS_ImagePackage -ComputerName $script:SiteServer) |
             Where-Object { ($_.PackageID -eq $PackID) }
 
         $WPFCMTBImageName.text = $image.name
@@ -59,8 +59,8 @@ function Get-WWImageInformation {
 
         $Package = $packageID.PackageID
         $DPs = Get-CMDistributionPoint
-        $NALPaths = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
-            -ComputerName $Script:SiteServer `
+        $NALPaths = Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" `
+            -ComputerName $script:SiteServer `
             -Query "SELECT * FROM SMS_DistributionPoint WHERE PackageID='$Package'"
 
         Write-WimWitchLog -Data 'Retrieving Distrbution Point Information' -Class Information
@@ -90,7 +90,7 @@ function Get-WWImageInformation {
         } else
         { $WPFCMCBDeploymentShare.IsChecked = $false }
 
-        Set-Location $Script:workdir
+        Set-Location $script:workingDirectory
     }
 }
 

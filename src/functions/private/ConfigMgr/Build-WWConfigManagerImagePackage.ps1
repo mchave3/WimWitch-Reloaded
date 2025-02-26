@@ -65,7 +65,7 @@ function Build-WWConfigManagerImagePackage {
         }
 
         Save-WWSetting -CM $PackageID
-        Set-Location $Script:workdir
+        Set-Location $script:workingDirectory
     }
 }
 

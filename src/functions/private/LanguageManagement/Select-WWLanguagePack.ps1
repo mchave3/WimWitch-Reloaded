@@ -32,7 +32,7 @@ function Select-WWLanguagePack {
     )
 
     process {
-        $LPSourceFolder = $Script:workdir + '\imports\lang\' + $WinOS + '\' + $winver + '\' + 'LanguagePacks' + '\'
+        $LPSourceFolder = $script:workingDirectory + '\imports\lang\' + $WinOS + '\' + $winver + '\' + 'LanguagePacks' + '\'
 
         $items = (Get-ChildItem -Path $LPSourceFolder | Select-Object -Property Name | Out-GridView -Title 'Select Language Packs' -PassThru)
         foreach ($item in $items) { $WPFCustomLBLangPacks.Items.Add($item.name) }

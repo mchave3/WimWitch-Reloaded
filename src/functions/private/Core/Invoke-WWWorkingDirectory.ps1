@@ -29,8 +29,6 @@ function Invoke-WWWorkingDirectory {
     )
 
     process {
-        $Script:workdir = $env:ProgramData + '\WimWitch-Reloaded'
-
         $subfolders = @(
             'CompletedWIMs'
             'Configs'

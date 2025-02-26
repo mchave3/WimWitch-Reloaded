@@ -46,8 +46,8 @@ function Test-WWWorkingDirectory {
         )
 
         $count = $null
-        Set-Location -Path $Script:workdir
-        Write-Output "WimWitch Reloaded working directory selected: $Script:workdir"
+        Set-Location -Path $script:workingDirectory
+        Write-Output "WimWitch Reloaded working directory selected: $script:workingDirectory"
         Write-Output 'Checking working directory for required folders...'
         foreach ($subfolder in $subfolders) {
             if ((Test-Path -Path .\$subfolder) -eq $true) { $count = $count + 1 }

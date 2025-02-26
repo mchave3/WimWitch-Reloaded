@@ -33,7 +33,7 @@ function Test-WWISOBinariesExist {
         $buildnum = Get-WWWindowsVersionNumber
         $OSType = Get-WWWindowsType
 
-        $ISOFiles = $Script:workdir + '\imports\iso\' + $OSType + '\' + $buildnum + '\'
+        $ISOFiles = $script:workingDirectory + '\imports\iso\' + $OSType + '\' + $buildnum + '\'
 
         Test-Path -Path $ISOFiles\*
         if ((Test-Path -Path $ISOFiles\*) -eq $false) {

@@ -36,7 +36,7 @@ function Backup-WimWitch {
         Write-WimWitchLog -data $MyInvocation.PSCommandPath -Class Information
         try {
             Write-WimWitchLog -data 'Copy script to backup folder...' -Class Information
-            Copy-Item -Path $scriptname -Destination $Script:workdir\backup -ErrorAction Stop
+            Copy-Item -Path $scriptname -Destination $script:workingDirectory\backup -ErrorAction Stop
             Write-WimWitchLog -Data 'Successfully copied...' -Class Information
         } catch {
             Write-WimWitchLog -data "Couldn't copy the WimWitch script. My guess is a permissions issue" -Class Error
@@ -45,7 +45,7 @@ function Backup-WimWitch {
         }
         try {
             Write-WimWitchLog -data 'Renaming archived script...' -Class Information
-            Rename-WWName -file $Script:workdir\backup\$scriptname -extension '.ps1'
+            Rename-WWName -file $script:workingDirectory\backup\$scriptname -extension '.ps1'
             Write-WimWitchLog -data 'Backup successfully renamed for archiving' -class Information
         } catch {
             Write-WimWitchLog -Data "Backed-up script couldn't be renamed. This isn't a critical error" -Class Warning

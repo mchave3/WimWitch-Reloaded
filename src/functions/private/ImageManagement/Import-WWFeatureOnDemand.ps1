@@ -48,12 +48,12 @@ function Import-WWFeatureOnDemand {
 
         $langpacks = Get-ChildItem -Path $LPSourceFolder
 
-        if ((Test-Path -Path $Script:workdir\imports\FODs\$WinOS\$Winver) -eq $False) {
+        if ((Test-Path -Path $script:workingDirectory\imports\FODs\$WinOS\$Winver) -eq $False) {
             Write-WimWitchLog -Data 'Destination folder does not exist. Creating...' -Class Warning
-            $path = $Script:workdir + '\imports\FODs\' + $WinOS + '\' + $winver
+            $path = $script:workingDirectory + '\imports\FODs\' + $WinOS + '\' + $winver
             $text = 'Creating folder ' + $path
             Write-WimWitchLog -data $text -Class Information
-            New-Item -Path $Script:workdir\imports\fods\$WinOS -Name $winver -ItemType Directory
+            New-Item -Path $script:workingDirectory\imports\fods\$WinOS -Name $winver -ItemType Directory
             Write-WimWitchLog -Data 'Folder created successfully' -Class Information
         }
 
@@ -64,7 +64,7 @@ function Import-WWFeatureOnDemand {
                 $source = $LPSourceFolder + $item
                 $text = 'Importing ' + $item
                 Write-WimWitchLog -Data $text -Class Information
-                Copy-Item $source -Destination $Script:workdir\imports\FODs\$WinOS\$Winver\ -Force
+                Copy-Item $source -Destination $script:workingDirectory\imports\FODs\$WinOS\$Winver\ -Force
             }
         }
 
@@ -72,7 +72,7 @@ function Import-WWFeatureOnDemand {
         if ($WPFImportOtherCBWinOS.SelectedItem -ne 'Windows 11') {
             foreach ($langpack in $langpacks) {
                 $source = $LPSourceFolder + $langpack.name
-                Copy-Item $source -Destination $Script:workdir\imports\FODs\$WinOS\$Winver\ -Force
+                Copy-Item $source -Destination $script:workingDirectory\imports\FODs\$WinOS\$Winver\ -Force
                 $name = $langpack.name
                 $text = 'Copying ' + $name
                 Write-WimWitchLog -Data $text -Class Information
@@ -80,7 +80,7 @@ function Import-WWFeatureOnDemand {
         }
 
         Write-WimWitchLog -Data 'Importing metadata subfolder...' -Class Information
-        Get-ChildItem -Path ($LPSourceFolder + '\metadata\') | Copy-Item -Destination $Script:workdir\imports\FODs\$WinOS\$Winver\metadata -Force
+        Get-ChildItem -Path ($LPSourceFolder + '\metadata\') | Copy-Item -Destination $script:workingDirectory\imports\FODs\$WinOS\$Winver\metadata -Force
         Write-WimWitchLog -data 'Feature On Demand imporation complete.'
     }
 }

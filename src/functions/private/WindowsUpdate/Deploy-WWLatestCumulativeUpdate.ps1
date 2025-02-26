@@ -39,8 +39,8 @@ function Deploy-WWLatestCumulativeUpdate {
             $executable = "$env:windir\system32\expand.exe"
             $filename = (Get-ChildItem $packagepath).name
             Write-WimWitchLog -Data 'Extracting LCU Package content to staging folder...' -Class Information
-            Start-Process $executable -args @("`"$packagepath\$filename`"", '/f:*.CAB', "`"$Script:workdir\staging`"") -Wait -ErrorAction Stop
-            $cabs = (Get-Item $Script:workdir\staging\*.cab)
+            Start-Process $executable -args @("`"$packagepath\$filename`"", '/f:*.CAB', "`"$script:workingDirectory\staging`"") -Wait -ErrorAction Stop
+            $cabs = (Get-Item $script:workingDirectory\staging\*.cab)
             #MMSMOA2022
             Write-WimWitchLog -data 'Applying SSU...' -class information
             foreach ($cab in $cabs) {
@@ -69,18 +69,18 @@ function Deploy-WWLatestCumulativeUpdate {
             # Copy file to staging
             Write-WimWitchLog -data 'Copying LCU file to staging folder...' -class information
             $filename = (Get-ChildItem -Path $packagepath -Name)
-            Copy-Item -Path $packagepath\$filename -Destination $Script:workdir\staging -Force
+            Copy-Item -Path $packagepath\$filename -Destination $script:workingDirectory\staging -Force
             Write-WimWitchLog -data 'Changing file extension type from CAB to MSU...' -class information
-            $basename = (Get-Item -Path $Script:workdir\staging\$filename).BaseName
+            $basename = (Get-Item -Path $script:workingDirectory\staging\$filename).BaseName
             $newname = $basename + '.msu'
-            Rename-Item -Path $Script:workdir\staging\$filename -NewName $newname
+            Rename-Item -Path $script:workingDirectory\staging\$filename -NewName $newname
             Write-WimWitchLog -data 'Applying LCU...' -class information
-            Write-WimWitchLog -data $Script:workdir\staging\$newname -class information
+            Write-WimWitchLog -data $script:workingDirectory\staging\$newname -class information
             $updatename = (Get-Item -Path $packagepath).name
             Write-WimWitchLog -data $updatename -Class Information
             try {
                 if ($demomode -eq $false) {
-                    Add-WindowsPackage -Path $WPFMISMountTextBox.Text -PackagePath $Script:workdir\staging\$newname -ErrorAction Stop | Out-Null
+                    Add-WindowsPackage -Path $WPFMISMountTextBox.Text -PackagePath $script:workingDirectory\staging\$newname -ErrorAction Stop | Out-Null
                 } else {
                     $string = 'Demo mode active - Not applying ' + $updatename
                     Write-WimWitchLog -data $string -Class Warning
