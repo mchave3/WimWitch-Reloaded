@@ -40,7 +40,7 @@ Import-WWVersionCallback
 Import-WWWIMInformation
 Import-WWWindowsISO
 Initialize-WimWitchEnvironment
-Install-WimWitchUpgrade
+Invoke-WimWitchUpgrade
 Install-WWAutopilotModule
 Install-WWConfigManagerConsoleExtension
 Install-WWDefaultApplicationAssociation

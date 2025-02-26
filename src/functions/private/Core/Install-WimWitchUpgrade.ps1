@@ -10,7 +10,7 @@
     will log the decision and continue to start WIM Witch.
 
 .NOTES
-    Name:        Install-WimWitchUpgrade.ps1
+    Name:        Invoke-WimWitchUpgrade.ps1
     Author:      Mickaël CHAVE
     Created:     2025-01-30
     Version:     1.0.0
@@ -24,9 +24,9 @@
     https://github.com/mchave3/WimWitch-Reloaded
 
 .EXAMPLE
-    Install-WimWitchUpgrade
+    Invoke-WimWitchUpgrade
 #>
-function Install-WimWitchUpgrade {
+function Invoke-WimWitchUpgrade {
     [CmdletBinding()]
     param(
 
@@ -38,7 +38,7 @@ function Install-WimWitchUpgrade {
         Write-Output $yesno
         if (($yesno -ne 'Y') -and ($yesno -ne 'N')) {
             Write-Output 'Invalid entry, try again.'
-            Install-WimWitchUpgrade
+            Invoke-WimWitchUpgrade
         }
 
         if ($yesno -eq 'y') {
