@@ -1,0 +1,25 @@
+﻿<Window 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="WimWitch-Reloaded Update" 
+    Height="180" 
+    Width="400"
+    WindowStartupLocation="CenterScreen"
+    ResizeMode="NoResize">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" Text="WimWitch-Reloaded Update" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+        <TextBlock Grid.Row="1" Text="A new version of WimWitch-Reloaded is available ($onlineVersion). Would you like to update?" 
+                  TextWrapping="Wrap" VerticalAlignment="Center"/>
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Name="btnYes" Content="Yes" Width="80" Margin="0,0,10,0" IsDefault="True"/>
+            <Button Name="btnNo" Content="No" Width="80" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

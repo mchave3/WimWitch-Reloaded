@@ -32,10 +32,17 @@ function Update-WimWitchModule {
 
     process {
         try {
-            # Get current module version
-            $currentModule = Get-Module -Name "WimWitch-Reloaded" -ListAvailable |
+            # Get current module version - first check if loaded, then check if installed
+            $currentModule = Get-Module -Name "WimWitch-Reloaded" |
                 Sort-Object Version -Descending |
                 Select-Object -First 1
+
+            if (-not $currentModule) {
+                # If not found in loaded modules, check available modules
+                $currentModule = Get-Module -Name "WimWitch-Reloaded" -ListAvailable |
+                    Sort-Object Version -Descending |
+                    Select-Object -First 1
+            }
 
             if (-not $currentModule) {
                 Write-WimWitchLog -Data "Could not find WimWitch-Reloaded module installed." -Class Error
@@ -55,33 +62,71 @@ function Update-WimWitchModule {
             if ($onlineVersion -gt $currentVersion) {
                 Write-WimWitchLog -Data "New version available: $onlineVersion" -Class Information
 
-                # Ask user if they want to update
-                $title = "WimWitch-Reloaded Update"
-                $message = "A new version of WimWitch-Reloaded is available ($onlineVersion). Would you like to update?"
+                $inputXML = Get-Content -Path "$PSScriptRoot\resources\UI\Window_WimWitchUpgrade.xaml" -Raw
 
-                $options = @(
-                    [System.Management.Automation.Host.ChoiceDescription]::new("&Yes", "Update the module")
-                    [System.Management.Automation.Host.ChoiceDescription]::new("&No", "Skip this update")
-                )
-                $result = $Host.UI.PromptForChoice($title, $message, $options, 0)
+                $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window'
+                [xml]$xaml = $inputXML
+
+                $reader = (New-Object System.Xml.XmlNodeReader $xaml)
+                try {
+                    $form = [Windows.Markup.XamlReader]::Load($reader)
+                } catch {
+                Write-Warning @"
+Unable to parse XML, with error: $($Error[0])
+Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes
+(PowerShell cannot process them)
+"@
+                    throw
+                }
+
+                $xaml.SelectNodes('//*[@Name]') | ForEach-Object { "trying item $($_.Name)" | Out-Null
+                    try { Set-Variable -Name "WPF$($_.Name)" -Value $form.FindName($_.Name) -ErrorAction Stop }
+                    catch { throw }
+                }
+
+                # Replace placeholders in content
+                $textBlocks = $form.FindName('Grid').Children | Where-Object { $_ -is [System.Windows.Controls.TextBlock] }
+                foreach ($textBlock in $textBlocks) {
+                    $textBlock.Text = $textBlock.Text.Replace('$onlineVersion', $onlineVersion)
+                }
+
+                $result = -1
+
+                # Add event handlers
+                $form.FindName('btnYes').Add_Click({
+                    $result = 0
+                    $form.DialogResult = $true
+                })
+
+                $form.FindName('btnNo').Add_Click({
+                    $result = 1
+                    $form.DialogResult = $false
+                })
+
+                # Show the window
+                $form.ShowDialog() | Out-Null
 
                 if ($result -eq 0) {
                     Write-WimWitchLog -Data "Updating WimWitch-Reloaded module..." -Class Information
 
-                    $scope = if ((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-                        "AllUsers"
-                    } else {
-                        "CurrentUser"
-                    }
-
-                    # Remove current module if loaded
-                    if (Get-Module -Name "WimWitch-Reloaded") {
-                        Remove-Module -Name "WimWitch-Reloaded" -Force -ErrorAction SilentlyContinue
-                    }
-
                     # Update the module
-                    if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
-                        Update-Module -Name "WimWitch-Reloaded" -Force -Scope $scope -ErrorAction Stop
+                    # Check PowerShell version to determine if Scope parameter is supported
+                    if ($PSVersionTable.PSVersion.Major -ge 6) {
+                        # PowerShell Core 7+ supports -Scope parameter
+                        $scope = if ((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+                            "AllUsers"
+                        } else {
+                            "CurrentUser"
+                        }
+
+                        if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
+                            Update-Module -Name "WimWitch-Reloaded" -Force -Scope $scope -ErrorAction Stop
+                        }
+                    } else {
+                        # PowerShell 5.1 and earlier don't support -Scope parameter
+                        if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
+                            Update-Module -Name "WimWitch-Reloaded" -Force -ErrorAction Stop
+                        }
                     }
 
                     Write-WimWitchLog -Data "WimWitch-Reloaded module has been updated to version $onlineVersion" -Class Information

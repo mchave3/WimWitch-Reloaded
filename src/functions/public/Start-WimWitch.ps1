@@ -73,14 +73,6 @@ function Start-WimWitch {
     )
 
     process {
-        # Check for module updates automatically
-        $updateResult = Invoke-WimWitchUpgrade
-        if ($updateResult -eq "restart") {
-            Write-WimWitchLog -Data "Restarting WimWitch-Reloaded after update..." -Class Information
-            Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -Command Import-Module WimWitch-Reloaded; Start-WimWitch" -WindowStyle Normal
-            return
-        }
-
         # Retrieve available versions
         $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } |
             Sort-Object Version -Descending |
@@ -108,7 +100,7 @@ function Start-WimWitch {
 
         $reader = (New-Object System.Xml.XmlNodeReader $xaml)
         try {
-        $Form = [Windows.Markup.XamlReader]::Load($reader)
+        $form = [Windows.Markup.XamlReader]::Load($reader)
         } catch {
         Write-Warning @"
 Unable to parse XML, with error: $($Error[0])
@@ -124,7 +116,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         #===========================================================================
 
         $xaml.SelectNodes('//*[@Name]') | ForEach-Object { "trying item $($_.Name)" | Out-Null
-            try { Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name) -ErrorAction Stop }
+            try { Set-Variable -Name "WPF$($_.Name)" -Value $form.FindName($_.Name) -ErrorAction Stop }
             catch { throw }
         }
 
@@ -1035,9 +1027,19 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             $WPFImportBDJ.Visibility = 'Visible'
         }
 
+        # Check for module updates automatically
+        $form.Add_ContentRendered({
+            $updateResult = Invoke-WimWitchUpgrade
+            if ($updateResult -eq "restart") {
+                Write-WimWitchLog -Data "Restarting WimWitch-Reloaded after update..." -Class Information
+                $form.Close() # Close the form first
+                Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -Command Import-Module WimWitch-Reloaded; Start-WimWitch" -WindowStyle Normal
+            }
+        })
+
         #Start GUI
         Write-WimWitchLog -data 'Starting WIM Witch GUI' -class Information
-        $Form.ShowDialog() | Out-Null #This starts the GUI
+        $form.ShowDialog() | Out-Null #This starts the GUI
 
         #endregion Main
     }
