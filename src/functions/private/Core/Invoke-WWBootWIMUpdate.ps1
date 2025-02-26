@@ -32,7 +32,7 @@ function Invoke-WWBootWIMUpdate {
         #create mount point in staging
         try {
             Write-WimWitchLog -Data 'Creating mount point in staging folder...'
-            New-Item -Path $Script:workdir\staging `
+            New-Item -Path $script:workingDirectory\staging `
                     -Name 'mount' `
                     -ItemType Directory `
                     -ErrorAction Stop
@@ -46,18 +46,18 @@ function Invoke-WWBootWIMUpdate {
         #change attribute of boot.wim
         #Change file attribute to normal
         Write-WimWitchLog -Data 'Setting file attribute of boot.wim to Normal' -Class Information
-        $attrib = Get-Item $Script:workdir\staging\media\sources\boot.wim
+        $attrib = Get-Item $script:workingDirectory\staging\media\sources\boot.wim
         $attrib.Attributes = 'Normal'
 
-        $BootImages = Get-WindowsImage -ImagePath $Script:workdir\staging\media\sources\boot.wim
+        $BootImages = Get-WindowsImage -ImagePath $script:workingDirectory\staging\media\sources\boot.wim
         Foreach ($BootImage in $BootImages) {
             #Mount the PE Image
             try {
                 $text = 'Mounting PE image number ' + $BootImage.ImageIndex
                 Write-WimWitchLog -data $text -Class Information
                 Mount-WindowsImage `
-                    -ImagePath $Script:workdir\staging\media\sources\boot.wim `
-                    -Path $Script:workdir\staging\mount `
+                    -ImagePath $script:workingDirectory\staging\media\sources\boot.wim `
+                    -Path $script:workingDirectory\staging\mount `
                     -Index $BootImage.ImageIndex `
                     -ErrorAction Stop
             } catch {
@@ -74,7 +74,7 @@ function Invoke-WWBootWIMUpdate {
             #Dismount the PE Image
             try {
                 Write-WimWitchLog -data 'Dismounting Windows PE image...' -Class Information
-                Dismount-WindowsImage -Path $Script:workdir\staging\mount -Save -ErrorAction Stop
+                Dismount-WindowsImage -Path $script:workingDirectory\staging\mount -Save -ErrorAction Stop
             } catch {
                 Write-WimWitchLog -data 'Could not dismount the winpe image.' -Class Error
                 Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -84,9 +84,9 @@ function Invoke-WWBootWIMUpdate {
             Try {
                 Write-WimWitchLog -data 'Exporting WinPE image index...' -Class Information
                 Export-WindowsImage `
-                    -SourceImagePath $Script:workdir\staging\media\sources\boot.wim `
+                    -SourceImagePath $script:workingDirectory\staging\media\sources\boot.wim `
                     -SourceIndex $BootImage.ImageIndex `
-                    -DestinationImagePath $Script:workdir\staging\tempboot.wim `
+                    -DestinationImagePath $script:workingDirectory\staging\tempboot.wim `
                     -ErrorAction Stop
             } catch {
                 Write-WimWitchLog -Data 'Failed to export WinPE image' -Class Error
@@ -97,7 +97,7 @@ function Invoke-WWBootWIMUpdate {
         #Overwrite the stock boot.wim file with the updated one
         try {
             Write-WimWitchLog -Data 'Overwriting boot.wim with updated and optimized version...' -Class Information
-            Move-Item -Path $Script:workdir\staging\tempboot.wim -Destination $Script:workdir\staging\media\sources\boot.wim -Force -ErrorAction Stop
+            Move-Item -Path $script:workingDirectory\staging\tempboot.wim -Destination $script:workingDirectory\staging\media\sources\boot.wim -Force -ErrorAction Stop
             Write-WimWitchLog -Data 'Boot.WIM updated successfully' -Class Information
         } catch {
             Write-WimWitchLog -Data 'Could not copy the updated boot.wim' -Class Error

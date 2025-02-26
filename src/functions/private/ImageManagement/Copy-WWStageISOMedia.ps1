@@ -36,12 +36,12 @@ function Copy-WWStageISOMedia {
         $OS = Get-WWWindowsType
 
         #$Ver = (Get-WWWindowsVersionNumber)
-        $Ver = $Script:MISWinVer
+        $Ver = $script:MISWinVer
 
         #create staging folder
         try {
             Write-WimWitchLog -Data 'Creating staging folder for media' -Class Information
-            New-Item -Path $Script:workdir\staging -Name 'Media' -ItemType Directory -ErrorAction Stop | Out-Null
+            New-Item -Path $script:workingDirectory\staging -Name 'Media' -ItemType Directory -ErrorAction Stop | Out-Null
             Write-WimWitchLog -Data 'Media staging folder has been created' -Class Information
         } catch {
             Write-WimWitchLog -Data 'Could not create staging folder' -Class Error
@@ -51,7 +51,7 @@ function Copy-WWStageISOMedia {
         #copy source to staging
         try {
             Write-WimWitchLog -data 'Staging media binaries...' -Class Information
-            Copy-Item -Path $Script:workdir\imports\iso\$OS\$Ver\* -Destination $Script:workdir\staging\media -Force -Recurse -ErrorAction Stop
+            Copy-Item -Path $script:workingDirectory\imports\iso\$OS\$Ver\* -Destination $script:workingDirectory\staging\media -Force -Recurse -ErrorAction Stop
             Write-WimWitchLog -data 'Media files have been staged' -Class Information
         } catch {
             Write-WimWitchLog -Data 'Failed to stage media binaries...' -Class Error

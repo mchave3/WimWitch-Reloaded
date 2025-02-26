@@ -59,29 +59,29 @@ function Invoke-WWConfigManagerUpdateSupersedence {
 
         Write-WimWitchLog -data 'Checking files for supersedense...' -Class Information
 
-        if ((Test-Path -Path "$Script:workdir\updates\$Prod\$ver\") -eq $False) {
+        if ((Test-Path -Path "$script:workingDirectory\updates\$Prod\$ver\") -eq $False) {
             Write-WimWitchLog -Data 'Folder doesnt exist. Skipping supersedence check...' -Class Warning
             return
         }
 
         #For every folder under updates\prod\ver
-        $FolderFirstLevels = Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\"
+        $FolderFirstLevels = Get-ChildItem -Path "$script:workingDirectory\updates\$Prod\$ver\"
         foreach ($FolderFirstLevel in $FolderFirstLevels) {
 
             #For every folder under updates\prod\ver\class
-            $FolderSecondLevels = Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel"
+            $FolderSecondLevels = Get-ChildItem -Path "$script:workingDirectory\updates\$Prod\$ver\$FolderFirstLevel"
             foreach ($FolderSecondLevel in $FolderSecondLevels) {
 
                 #for every cab under updates\prod\ver\class\update
                 $UpdateCabs = (Get-ChildItem -Path (
-                    "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
+                    "$script:workingDirectory\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
                 ))
                 foreach ($UpdateCab in $UpdateCabs) {
                     Write-WimWitchLog -data "Checking update file name $UpdateCab" -Class Information
                     $UpdateItem = Get-CimInstance `
-                        -Namespace "root\SMS\Site_$($Script:SiteCode)" `
+                        -Namespace "root\SMS\Site_$($script:SiteCode)" `
                         -ClassName SMS_SoftwareUpdate `
-                        -ComputerName $Script:SiteServer `
+                        -ComputerName $script:SiteServer `
                         -Filter $WMIQueryFilter `
                         -ErrorAction Stop |
                         Where-Object { ($_.LocalizedDisplayName -eq $FolderSecondLevel) }
@@ -92,7 +92,7 @@ function Invoke-WWConfigManagerUpdateSupersedence {
                     } else {
                         Write-WimWitchLog -Data "Update $UpdateCab is superseded. Deleting file..." -Class Warning
                         Remove-Item -Path (
-                            "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel\$UpdateCab"
+                            "$script:workingDirectory\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel\$UpdateCab"
                         )
                     }
                 }
@@ -100,24 +100,24 @@ function Invoke-WWConfigManagerUpdateSupersedence {
         }
 
         Write-WimWitchLog -Data 'Cleaning folders...' -Class Information
-        $FolderFirstLevels = Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\"
+        $FolderFirstLevels = Get-ChildItem -Path "$script:workingDirectory\updates\$Prod\$ver\"
         foreach ($FolderFirstLevel in $FolderFirstLevels) {
 
             #For every folder under updates\prod\ver\class
-            $FolderSecondLevels = Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel"
+            $FolderSecondLevels = Get-ChildItem -Path "$script:workingDirectory\updates\$Prod\$ver\$FolderFirstLevel"
             foreach ($FolderSecondLevel in $FolderSecondLevels) {
 
                 #for every cab under updates\prod\ver\class\update
-                $UpdateCabs = (Get-ChildItem -Path "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel")
+                $UpdateCabs = (Get-ChildItem -Path "$script:workingDirectory\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel")
 
                 if ($null -eq $UpdateCabs) {
                     Write-WimWitchLog -Data "$FolderSecondLevel is empty. Deleting...." -Class Warning
-                    Remove-Item -Path "$Script:workdir\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
+                    Remove-Item -Path "$script:workingDirectory\updates\$Prod\$ver\$FolderFirstLevel\$FolderSecondLevel"
                 }
             }
         }
 
-        Set-Location $Script:workdir
+        Set-Location $script:workingDirectory
         Write-WimWitchLog -data 'Supersedence check complete' -class Information
     }
 }

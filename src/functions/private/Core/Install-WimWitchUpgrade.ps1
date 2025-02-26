@@ -45,7 +45,7 @@ function Install-WimWitchUpgrade {
             Backup-WIMWitch
 
             try {
-                Save-Script -Name 'WIMWitch' -Path $Script:workdir -Force -ErrorAction Stop
+                Save-Script -Name 'WIMWitch' -Path $script:workingDirectory -Force -ErrorAction Stop
                 Write-Output 'New version has been applied. WIM Witch will now exit.'
                 Write-Output 'Please restart WIM Witch'
                 exit

@@ -32,7 +32,7 @@ function Select-WWLocalExperiencePack {
     )
 
     process {
-        $LPSourceFolder = $Script:workdir + '\imports\lang\' + $WinOS + '\' + $winver + '\' + 'localexperiencepack' + '\'
+        $LPSourceFolder = $script:workingDirectory + '\imports\lang\' + $WinOS + '\' + $winver + '\' + 'localexperiencepack' + '\'
 
         $items = (Get-ChildItem -Path $LPSourceFolder | Select-Object -Property Name | Out-GridView -Title 'Select Local Experience Packs' -PassThru)
         foreach ($item in $items) { $WPFCustomLBLEP.Items.Add($item.name) }

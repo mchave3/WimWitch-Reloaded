@@ -30,7 +30,7 @@ function Select-WWSourceWIM {
 
     process {
         $SourceWIM = New-Object System.Windows.Forms.OpenFileDialog -Property @{
-            InitialDirectory = "$Script:workdir\imports\wim"
+            InitialDirectory = "$script:workingDirectory\imports\wim"
             Filter           = 'WIM (*.wim)|'
         }
         $null = $SourceWIM.ShowDialog()

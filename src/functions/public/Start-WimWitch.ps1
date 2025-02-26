@@ -69,10 +69,7 @@ function Start-WimWitch {
 
         [parameter(mandatory = $false, HelpMessage = 'CM Option')]
         [ValidateSet('New', 'Edit')]
-        [string]$CM = 'none',
-
-        [parameter(mandatory = $false, HelpMessage = 'Select working directory')]
-        [string]$Script:workdir
+        [string]$CM = 'none'
     )
 
     process {
@@ -150,9 +147,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         Write-WWOpeningMessage
 
-        # Get-WWFormVariable #lists all WPF variables
-        $Script:workdir = Select-WWWorkingDirectory
-        Test-WWWorkingDirectory
+        # Sets the working directory
+        Invoke-WWWorkingDirectory
 
         # Clears out old logs from previous builds and checks for other folders
         Initialize-WimWitchEnvironment
@@ -161,9 +157,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         Test-WWAdministrator
 
         # Setting default values for the WPF form
-        $WPFMISWimFolderTextBox.Text = "$Script:workdir\CompletedWIMs"
-        $WPFMISMountTextBox.Text = "$Script:workdir\Mount"
-        $WPFJSONTextBoxSavePath.Text = "$Script:workdir\Autopilot"
+        $WPFMISWimFolderTextBox.Text = "$script:workingDirectory\CompletedWIMs"
+        $WPFMISMountTextBox.Text = "$script:workingDirectory\Mount"
+        $WPFJSONTextBoxSavePath.Text = "$script:workingDirectory\Autopilot"
 
 
         ##################
@@ -202,7 +198,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         $WPFMISAppxTextBox.Text = 'False'
 
-        $Script:Win10VerDet = ''
+        $script:Win10VerDet = ''
 
         #===========================================================================
         # Section for Combo box Functions
@@ -212,9 +208,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         $ObjectTypes = @('Language Pack', 'Local Experience Pack', 'Feature On Demand')
         $WinOS = @('Windows Server', 'Windows 10', 'Windows 11')
-        $Script:WinSrvVer = @('2019', '21H2')
-        $Script:Win10Ver = @('1809', '2004')
-        $Script:Win11Ver = @('21H2', '22H2', '23H2')
+        $script:WinSrvVer = @('2019', '21H2')
+        $script:Win10Ver = @('1809', '2004')
+        $script:Win11Ver = @('21H2', '22H2', '23H2')
 
         Foreach ($ObjectType in $ObjectTypes) { $WPFImportOtherCBType.Items.Add($ObjectType) | Out-Null }
         Foreach ($WinOS in $WinOS) { $WPFImportOtherCBWinOS.Items.Add($WinOS) | Out-Null }
@@ -471,7 +467,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFDriverDir5Button.Add_Click( { Select-WWDriverSource -DriverTextBoxNumber $WPFDriverDir5TextBox })
 
         #Make it So Button, which builds the WIM file
-        $WPFMISMakeItSoButton.Add_Click( { Invoke-WWMakeItSo -appx $Script:SelectedAppx })
+        $WPFMISMakeItSoButton.Add_Click( { Invoke-WWMakeItSo -appx $script:SelectedAppx })
 
         #Update OSDBuilder Button
         $WPFUpdateOSDBUpdateButton.Add_Click( {
@@ -483,7 +479,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFUpdatesDownloadNewButton.Add_Click( { Sync-WWWindowsUpdateSource })
 
         #Select Appx packages to remove
-        $WPFAppxButton.Add_Click( { $Script:SelectedAppx = Select-WWAppx })
+        $WPFAppxButton.Add_Click( { $script:SelectedAppx = Select-WWAppx })
 
         #Select Autopilot path to save button
         $WPFJSONButtonSavePath.Add_Click( { Select-WWNewJSONDirectory })
@@ -603,8 +599,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Button to Select ConfigMgr Image Package
         $WPFCMBSelectImage.Add_Click({
-            $image = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_ImagePackage `
-                -ComputerName $Script:SiteServer |
+            $image = Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" -ClassName SMS_ImagePackage `
+                -ComputerName $script:SiteServer |
                 Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description |
                 Out-GridView -Title 'Pick an image' -PassThru
 

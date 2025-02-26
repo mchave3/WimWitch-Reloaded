@@ -51,7 +51,7 @@ function Deploy-WWUpdate {
             reg UNLOAD HKLM\OFFLINE | Out-Null
         }
         If (($WPFSourceWimVerTextBox.text -like '10.0.18362.*') -and (($class -eq 'Dynamic') -or ($class -like 'PE*'))) {
-            $windowsver = Get-WindowsImage -ImagePath ($Script:workdir + '\staging\' + $WPFMISWimNameTextBox.text) -Index 1
+            $windowsver = Get-WindowsImage -ImagePath ($script:workingDirectory + '\staging\' + $WPFMISWimNameTextBox.text) -Index 1
             $Vardate = (Get-Date -Year 2019 -Month 10 -Day 01)
             if ($windowsver.CreatedTime -gt $vardate) { $buildnum = 1909 }
             else
@@ -65,7 +65,7 @@ function Deploy-WWUpdate {
             $IsPE = $true
             $class = 'LCU'
         }
-        $path = $Script:workdir + '\updates\' + $OS + '\' + $buildnum + '\' + $class + '\'
+        $path = $script:workingDirectory + '\updates\' + $OS + '\' + $buildnum + '\' + $class + '\'
         if ((Test-Path $path) -eq $False) {
             Write-WimWitchLog -data "$path does not exist. There are no updates of this class to apply" -class Warning
             return
@@ -77,7 +77,7 @@ function Deploy-WWUpdate {
             try {
                 if ($class -eq 'Dynamic') {
                     #Write-WimWitchLog -data "Applying Dynamic to media" -Class Information
-                    $mediafolder = $Script:workdir + '\staging\media\sources'
+                    $mediafolder = $script:workingDirectory + '\staging\media\sources'
                     $DynUpdates = (Get-ChildItem -Path $compound -Name)
                     foreach ($DynUpdate in $DynUpdates) {
                         $text = $compound + '\' + $DynUpdate
@@ -85,7 +85,7 @@ function Deploy-WWUpdate {
                         Start-Process -FilePath c:\windows\system32\expand.exe -ArgumentList $expandArgs -Wait
                     }
                 } elseif ($IsPE -eq $true) {
-                    Add-WindowsPackage -Path ($Script:workdir + '\staging\mount') `
+                    Add-WindowsPackage -Path ($script:workingDirectory + '\staging\mount') `
                     -PackagePath $compound -ErrorAction stop | Out-Null
                 }
                 else {

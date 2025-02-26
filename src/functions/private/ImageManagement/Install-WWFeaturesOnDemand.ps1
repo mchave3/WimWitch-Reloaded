@@ -42,7 +42,7 @@ function Install-WWFeaturesOnDemand {
             $winver = '2004'
         }
 
-        $FODsource = $Script:workdir + '\imports\FODs\' + $winOS + '\' + $Winver + '\'
+        $FODsource = $script:workingDirectory + '\imports\FODs\' + $winOS + '\' + $Winver + '\'
         $items = $WPFCustomLBFOD.items
 
         foreach ($item in $items) {

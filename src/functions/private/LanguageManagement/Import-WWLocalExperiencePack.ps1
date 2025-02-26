@@ -44,12 +44,12 @@ function Import-WWLocalExperiencePack {
 
         Write-WimWitchLog -Data 'Importing Local Experience Packs...' -Class Information
 
-        if ((Test-Path -Path $Script:workdir\imports\Lang\$WinOS\$winver\localexperiencepack) -eq $False) {
+        if ((Test-Path -Path $script:workingDirectory\imports\Lang\$WinOS\$winver\localexperiencepack) -eq $False) {
             Write-WimWitchLog -Data 'Destination folder does not exist. Creating...' -Class Warning
-            $path = $Script:workdir + '\imports\Lang\' + $WinOS + '\' + $winver + '\localexperiencepack'
+            $path = $script:workingDirectory + '\imports\Lang\' + $WinOS + '\' + $winver + '\localexperiencepack'
             $text = 'Creating folder ' + $path
             Write-WimWitchLog -data $text -Class Information
-            New-Item -Path $Script:workdir\imports\Lang\$WinOS\$winver -Name localexperiencepack -ItemType Directory
+            New-Item -Path $script:workingDirectory\imports\Lang\$WinOS\$winver -Name localexperiencepack -ItemType Directory
             Write-WimWitchLog -Data 'Folder created successfully' -Class Information
         }
 
@@ -60,8 +60,8 @@ function Import-WWLocalExperiencePack {
             $text = 'Creating destination folder for ' + $item
             Write-WimWitchLog -Data $text -Class Information
 
-            if ((Test-Path -Path $Script:workdir\imports\lang\$WinOS\$winver\localexperiencepack\$name) -eq $False) {
-                New-Item -Path $Script:workdir\imports\lang\$WinOS\$winver\localexperiencepack -Name $name -ItemType Directory
+            if ((Test-Path -Path $script:workingDirectory\imports\lang\$WinOS\$winver\localexperiencepack\$name) -eq $False) {
+                New-Item -Path $script:workingDirectory\imports\lang\$WinOS\$winver\localexperiencepack -Name $name -ItemType Directory
             }
             else {
                 $text = 'The folder for ' + $item + ' already exists. Skipping creation...'
@@ -69,7 +69,7 @@ function Import-WWLocalExperiencePack {
             }
 
             Write-WimWitchLog -Data 'Copying source to destination folders...' -Class Information
-            Get-ChildItem -Path $source | Copy-Item -Destination $Script:workdir\imports\Lang\$WinOS\$Winver\LocalExperiencePack\$name -Force
+            Get-ChildItem -Path $source | Copy-Item -Destination $script:workingDirectory\imports\Lang\$WinOS\$Winver\LocalExperiencePack\$name -Force
         }
         Write-WimWitchLog -Data 'Importation complete' -Class Information
     }
