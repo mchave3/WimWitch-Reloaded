@@ -150,9 +150,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         Write-WWOpeningMessage
 
-        # Get-WWFormVariable #lists all WPF variables
-        $script:workingDirectory = Select-WWWorkingDirectory
-        Test-WWWorkingDirectory
+        # Sets the working directory
+        Invoke-WWWorkingDirectory
 
         # Clears out old logs from previous builds and checks for other folders
         Initialize-WimWitchEnvironment
