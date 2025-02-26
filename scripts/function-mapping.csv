@@ -41,7 +41,7 @@ Import-WWVersionCallback,Import-WWVersionCallback
 Import-WWWIMInformation,Import-WWWIMInformation
 Import-WWWindowsISO,Import-WWWindowsISO
 Initialize-WimWitchEnvironment,Initialize-WimWitchEnvironment
-Install-WimWitchUpgrade,Install-WimWitchUpgrade
+Invoke-WimWitchUpgrade,Invoke-WimWitchUpgrade
 Install-WWAutopilotModule,Install-WWAutopilotModule
 Install-WWConfigManagerConsoleExtension,Install-WWConfigManagerConsoleExtension
 Install-WWDefaultApplicationAssociation,Install-WWDefaultApplicationAssociation

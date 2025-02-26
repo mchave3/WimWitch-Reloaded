@@ -73,6 +73,19 @@ function Start-WimWitch {
     )
 
     process {
+        # Set GUI mode flag for modules that need to know context
+        $script:isGUIMode = $true
+        
+        # Check for module updates automatically (unless explicitly disabled)
+        
+        $updateResult = Update-WimWitchModule
+        if ($updateResult.Action -eq "Restart") {
+            # If update applied and restart requested, re-launch the module
+            Write-WimWitchLog -Data "Restarting WimWitch-Reloaded after update..." -Class Information
+            Start-Process -FilePath "powershell.exe" -ArgumentList "-Command Import-Module WimWitch-Reloaded; Start-WimWitch" -WindowStyle Normal
+            return
+        }
+
         # Retrieve available versions
         $module = Get-Module | Where-Object { $_.Name -match "WimWitch-Reloaded" } |
             Sort-Object Version -Descending |
@@ -111,6 +124,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         }
 
         #===========================================================================
+
         # Load XAML Objects In PowerShell
         #===========================================================================
 
@@ -140,6 +154,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #region Main
         #===========================================================================
+
         # Run commands to set values of files and variables, etc.
         #===========================================================================
 
@@ -184,6 +199,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         ###################
 
         #===========================================================================
+
         # Set default values for certain variables
         #===========================================================================
 
@@ -201,6 +217,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $script:Win10VerDet = ''
 
         #===========================================================================
+
         # Section for Combo box Functions
         #===========================================================================
 
@@ -444,6 +461,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         }
 
         #===========================================================================
+
         # Section for Buttons to call Functions
         #===========================================================================
 
@@ -692,6 +710,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
 
         #===========================================================================
+
         # Section for Checkboxes to call Functions
         #===========================================================================
 
@@ -977,6 +996,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #==========================================================
+
         #Run WIM Witch below
         #==========================================================
 

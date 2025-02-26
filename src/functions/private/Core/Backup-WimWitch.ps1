@@ -1,9 +1,10 @@
 ﻿<#
 .SYNOPSIS
-    Backup the existing WimWitch script before upgrading to a new version.
+    Create a backup of the WimWitch-Reloaded module settings and configuration.
 
 .DESCRIPTION
-    This function is used to backup the existing WimWitch script before upgrading to a new version.
+    This function creates a backup of the current WimWitch-Reloaded module settings and configuration.
+    It exports the module configuration to a backup file and stores it in the backup directory.
 
 .NOTES
     Name:        Backup-WimWitch.ps1
@@ -13,7 +14,7 @@
     Repository:  https://github.com/mchave3/WimWitch-Reloaded
     License:     MIT License
 
-    Based on original WIM-Witch by TheNotoriousDRR :
+    Based on original WIM-Witch by TheNotoriousDRR:
     https://github.com/thenotoriousdrr/WIM-Witch
 
 .LINK
@@ -25,32 +26,95 @@
 function Backup-WimWitch {
     [CmdletBinding()]
     param(
-
+        [Parameter()]
+        [string]$BackupName,
+        
+        [Parameter()]
+        [switch]$IncludeSettings,
+        
+        [Parameter()]
+        [switch]$IncludeTemplates,
+        
+        [Parameter()]
+        [switch]$Full
     )
 
     process {
-        Write-WimWitchLog -data 'Backing up existing WimWitch script...' -Class Information
+        Write-WimWitchLog -data 'Creating WimWitch-Reloaded backup...' -Class Information
 
-        $scriptname = Split-Path $MyInvocation.PSCommandPath -Leaf #Find local script name
-        Write-WimWitchLog -data 'The script to be backed up is: ' -Class Information
-        Write-WimWitchLog -data $MyInvocation.PSCommandPath -Class Information
-        try {
-            Write-WimWitchLog -data 'Copy script to backup folder...' -Class Information
-            Copy-Item -Path $scriptname -Destination $script:workingDirectory\backup -ErrorAction Stop
-            Write-WimWitchLog -Data 'Successfully copied...' -Class Information
-        } catch {
-            Write-WimWitchLog -data "Couldn't copy the WimWitch script. My guess is a permissions issue" -Class Error
-            Write-WimWitchLog -Data 'Exiting out of an over abundance of caution' -Class Error
-            exit
+        # Create timestamp for backup file name
+        $timestamp = Get-Date -Format "yyyy-MM-dd_HHmmss"
+        $backupName = if ($BackupName) { $BackupName } else { "WimWitch-Backup-$timestamp" }
+        
+        # Ensure backup directory exists
+        $backupDir = Join-Path -Path $script:workingDirectory -ChildPath "backup"
+        if (-not (Test-Path -Path $backupDir)) {
+            New-Item -Path $backupDir -ItemType Directory -Force | Out-Null
+            Write-WimWitchLog -data "Created backup directory: $backupDir" -Class Information
         }
+        
         try {
-            Write-WimWitchLog -data 'Renaming archived script...' -Class Information
-            Rename-WWName -file $script:workingDirectory\backup\$scriptname -extension '.ps1'
-            Write-WimWitchLog -data 'Backup successfully renamed for archiving' -class Information
+            $backupPath = Join-Path -Path $backupDir -ChildPath "$backupName.zip"
+            
+            # Create a temporary directory for items to back up
+            $tempBackupDir = Join-Path -Path $env:TEMP -ChildPath "WimWitchBackup_$timestamp"
+            New-Item -Path $tempBackupDir -ItemType Directory -Force | Out-Null
+            
+            # Always back up the configuration
+            $configDir = Join-Path -Path $script:workingDirectory -ChildPath "Config"
+            if (Test-Path -Path $configDir) {
+                Copy-Item -Path $configDir -Destination $tempBackupDir -Recurse -Force
+            }
+            
+            # Back up settings if requested or doing a full backup
+            if ($IncludeSettings -or $Full) {
+                $settingsFile = Join-Path -Path $script:workingDirectory -ChildPath "settings.xml"
+                if (Test-Path -Path $settingsFile) {
+                    Copy-Item -Path $settingsFile -Destination $tempBackupDir -Force
+                }
+                
+                # Create module information file
+                $moduleInfo = Get-Module -Name "WimWitch-Reloaded" -ListAvailable | 
+                    Sort-Object Version -Descending | 
+                    Select-Object -First 1 |
+                    Select-Object Name, Version, Path, ModuleBase
+                
+                $moduleInfoFile = Join-Path -Path $tempBackupDir -ChildPath "ModuleInfo.json"
+                $moduleInfo | ConvertTo-Json | Out-File -FilePath $moduleInfoFile -Force
+            }
+            
+            # Back up templates if requested or doing a full backup
+            if ($IncludeTemplates -or $Full) {
+                $templateDir = Join-Path -Path $script:workingDirectory -ChildPath "Templates"
+                if (Test-Path -Path $templateDir) {
+                    Copy-Item -Path $templateDir -Destination $tempBackupDir -Recurse -Force
+                }
+            }
+            
+            # Create the ZIP file
+            if (Test-Path -Path $tempBackupDir) {
+                # Use Compress-Archive to create the backup
+                Compress-Archive -Path "$tempBackupDir\*" -DestinationPath $backupPath -Force
+                
+                # Clean up temp directory
+                Remove-Item -Path $tempBackupDir -Recurse -Force -ErrorAction SilentlyContinue
+                
+                Write-WimWitchLog -Data "Backup successfully created at: $backupPath" -Class Information
+                return $backupPath
+            } else {
+                Write-WimWitchLog -Data "Failed to create backup - no items found to back up" -Class Error
+                return $false
+            }
         } catch {
-            Write-WimWitchLog -Data "Backed-up script couldn't be renamed. This isn't a critical error" -Class Warning
-            Write-WimWitchLog -Data "You may want to change it's name so it doesn't get overwritten." -Class Warning
-            Write-WimWitchLog -Data 'Continuing with WimWitch upgrade...' -Class Warning
+            Write-WimWitchLog -Data "Error creating backup: $_" -Class Error
+            Write-WimWitchLog -Data $_.Exception.Message -Class Error
+            
+            # Clean up temp directory if it exists
+            if (Test-Path -Path $tempBackupDir) {
+                Remove-Item -Path $tempBackupDir -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            
+            return $false
         }
     }
 }

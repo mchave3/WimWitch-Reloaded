@@ -208,7 +208,7 @@ src/functions/
 
 <hr style="border-top: 1px dashed #ccc">
 
-#### [`Install-WimWitchUpgrade`](private/Core/Install-WimWitchUpgrade.ps1)
+#### [`Invoke-WimWitchUpgrade`](private/Core/Invoke-WimWitchUpgrade.ps1)
 > Manages WimWitch upgrades.
 
 **Purpose:**
