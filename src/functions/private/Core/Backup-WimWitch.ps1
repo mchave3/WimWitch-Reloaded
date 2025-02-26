@@ -14,26 +14,26 @@
     Repository:  https://github.com/mchave3/WimWitch-Reloaded
     License:     MIT License
 
-    Based on original WIM-Witch by TheNotoriousDRR:
+Based on original WIM-Witch by TheNotoriousDRR:
+    https://github.com/thenotoriousdrr/WIM-Witch
+
+Based on original WIM-Witch by TheNotoriousDRR:
     https://github.com/thenotoriousdrr/WIM-Witch
 
 .LINK
     https://github.com/mchave3/WimWitch-Reloaded
 
-.EXAMPLE
-    Backup-WimWitch
+.PARAMETER BackupName
+    Custom name for the backup file. If not specified, a timestamp will be used.
+
+.PARAMETER Full
+    Create a full backup including settings and templates.
 #>
 function Backup-WimWitch {
     [CmdletBinding()]
     param(
         [Parameter()]
         [string]$BackupName,
-        
-        [Parameter()]
-        [switch]$IncludeSettings,
-        
-        [Parameter()]
-        [switch]$IncludeTemplates,
         
         [Parameter()]
         [switch]$Full
@@ -66,25 +66,23 @@ function Backup-WimWitch {
                 Copy-Item -Path $configDir -Destination $tempBackupDir -Recurse -Force
             }
             
-            # Back up settings if requested or doing a full backup
-            if ($IncludeSettings -or $Full) {
-                $settingsFile = Join-Path -Path $script:workingDirectory -ChildPath "settings.xml"
-                if (Test-Path -Path $settingsFile) {
-                    Copy-Item -Path $settingsFile -Destination $tempBackupDir -Force
-                }
-                
-                # Create module information file
-                $moduleInfo = Get-Module -Name "WimWitch-Reloaded" -ListAvailable | 
-                    Sort-Object Version -Descending | 
-                    Select-Object -First 1 |
-                    Select-Object Name, Version, Path, ModuleBase
-                
-                $moduleInfoFile = Join-Path -Path $tempBackupDir -ChildPath "ModuleInfo.json"
-                $moduleInfo | ConvertTo-Json | Out-File -FilePath $moduleInfoFile -Force
+            # Always include settings in backups during module updates
+            $settingsFile = Join-Path -Path $script:workingDirectory -ChildPath "settings.xml"
+            if (Test-Path -Path $settingsFile) {
+                Copy-Item -Path $settingsFile -Destination $tempBackupDir -Force
             }
             
+            # Create module information file
+            $moduleInfo = Get-Module -Name "WimWitch-Reloaded" -ListAvailable | 
+                Sort-Object Version -Descending | 
+                Select-Object -First 1 |
+                Select-Object Name, Version, Path, ModuleBase
+            
+            $moduleInfoFile = Join-Path -Path $tempBackupDir -ChildPath "ModuleInfo.json"
+            $moduleInfo | ConvertTo-Json | Out-File -FilePath $moduleInfoFile -Force
+            
             # Back up templates if requested or doing a full backup
-            if ($IncludeTemplates -or $Full) {
+            if ($Full) {
                 $templateDir = Join-Path -Path $script:workingDirectory -ChildPath "Templates"
                 if (Test-Path -Path $templateDir) {
                     Copy-Item -Path $templateDir -Destination $tempBackupDir -Recurse -Force

@@ -1,13 +1,10 @@
 ﻿<#
 .SYNOPSIS
-    This function will check for updates to the WimWitch-Reloaded module and prompt the user
-    to upgrade if a new version is available. This is a wrapper around the Update-WimWitchModule
-    function that provides backward compatibility with the original upgrade mechanism.
+    This function will check for updates to the WimWitch-Reloaded module and update if needed.
 
 .DESCRIPTION
-    This function will check for updates to the WimWitch-Reloaded module and prompt the user
-    to upgrade if a new version is available. This is a wrapper around the Update-WimWitchModule
-    function that provides backward compatibility with the original upgrade mechanism.
+    This function will check for updates to the WimWitch-Reloaded module and update if available.
+    It also handles creating a backup before updating and provides a smooth upgrade experience.
 
 .NOTES
     Name:        Invoke-WimWitchUpgrade.ps1
@@ -28,44 +25,49 @@
 #>
 function Invoke-WimWitchUpgrade {
     [CmdletBinding()]
+    [OutputType([System.String])]
     param(
-        [Parameter()]
-        [switch]$Force
+
     )
 
     process {
         Write-WimWitchLog -Data "Checking for WimWitch-Reloaded module updates..." -Class Information
-        
-        # Call the new update module function
-        $updateResult = Update-WimWitchModule -NoPrompt:$Force
-        
+
+        # Call the update module function to check for updates
+        $updateResult = Update-WimWitchModule
+
         # Handle the result
         switch ($updateResult.Action) {
-            "Updated" {
-                Write-WimWitchLog -Data "WimWitch-Reloaded updated to version $($updateResult.Version)" -Class Information
-                Write-WimWitchLog -Data "Please restart PowerShell to apply the changes" -Class Warning
-                return $true
-            }
-            "Restart" {
-                Write-WimWitchLog -Data "WimWitch-Reloaded updated to version $($updateResult.Version) - restarting..." -Class Information
-                # The restart will be handled by the caller
-                return "restart"
-            }
             "Current" {
                 Write-WimWitchLog -Data "WimWitch-Reloaded is already at the latest version ($($updateResult.Version))" -Class Information
-                return $false
+                return $null
             }
             "Declined" {
                 Write-WimWitchLog -Data "Update to version $($updateResult.Version) declined by user" -Class Information
-                return $false
+                return $null
             }
             "Error" {
                 Write-WimWitchLog -Data "Error during update check: $($updateResult.Error)" -Class Error
-                return $false
+                return $null
+            }
+            "Update" {
+                # Create backup before updating
+                Write-WimWitchLog -Data "Creating backup before updating to version $($updateResult.Version)..." -Class Information
+                $backupPath = Backup-WimWitch -Full
+
+                if ($backupPath) {
+                    Write-WimWitchLog -Data "Backup created successfully at: $backupPath" -Class Information
+
+                    # Perform update - the Update-WimWitchModule will have set up everything for restarting
+                    return "restart"
+                } else {
+                    Write-WimWitchLog -Data "Failed to create backup. Update cancelled." -Class Error
+                    return $null
+                }
             }
             default {
                 Write-WimWitchLog -Data "Unknown result from update check" -Class Warning
-                return $false
+                return $null
             }
         }
     }

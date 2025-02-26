@@ -73,16 +73,11 @@ function Start-WimWitch {
     )
 
     process {
-        # Set GUI mode flag for modules that need to know context
-        $script:isGUIMode = $true
-        
-        # Check for module updates automatically (unless explicitly disabled)
-        
-        $updateResult = Update-WimWitchModule
-        if ($updateResult.Action -eq "Restart") {
-            # If update applied and restart requested, re-launch the module
+        # Check for module updates automatically
+        $updateResult = Invoke-WimWitchUpgrade
+        if ($updateResult -eq "restart") {
             Write-WimWitchLog -Data "Restarting WimWitch-Reloaded after update..." -Class Information
-            Start-Process -FilePath "powershell.exe" -ArgumentList "-Command Import-Module WimWitch-Reloaded; Start-WimWitch" -WindowStyle Normal
+            Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -Command Import-Module WimWitch-Reloaded; Start-WimWitch" -WindowStyle Normal
             return
         }
 
