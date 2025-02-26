@@ -146,7 +146,3 @@ function Invoke-WWConfigManagerUpdateCatalog {
     }
 }
 
-
-
-
-

@@ -44,6 +44,3 @@ function Compare-WWOSDSUSVersion {
     }
 }
 
-
-
-

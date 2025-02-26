@@ -51,6 +51,3 @@ function Get-WWOSDSUSInstallation {
     }
 }
 
-
-
-

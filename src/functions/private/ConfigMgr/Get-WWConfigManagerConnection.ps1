@@ -70,6 +70,3 @@ function Get-WWConfigManagerConnection {
     }
 }
 
-
-
-

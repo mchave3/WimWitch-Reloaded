@@ -55,6 +55,3 @@ function Backup-WimWitch {
     }
 }
 
-
-
-

@@ -104,6 +104,3 @@ function Get-WWAutopilotProfile {
     }
 }
 
-
-
-

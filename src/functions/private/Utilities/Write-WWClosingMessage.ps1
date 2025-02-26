@@ -38,6 +38,3 @@ function Write-WWClosingMessage {
     }
 }
 
-
-
-
