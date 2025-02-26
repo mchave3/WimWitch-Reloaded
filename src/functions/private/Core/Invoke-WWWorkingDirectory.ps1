@@ -49,8 +49,6 @@ function Invoke-WWWorkingDirectory {
                 'Backup'
             )
 
-            Write-Output $script:workingDirectory
-
             # Check that $script:workingDirectory is defined
             if (-not $script:workingDirectory) {
                 throw "Working directory is not defined"

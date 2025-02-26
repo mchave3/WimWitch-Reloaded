@@ -69,10 +69,7 @@ function Start-WimWitch {
 
         [parameter(mandatory = $false, HelpMessage = 'CM Option')]
         [ValidateSet('New', 'Edit')]
-        [string]$CM = 'none',
-
-        [parameter(mandatory = $false, HelpMessage = 'Select working directory')]
-        [string]$script:workingDirectory
+        [string]$CM = 'none'
     )
 
     process {
