@@ -32,6 +32,7 @@ function Update-WimWitchModule {
 
     process {
         try {
+            #region Get Current Module Version
             # Get current module version - first check if loaded, then check if installed
             $currentModule = Get-Module -Name "WimWitch-Reloaded" |
                 Sort-Object Version -Descending |
@@ -54,101 +55,113 @@ function Update-WimWitchModule {
 
             $currentVersion = $currentModule.Version
             Write-WimWitchLog -Data "Current WimWitch-Reloaded version: $currentVersion" -Class Information
+            #endregion Get Current Module Version
 
+            #region Check for Updates
             # Check online for newer version
             $onlineModule = Find-Module -Name "WimWitch-Reloaded" -ErrorAction Stop
             $onlineVersion = $onlineModule.Version
 
-            if ($onlineVersion -gt $currentVersion) {
-                Write-WimWitchLog -Data "New version available: $onlineVersion" -Class Information
-
-                $inputXML = Get-Content -Path "$PSScriptRoot\resources\UI\Window_WimWitchUpgrade.xaml" -Raw
-
-                $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window'
-                [xml]$xaml = $inputXML
-
-                $reader = (New-Object System.Xml.XmlNodeReader $xaml)
-                try {
-                    $form = [Windows.Markup.XamlReader]::Load($reader)
-                } catch {
-                Write-Warning @"
-Unable to parse XML, with error: $($Error[0])
-Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes
-(PowerShell cannot process them)
-"@
-                    throw
-                }
-
-                $xaml.SelectNodes('//*[@Name]') | ForEach-Object { "trying item $($_.Name)" | Out-Null
-                    try { Set-Variable -Name "WPF$($_.Name)" -Value $form.FindName($_.Name) -ErrorAction Stop }
-                    catch { throw }
-                }
-
-                # Replace placeholders in content
-                $textBlocks = $form.FindName('Grid').Children | Where-Object { $_ -is [System.Windows.Controls.TextBlock] }
-                foreach ($textBlock in $textBlocks) {
-                    $textBlock.Text = $textBlock.Text.Replace('$onlineVersion', $onlineVersion)
-                }
-
-                $result = -1
-
-                # Add event handlers
-                $form.FindName('btnYes').Add_Click({
-                    $result = 0
-                    $form.DialogResult = $true
-                })
-
-                $form.FindName('btnNo').Add_Click({
-                    $result = 1
-                    $form.DialogResult = $false
-                })
-
-                # Show the window
-                $form.ShowDialog() | Out-Null
-
-                if ($result -eq 0) {
-                    Write-WimWitchLog -Data "Updating WimWitch-Reloaded module..." -Class Information
-
-                    # Update the module
-                    # Check PowerShell version to determine if Scope parameter is supported
-                    if ($PSVersionTable.PSVersion.Major -ge 6) {
-                        # PowerShell Core 7+ supports -Scope parameter
-                        $scope = if ((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-                            "AllUsers"
-                        } else {
-                            "CurrentUser"
-                        }
-
-                        if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
-                            Update-Module -Name "WimWitch-Reloaded" -Force -Scope $scope -ErrorAction Stop
-                        }
-                    } else {
-                        # PowerShell 5.1 and earlier don't support -Scope parameter
-                        if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
-                            Update-Module -Name "WimWitch-Reloaded" -Force -ErrorAction Stop
-                        }
-                    }
-
-                    Write-WimWitchLog -Data "WimWitch-Reloaded module has been updated to version $onlineVersion" -Class Information
-
-                    return @{
-                        Action = "Update"
-                        Version = $onlineVersion
-                    }
-                }
-
-                return @{
-                    Action = "Declined"
-                    Version = $onlineVersion
-                }
-            } else {
+            # If no update needed, return early
+            if (-not ($onlineVersion -gt $currentVersion)) {
                 Write-WimWitchLog -Data "WimWitch-Reloaded is already at the latest version" -Class Information
                 return @{
                     Action = "Current"
                     Version = $currentVersion
                 }
             }
+            #endregion Check for Updates
+
+            #region Display Update Dialog
+            Write-WimWitchLog -Data "New version available: $onlineVersion" -Class Information
+
+            # Load XAML UI for update prompt
+            $inputXML = Get-Content -Path "$PSScriptRoot\resources\UI\WimWitchUpdateDialog.xaml" -Raw
+
+            $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window' -replace 'VersionNumber', $onlineModule
+            [xml]$xaml = $inputXML
+
+            $reader = (New-Object System.Xml.XmlNodeReader $xaml)
+            try {
+                $form = [Windows.Markup.XamlReader]::Load($reader)
+            } catch {
+                Write-Warning @"
+Unable to parse XML, with error: $($Error[0])
+Ensure that there are NO SelectionChanged or TextChanged properties in your textboxes
+(PowerShell cannot process them)
+"@
+                throw
+            }
+
+            # Get named elements from XAML
+            $xaml.SelectNodes('//*[@Name]') | ForEach-Object {
+                try { Set-Variable -Name "WPF$($_.Name)" -Value $form.FindName($_.Name) -ErrorAction Stop }
+                catch { throw }
+            }
+
+            # Replace placeholders in content
+            $textBlocks = $form.FindName('Grid').Children | Where-Object { $_ -is [System.Windows.Controls.TextBlock] }
+            foreach ($textBlock in $textBlocks) {
+                $textBlock.Text = $textBlock.Text.Replace('$onlineVersion', $onlineVersion)
+            }
+
+            $script:updateModuleChoice = -1
+
+            # Add event handlers for buttons
+            $form.FindName('btnYes').Add_Click({
+                $script:updateModuleChoice = 0
+                $form.Close()
+            })
+
+            $form.FindName('btnNo').Add_Click({
+                $script:updateModuleChoice = 1
+                $form.Close()
+            })
+
+            # Show the dialog and wait for user response
+            $form.ShowDialog() | Out-Null
+            #endregion Display Update Dialog
+
+            #region Process User Choice
+            if ($script:updateModuleChoice -eq 0) {
+                # User chose to update
+                Write-WimWitchLog -Data "Updating WimWitch-Reloaded module..." -Class Information
+
+                # Determine scope based on PowerShell version and admin rights
+                if ($PSVersionTable.PSVersion.Major -ge 6) {
+                    # PowerShell Core 7+ supports -Scope parameter
+                    $scope = if ((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+                        "AllUsers"
+                    } else {
+                        "CurrentUser"
+                    }
+
+                    if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
+                        Update-Module -Name "WimWitch-Reloaded" -Force -Scope $scope -ErrorAction Stop
+                    }
+                } else {
+                    # PowerShell 5.1 and earlier don't support -Scope parameter
+                    if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
+                        Update-Module -Name "WimWitch-Reloaded" -Force -ErrorAction Stop
+                    }
+                }
+
+                Write-WimWitchLog -Data "WimWitch-Reloaded module has been updated to version $onlineVersion" -Class Information
+
+                return @{
+                    Action = "Update"
+                    Version = $onlineVersion
+                }
+            } else {
+                # User declined update
+                return @{
+                    Action = "Declined"
+                    Version = $onlineVersion
+                }
+            }
+            #endregion Process User Choice
         } catch {
+            # Error handling
             Write-WimWitchLog -Data "Error checking for updates: $_" -Class Error
             Write-WimWitchLog -Data $_.Exception.Message -Class Error
             return @{

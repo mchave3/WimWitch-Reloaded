@@ -134,7 +134,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $form.Icon = $bitmap
         # This is the toolbar icon and description
         $form.TaskbarItemInfo.Overlay = $bitmap
-        $form.TaskbarItemInfo.Description = "WIM Witch - $wwscriptver"
+        $form.TaskbarItemInfo.Description = "WimWitch-Reloaded - $wwscriptver"
         ###################################################
 
         #endregion XAML
