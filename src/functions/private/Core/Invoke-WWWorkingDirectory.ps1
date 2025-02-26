@@ -29,7 +29,8 @@ function Invoke-WWWorkingDirectory {
     )
 
     process {
-        $subfolders = @(
+        try {
+            $subfolders = @(
             'CompletedWIMs'
             'Configs'
             'Drivers'
@@ -43,6 +44,27 @@ function Invoke-WWWorkingDirectory {
             'Imports\DotNet'
             'Autopilot'
             'Backup'
-        )
+            )
+
+            Set-Location -Path $script:workingDirectory
+            Write-Output "WimWitch Reloaded working directory defined as: $script:workingDirectory"
+            Write-Output 'Checking working directory for required folders...'
+            foreach ($subfolder in $subfolders) {
+            if ((Test-Path -Path "$subfolder") -eq $false) {
+                Write-Output "Creating missing folder: $subfolder"
+                New-Item -Path $subfolder -ItemType Directory -ErrorAction Stop | Out-Null
+                Write-Output "Created folder: $subfolder"
+            }
+            else {
+                Write-Output "Folder already exists: $subfolder"
+            }
+            }
+            Write-Output 'Preflight check complete. Working directory is ready.'
+            Write-Output 'Starting WimWitch Reloaded...'
+        }
+        catch {
+            Write-Error "Failed to setup working directory: $_"
+            throw
+        }
     }
 }
