@@ -94,10 +94,25 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             }
 
             # Get named elements from XAML
-            $xaml.SelectNodes('//*[@Name]') | ForEach-Object {
+            $xaml.SelectNodes('//*[@Name]') | ForEach-Object { 
                 try { Set-Variable -Name "WPF$($_.Name)" -Value $form.FindName($_.Name) -ErrorAction Stop }
                 catch { throw }
             }
+
+            $base64 = Get-Content -Path "$PSScriptRoot\resources\UI\icon_base64.txt" -Raw
+            # Create a streaming image by streaming the base64 string to a bitmap streamsource
+            $bitmap = New-Object System.Windows.Media.Imaging.BitmapImage
+            $bitmap.BeginInit()
+            $bitmap.StreamSource = [System.IO.MemoryStream][System.Convert]::FromBase64String($base64)
+            $bitmap.EndInit()
+            $bitmap.Freeze()
+
+            # This is the icon in the upper left hand corner of the app
+            $form.Icon = $bitmap
+            # This is the toolbar icon and description
+            $form.TaskbarItemInfo.Overlay = $bitmap
+            # Set the taskbar item description with version information
+            $form.TaskbarItemInfo.Description = "Update - v$currentVersion to v$onlineVersion"
 
             # Replace placeholders in content
             $textBlocks = $form.FindName('Grid').Children | Where-Object { $_ -is [System.Windows.Controls.TextBlock] }
