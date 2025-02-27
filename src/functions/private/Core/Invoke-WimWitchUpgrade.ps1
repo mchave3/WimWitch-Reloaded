@@ -37,12 +37,12 @@ function Invoke-WimWitchUpgrade {
 
     process {
         try {
-            Write-WimWitchLog -Data "Checking for WimWitch-Reloaded module updates..." -Class Information
+            Write-WimWitchLog -Data "Checking for module updates..." -Class Information
 
             # Call the update module function to check for updates
             $updateParams = @{}
             if ($SkipPrompt) {
-                Write-WimWitchLog -Data "SkipPrompt specified - passing through to Update-WimWitchModule" -Class Information -Verbose
+                Write-WimWitchLog -Data "SkipPrompt specified - passing through to Update-WimWitchModule" -Class Information
                 $updateParams.Add('SkipPrompt', $true)
             }
 
@@ -54,25 +54,24 @@ function Invoke-WimWitchUpgrade {
             }
 
             # Log the detailed results for troubleshooting
-            Write-WimWitchLog -Data "Update check result: $($updateResult.Action), Version: $($updateResult.Version)" -Class Information -Verbose
+            Write-WimWitchLog -Data "Update check result: $($updateResult.Action), Version: $($updateResult.Version)" -Class Information
             if ($updateResult.Details) {
-                Write-WimWitchLog -Data "Details: $($updateResult.Details)" -Class Information -Verbose
+                Write-WimWitchLog -Data "Details: $($updateResult.Details)" -Class Information
             }
 
             # Handle the result
             switch ($updateResult.Action) {
                 "Current" {
-                    Write-WimWitchLog -Data "WimWitch-Reloaded is already at the latest version ($($updateResult.Version))" -Class Information
                     return $null
                 }
                 "Declined" {
-                    Write-WimWitchLog -Data "Update to version $($updateResult.Version) declined by user" -Class Information
+                    Write-WimWitchLog -Data "Update declined by user" -Class Information
                     return $null
                 }
                 "Error" {
                     Write-WimWitchLog -Data "Error during update check: $($updateResult.Error)" -Class Error
                     if ($updateResult.Details) {
-                        Write-WimWitchLog -Data "Error details: $($updateResult.Details)" -Class Error -Verbose
+                        Write-WimWitchLog -Data "Error details: $($updateResult.Details)" -Class Error
                     }
                     return $null
                 }
@@ -84,7 +83,7 @@ function Invoke-WimWitchUpgrade {
                 "Warning" {
                     Write-WimWitchLog -Data "Warning during update check: $($updateResult.Error)" -Class Warning
                     if ($updateResult.Details) {
-                        Write-WimWitchLog -Data "Warning details: $($updateResult.Details)" -Class Warning -Verbose
+                        Write-WimWitchLog -Data "Warning details: $($updateResult.Details)" -Class Warning
                     }
                     return $null
                 }
@@ -97,14 +96,14 @@ function Invoke-WimWitchUpgrade {
         catch {
             # Comprehensive error handling
             Write-WimWitchLog -Data "Error in Invoke-WimWitchUpgrade: $_" -Class Error
-            Write-WimWitchLog -Data $_.Exception.Message -Class Error -Verbose
-            Write-WimWitchLog -Data $_.ScriptStackTrace -Class Error -Verbose
+            Write-WimWitchLog -Data $_.Exception.Message -Class Error
+            Write-WimWitchLog -Data $_.ScriptStackTrace -Class Error
             return $null
         }
     }
 
     end {
-        Write-WimWitchLog -Data "Completed WimWitch-Reloaded upgrade process" -Class Information -Verbose
+        Write-WimWitchLog -Data "Completed WimWitch-Reloaded upgrade process" -Class Information
     }
 }
 

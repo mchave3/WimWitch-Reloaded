@@ -31,10 +31,6 @@ function Update-WimWitchModule {
         [switch]$SkipPrompt
     )
 
-    begin {
-        Write-WimWitchLog -Data "Starting WimWitch-Reloaded update check" -Class Information
-    }
-
     process {
         try {
             # Check if PowerShell is running in admin mode
@@ -42,7 +38,7 @@ function Update-WimWitchModule {
             $isAdmin = $currentUser.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
             $scope = if ($isAdmin) { "AllUsers" } else { "CurrentUser" }
-            Write-WimWitchLog -Data "PowerShell running with admin rights: $isAdmin. Using scope: $scope" -Class Information -Verbose
+            Write-WimWitchLog -Data "PowerShell running with admin rights: $isAdmin. Using scope: $scope" -Class Information
 
             # Get current version
             $currentModule = Get-Module -Name 'WimWitch-Reloaded' -ListAvailable |
@@ -70,7 +66,7 @@ function Update-WimWitchModule {
 
             # Check for online version
             try {
-                Write-WimWitchLog -Data "Searching for WimWitch-Reloaded in PowerShell Gallery..." -Class Information -Verbose
+                Write-WimWitchLog -Data "Searching for WimWitch-Reloaded in PowerShell Gallery..." -Class Information
                 $onlineModule = Find-Module -Name 'WimWitch-Reloaded' -ErrorAction Stop
                 [version]$onlineVersion = $onlineModule.Version
                 Write-WimWitchLog -Data "Latest online version: $onlineVersion" -Class Information
@@ -98,7 +94,7 @@ function Update-WimWitchModule {
             # If skip prompt is set, proceed with update without showing dialog
             if ($SkipPrompt) {
                 $script:updateModuleChoice = 0
-                Write-WimWitchLog -Data "SkipPrompt specified - proceeding with update automatically" -Class Information -Verbose
+                Write-WimWitchLog -Data "SkipPrompt specified - proceeding with update automatically" -Class Information
             }
             else {
                 try {
@@ -150,7 +146,7 @@ function Update-WimWitchModule {
                     }
 
                     # Show the dialog and wait for user response
-                    Write-WimWitchLog -Data "Showing update confirmation dialog for version $onlineVersion" -Class Information -Verbose
+                    Write-WimWitchLog -Data "Available update: version $onlineVersion - prompting user" -Class Information
                     $form.ShowDialog() | Out-Null
                 }
                 catch {
@@ -171,7 +167,7 @@ function Update-WimWitchModule {
 
                 try {
                     if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update to version $onlineVersion")) {
-                        Write-WimWitchLog -Data "Updating module with scope: $scope" -Class Information -Verbose
+                        Write-WimWitchLog -Data "Updating module with scope: $scope" -Class Information
 
                         if ($script:powershellGetVersion.Version.Major -eq 1) {
                             Update-Module -Name WimWitch-Reloaded -Force -ErrorAction Stop
@@ -208,7 +204,7 @@ function Update-WimWitchModule {
                 catch {
                     $errorMsg = "Error during module update: $_"
                     Write-WimWitchLog -Data $errorMsg -Class Error
-                    Write-WimWitchLog -Data $_.Exception.Message -Class Error -Verbose
+                    Write-WimWitchLog -Data $_.Exception.Message -Class Error
                     return @{
                         Action = "Error"
                         Error = $errorMsg
@@ -230,8 +226,8 @@ function Update-WimWitchModule {
             # Error handling
             $errorMsg = "Unexpected error checking for updates: $_"
             Write-WimWitchLog -Data $errorMsg -Class Error
-            Write-WimWitchLog -Data $_.Exception.Message -Class Error -Verbose
-            Write-WimWitchLog -Data $_.ScriptStackTrace -Class Error -Verbose
+            Write-WimWitchLog -Data $_.Exception.Message -Class Error
+            Write-WimWitchLog -Data $_.ScriptStackTrace -Class Error
             return @{
                 Action = "Error"
                 Error = $errorMsg
@@ -242,6 +238,6 @@ function Update-WimWitchModule {
     }
 
     end {
-        Write-WimWitchLog -Data "Completed WimWitch-Reloaded update check" -Class Information -Verbose
+        # Skip this end message as it's redundant with the calling function
     }
 }
