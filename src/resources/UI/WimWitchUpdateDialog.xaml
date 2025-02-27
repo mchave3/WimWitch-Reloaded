@@ -42,8 +42,8 @@
                    Margin="0,0,0,10"/>
         
         <TextBlock Grid.Row="4" Margin="0,5,0,10">
-            <Hyperlink x:Name="changelogLink" RequestNavigate="ChangelogLink_RequestNavigate" 
-                       NavigateUri="https://github.com/mchave3/WimWitch-Reloaded/releases/latest">
+            <Hyperlink x:Name="changelogLink"
+                    NavigateUri="https://github.com/mchave3/WimWitch-Reloaded/releases/latest">
                 View release notes
             </Hyperlink>
         </TextBlock>

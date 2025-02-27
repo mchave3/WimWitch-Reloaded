@@ -145,6 +145,17 @@ function Update-WimWitchModule {
                         })
                     }
 
+                    # Add event handler for the changelog hyperlink
+                    $changelogLink = $form.FindName('changelogLink')
+                    if ($changelogLink) {
+                        $changelogLink.Add_RequestNavigate({
+                            param($sender, $e)
+                            # Open URL in default browser
+                            Start-Process $e.Uri.AbsoluteUri
+                            $e.Handled = $true
+                        })
+                    }
+
                     # Show the dialog and wait for user response
                     Write-WimWitchLog -Data "Available update: version $onlineVersion - prompting user" -Class Information
                     $form.ShowDialog() | Out-Null
@@ -235,9 +246,5 @@ function Update-WimWitchModule {
                 StackTrace = $_.ScriptStackTrace
             }
         }
-    }
-
-    end {
-        # Skip this end message as it's redundant with the calling function
     }
 }
