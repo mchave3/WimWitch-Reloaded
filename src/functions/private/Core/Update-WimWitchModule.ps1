@@ -99,7 +99,7 @@ function Update-WimWitchModule {
             else {
                 try {
                     $inputXML = Get-Content -Path "$PSScriptRoot\resources\UI\WimWitchUpdateDialog.xaml" -Raw -ErrorAction Stop
-                    $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window' -replace 'VersionNumber', $onlineVersion
+                    $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window' -replace '{NewVersionNumber}', $onlineVersion
                     [xml]$XAML = $inputXML
 
                     $reader = (New-Object System.Xml.XmlNodeReader $XAML)

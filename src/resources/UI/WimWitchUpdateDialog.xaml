@@ -3,8 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="WimWitch-Reloaded Update Available" 
-    Height="250" Width="450" 
+    Title="New Version Available - WimWitch-Reloaded" 
+    Height="280" Width="450" 
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize">
     
@@ -14,34 +14,43 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <TextBlock Grid.Row="0" 
-                   Text="WimWitch-Reloaded Update Available" 
-                   FontSize="18" FontWeight="Bold" 
-                   Margin="0,0,0,15"/>
+               Text="Update v{NewVersionNumber} Available" 
+               FontSize="18" FontWeight="Bold" 
+               Margin="0,0,0,15"
+               HorizontalAlignment="Center"/>
         
         <TextBlock Grid.Row="1" 
-                   Text="A new version of WimWitch-Reloaded (VersionNumber) is available." 
+                   Text="WimWitch-Reloaded v{NewVersionNumber} is now available for installation." 
                    TextWrapping="Wrap"
                    Margin="0,0,0,10"/>
         
         <TextBlock Grid.Row="2" 
-                   Text="Would you like to update now?" 
+                   Text="Do you want to install this update now?" 
                    TextWrapping="Wrap"
                    Margin="0,0,0,10"/>
                    
         <TextBlock Grid.Row="3" 
-                   Text="Note: The application will need to be restarted after the update is complete."
+                   Text="Warning: The application will automatically restart once the update is complete."
                    TextWrapping="Wrap"
                    Foreground="DarkOrange"
                    Margin="0,0,0,10"/>
         
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="btnYes" Content="Yes" Width="75" Height="25" Margin="0,0,10,0"/>
-            <Button x:Name="btnNo" Content="No" Width="75" Height="25"/>
+        <TextBlock Grid.Row="4" Margin="0,5,0,10">
+            <Hyperlink x:Name="changelogLink" RequestNavigate="ChangelogLink_RequestNavigate" 
+                       NavigateUri="https://github.com/mchave3/WimWitch-Reloaded/releases/latest">
+                View release notes
+            </Hyperlink>
+        </TextBlock>
+        
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="btnYes" Content="Install" Width="75" Height="25" Margin="0,0,10,0"/>
+            <Button x:Name="btnNo" Content="Skip" Width="75" Height="25"/>
         </StackPanel>
     </Grid>
 </Window>
