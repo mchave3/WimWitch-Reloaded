@@ -100,7 +100,7 @@ function Start-WimWitch {
 
         $reader = (New-Object System.Xml.XmlNodeReader $xaml)
         try {
-        $Form = [Windows.Markup.XamlReader]::Load($reader)
+        $form = [Windows.Markup.XamlReader]::Load($reader)
         } catch {
         Write-Warning @"
 Unable to parse XML, with error: $($Error[0])
@@ -111,11 +111,12 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         }
 
         #===========================================================================
+
         # Load XAML Objects In PowerShell
         #===========================================================================
 
         $xaml.SelectNodes('//*[@Name]') | ForEach-Object { "trying item $($_.Name)" | Out-Null
-            try { Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name) -ErrorAction Stop }
+            try { Set-Variable -Name "WPF$($_.Name)" -Value $form.FindName($_.Name) -ErrorAction Stop }
             catch { throw }
         }
 
@@ -133,13 +134,14 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $form.Icon = $bitmap
         # This is the toolbar icon and description
         $form.TaskbarItemInfo.Overlay = $bitmap
-        $form.TaskbarItemInfo.Description = "WIM Witch - $wwscriptver"
+        $form.TaskbarItemInfo.Description = "WimWitch-Reloaded - $wwscriptver"
         ###################################################
 
         #endregion XAML
 
         #region Main
         #===========================================================================
+
         # Run commands to set values of files and variables, etc.
         #===========================================================================
 
@@ -184,6 +186,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         ###################
 
         #===========================================================================
+
         # Set default values for certain variables
         #===========================================================================
 
@@ -201,6 +204,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $script:Win10VerDet = ''
 
         #===========================================================================
+
         # Section for Combo box Functions
         #===========================================================================
 
@@ -444,6 +448,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         }
 
         #===========================================================================
+
         # Section for Buttons to call Functions
         #===========================================================================
 
@@ -692,6 +697,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
 
         #===========================================================================
+
         # Section for Checkboxes to call Functions
         #===========================================================================
 
@@ -977,6 +983,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #==========================================================
+
         #Run WIM Witch below
         #==========================================================
 
@@ -1020,9 +1027,30 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             $WPFImportBDJ.Visibility = 'Visible'
         }
 
+        # Check for module updates automatically
+        $form.Add_ContentRendered({
+            $updateResult = Invoke-WimWitchUpgrade
+            if ($updateResult -eq "restart") {
+                # Close the form first
+                $form.Close()
+
+                # Start a new PowerShell process with WimWitch-Reloaded
+                $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+                $startInfo.FileName = "powershell.exe"
+                $startInfo.Arguments = "-NoProfile -Command Import-Module WimWitch-Reloaded; Start-WimWitch"
+                $startInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Normal
+
+                # Start the process
+                [System.Diagnostics.Process]::Start($startInfo)
+
+                # Exit current PowerShell session completely
+                [Environment]::Exit(0)
+            }
+        })
+
         #Start GUI
         Write-WimWitchLog -data 'Starting WIM Witch GUI' -class Information
-        $Form.ShowDialog() | Out-Null #This starts the GUI
+        $form.ShowDialog() | Out-Null #This starts the GUI
 
         #endregion Main
     }
