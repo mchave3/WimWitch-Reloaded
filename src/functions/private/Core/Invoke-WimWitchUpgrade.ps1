@@ -51,19 +51,8 @@ function Invoke-WimWitchUpgrade {
                 return $null
             }
             "Update" {
-                # Create backup before updating
-                Write-WimWitchLog -Data "Creating backup before updating to version $($updateResult.Version)..." -Class Information
-                $backupPath = Backup-WimWitch -Full
-
-                if ($backupPath) {
-                    Write-WimWitchLog -Data "Backup created successfully at: $backupPath" -Class Information
-
-                    # Perform update - the Update-WimWitchModule will have set up everything for restarting
-                    return "restart"
-                } else {
-                    Write-WimWitchLog -Data "Failed to create backup. Update cancelled." -Class Error
-                    return $null
-                }
+                Write-WimWitchLog -Data "Update to version $($updateResult.Version) successful" -Class Information
+                return "restart"
             }
             default {
                 Write-WimWitchLog -Data "Unknown result from update check" -Class Warning
