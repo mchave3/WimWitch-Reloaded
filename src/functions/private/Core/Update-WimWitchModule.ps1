@@ -137,10 +137,25 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                         # Force parameter ensures it will update an existing module
                         Install-Module -Name "WimWitch-Reloaded" -Force -Scope $scope -AllowClobber -ErrorAction Stop
 
-                        # Verify the installation
-                        $updatedModule = Get-Module -Name "WimWitch-Reloaded" -ListAvailable |
-                            Where-Object { $_.Version -eq $onlineVersion } |
-                            Select-Object -First 1
+                        # Get current module version - first check if loaded, then check if installed
+                        $currentModule = Get-Module -Name "WimWitch-Reloaded" |
+                        Sort-Object Version -Descending |
+                        Select-Object -First 1
+
+                        if (-not $currentModule) {
+                            # If not found in loaded modules, check available modules
+                            $currentModule = Get-Module -Name "WimWitch-Reloaded" -ListAvailable |
+                                Sort-Object Version -Descending |
+                                Select-Object -First 1
+                        }
+
+                        if (-not $currentModule) {
+                            Write-WimWitchLog -Data "Could not find WimWitch-Reloaded module installed." -Class Error
+                            return @{
+                                Action = "Error"
+                                Error = "Module not found"
+                            }
+                        }
 
                         if ($updatedModule) {
                             Write-WimWitchLog -Data "WimWitch-Reloaded module has been updated to version $onlineVersion" -Class Information
