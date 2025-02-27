@@ -1031,8 +1031,20 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $form.Add_ContentRendered({
             $updateResult = Invoke-WimWitchUpgrade
             if ($updateResult -eq "restart") {
-                $form.Close() # Close the form first
-                Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -Command Import-Module WimWitch-Reloaded; Start-WimWitch" -WindowStyle Normal
+                # Close the form first
+                $form.Close()
+
+                # Start a new PowerShell process with WimWitch-Reloaded
+                $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+                $startInfo.FileName = "powershell.exe"
+                $startInfo.Arguments = "-NoProfile -Command Import-Module WimWitch-Reloaded; Start-WimWitch"
+                $startInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Normal
+
+                # Start the process
+                [System.Diagnostics.Process]::Start($startInfo)
+
+                # Exit current PowerShell session completely
+                [Environment]::Exit(0)
             }
         })
 
