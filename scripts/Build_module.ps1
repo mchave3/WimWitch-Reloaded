@@ -83,7 +83,7 @@ function Initialize-BuildDirectory {
 #region Configuration
 # Core module settings
 $moduleName = "WimWitch-Reloaded"
-$moduleVersion = "1.0.0"
+$moduleVersion = "0.0.1"
 
 # Directory structure
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -245,7 +245,7 @@ $manifestParams = @{
     Path               = $manifestFile
     RootModule         = "$moduleName.psm1"
     ModuleVersion      = $moduleVersion
-    Author             = "WimWitch Team"
+    Author             = "Mickaël CHAVE"
     Description        = "WimWitch-Reloaded Module"
     PowerShellVersion  = "5.1"
     RequiredModules    = @('OSDSUS', 'OSDUpdate')
