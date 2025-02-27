@@ -149,10 +149,8 @@ function Update-WimWitchModule {
                     $changelogLink = $form.FindName('changelogLink')
                     if ($changelogLink) {
                         $changelogLink.Add_RequestNavigate({
-                            param($sender, $e)
-                            # Open URL in default browser
-                            Start-Process $e.Uri.AbsoluteUri
-                            $e.Handled = $true
+                            Start-Process $args[1].Uri.AbsoluteUri
+                            $args[1].Handled = $true
                         })
                     }
 
