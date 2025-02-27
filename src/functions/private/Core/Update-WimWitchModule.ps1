@@ -99,21 +99,6 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 catch { throw }
             }
 
-            $base64 = Get-Content -Path "$PSScriptRoot\resources\UI\icon_base64.txt" -Raw
-            # Create a streaming image by streaming the base64 string to a bitmap streamsource
-            $bitmap = New-Object System.Windows.Media.Imaging.BitmapImage
-            $bitmap.BeginInit()
-            $bitmap.StreamSource = [System.IO.MemoryStream][System.Convert]::FromBase64String($base64)
-            $bitmap.EndInit()
-            $bitmap.Freeze()
-
-            # This is the icon in the upper left hand corner of the app
-            $form.Icon = $bitmap
-            # This is the toolbar icon and description
-            $form.TaskbarItemInfo.Overlay = $bitmap
-            # Set the taskbar item description with version information
-            $form.TaskbarItemInfo.Description = "Update - v$currentVersion to v$onlineVersion"
-
             # Replace placeholders in content
             $textBlocks = $form.FindName('Grid').Children | Where-Object { $_ -is [System.Windows.Controls.TextBlock] }
             foreach ($textBlock in $textBlocks) {
@@ -142,30 +127,49 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
                 # User chose to update
                 Write-WimWitchLog -Data "Updating WimWitch-Reloaded module..." -Class Information
 
-                # Determine scope based on PowerShell version and admin rights
-                if ($PSVersionTable.PSVersion.Major -ge 6) {
-                    # PowerShell Core 7+ supports -Scope parameter
-                    $scope = if ((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-                        "AllUsers"
-                    } else {
-                        "CurrentUser"
-                    }
+                try {
+                    # Determine scope based on PowerShell version and admin rights
+                    $isAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+                    $scope = if ($isAdmin) { "AllUsers" } else { "CurrentUser" }
 
-                    if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
-                        Update-Module -Name "WimWitch-Reloaded" -Force -Scope $scope -ErrorAction Stop
-                    }
-                } else {
-                    # PowerShell 5.1 and earlier don't support -Scope parameter
-                    if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Update module to version $onlineVersion")) {
-                        Update-Module -Name "WimWitch-Reloaded" -Force -ErrorAction Stop
+                    # Use Install-Module instead of Update-Module for better reliability
+                    if ($PSCmdlet.ShouldProcess("WimWitch-Reloaded", "Install module version $onlineVersion")) {
+                        # Force parameter ensures it will update an existing module
+                        Install-Module -Name "WimWitch-Reloaded" -Force -Scope $scope -AllowClobber -ErrorAction Stop
+
+                        # Verify the installation
+                        $updatedModule = Get-Module -Name "WimWitch-Reloaded" -ListAvailable |
+                            Where-Object { $_.Version -eq $onlineVersion } |
+                            Select-Object -First 1
+
+                        if ($updatedModule) {
+                            Write-WimWitchLog -Data "WimWitch-Reloaded module has been updated to version $onlineVersion" -Class Information
+                            Write-WimWitchLog -Data "Please restart WimWitch application to use the new version" -Class Warning
+
+                            return @{
+                                Action = "Update"
+                                Version = $onlineVersion
+                                RestartRequired = $true
+                            }
+                        } else {
+                            throw "Failed to verify installation of version $onlineVersion"
+                        }
                     }
                 }
+                catch {
+                    # Specific error handling for module update
+                    Write-WimWitchLog -Data "Error during update: $_" -Class Error
 
-                Write-WimWitchLog -Data "WimWitch-Reloaded module has been updated to version $onlineVersion" -Class Information
+                    # Provide more helpful information based on common issues
+                    if ($_.Exception.Message -like "*Could not find file*") {
+                        Write-WimWitchLog -Data "The module update failed during installation. This might be due to permissions or network issues." -Class Error
+                        Write-WimWitchLog -Data "You can try updating the module manually by running: Install-Module -Name WimWitch-Reloaded -Force" -Class Information
+                    }
 
-                return @{
-                    Action = "Update"
-                    Version = $onlineVersion
+                    return @{
+                        Action = "Error"
+                        Error = $_.Exception.Message
+                    }
                 }
             } else {
                 # User declined update
