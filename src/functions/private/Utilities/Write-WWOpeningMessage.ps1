@@ -33,7 +33,7 @@ function Write-WWOpeningMessage {
         Write-Output '##########################################################'
         Write-Output ' '
         Write-Output '             ***** Starting WIM Witch *****'
-        Write-Output "                      version $WWScriptVer"
+        Write-Output "                      version $script:WimWitchVersion"
         Write-Output ' '
         Write-Output '##########################################################'
         Write-Output ' '
