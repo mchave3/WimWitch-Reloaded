@@ -24,19 +24,18 @@
 #>
 function Write-WWOpeningMessage {
     [CmdletBinding()]
-    param(
-
-    )
+    param()
 
     process {
         Clear-Host
-        Write-Output '##########################################################'
-        Write-Output ' '
-        Write-Output '             ***** Starting WIM Witch *****'
-        Write-Output "                      version $WWScriptVer"
-        Write-Output ' '
-        Write-Output '##########################################################'
-        Write-Output ' '
+        Write-Output ''
+        Write-Output '############################################################'
+        Write-Output '                                                            '
+        Write-Output '         *****  Welcome to WimWitch Reloaded  *****         '
+        Write-Output "                    Version: $script:WimWitchVersion        "
+        Write-Output '                                                            '
+        Write-Output '############################################################'
+        Write-Output ''
     }
 }
 

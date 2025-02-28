@@ -80,19 +80,19 @@ function Start-WimWitch {
 
         # Check version and include pre-release if available
         if ($module) {
-            $WWScriptVer = $module.Version.ToString()
+            $script:WimWitchVersion = $module.Version.ToString()
             if ($module.PrivateData.PSData.PreRelease) {
-                $WWScriptVer += "-$($module.PrivateData.PSData.PreRelease)"
+                $script:WimWitchVersion += "-$($module.PrivateData.PSData.PreRelease)"
             }
         } else {
-            $WWScriptVer = "Version not found"
+            $script:WimWitchVersion = "Version not found"
         }
 
         #region XAML
         #Your XAML goes here
         $inputXML = Get-Content -Path "$PSScriptRoot\resources\UI\MainWindow.xaml" -Raw
 
-        $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window' -replace 'WWScriptVer', $WWScriptVer
+        $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window' -replace 'WWScriptVer', $script:WimWitchVersion
         [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
         [void][System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
         [xml]$XAML = $inputXML
@@ -134,7 +134,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $form.Icon = $bitmap
         # This is the toolbar icon and description
         $form.TaskbarItemInfo.Overlay = $bitmap
-        $form.TaskbarItemInfo.Description = "WimWitch-Reloaded - $wwscriptver"
+        $form.TaskbarItemInfo.Description = "WimWitch-Reloaded - $script:WimWitchVersion"
         ###################################################
 
         #endregion XAML
