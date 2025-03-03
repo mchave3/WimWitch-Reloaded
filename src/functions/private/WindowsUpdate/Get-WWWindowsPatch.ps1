@@ -41,7 +41,7 @@ function Get-WWWindowsPatch {
                     $_.UpdateArch -eq 'x64' -and
                     $_.UpdateBuild -eq $build -and
                     $_.UpdateGroup -eq 'SSU'
-                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\SSU
+                } | Get-DownOSDUpdate -DownloadPath $script:workingDirectory\updates\$OS\$build\SSU
         } catch {
             Write-WimWitchLog -data 'Failed to download SSU update' -Class Error
             Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -55,7 +55,7 @@ function Get-WWWindowsPatch {
                     $_.UpdateArch -eq 'x64' -and
                     $_.UpdateBuild -eq $build -and
                     $_.UpdateGroup -eq 'AdobeSU'
-                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\AdobeSU
+                } | Get-DownOSDUpdate -DownloadPath $script:workingDirectory\updates\$OS\$build\AdobeSU
         } catch {
             Write-WimWitchLog -data 'Failed to download AdobeSU update' -Class Error
             Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -69,7 +69,7 @@ function Get-WWWindowsPatch {
                     $_.UpdateArch -eq 'x64' -and
                     $_.UpdateBuild -eq $build -and
                     $_.UpdateGroup -eq 'LCU'
-                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\LCU
+                } | Get-DownOSDUpdate -DownloadPath $script:workingDirectory\updates\$OS\$build\LCU
         } catch {
             Write-WimWitchLog -data 'Failed to download LCU update' -Class Error
             Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -82,7 +82,7 @@ function Get-WWWindowsPatch {
                     $_.UpdateArch -eq 'x64' -and
                     $_.UpdateBuild -eq $build -and
                     $_.UpdateGroup -eq 'DotNet'
-                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\DotNet
+                } | Get-DownOSDUpdate -DownloadPath $script:workingDirectory\updates\$OS\$build\DotNet
         } catch {
             Write-WimWitchLog -data 'Failed to download .Net update' -Class Error
             Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -96,7 +96,7 @@ function Get-WWWindowsPatch {
                     $_.UpdateArch -eq 'x64' -and
                     $_.UpdateBuild -eq $build -and
                     $_.UpdateGroup -eq 'DotNetCU'
-                } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\DotNetCU
+                } | Get-DownOSDUpdate -DownloadPath $script:workingDirectory\updates\$OS\$build\DotNetCU
         } catch {
             Write-WimWitchLog -data 'Failed to download .Net CU update' -Class Error
             Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -111,7 +111,7 @@ function Get-WWWindowsPatch {
                         $_.UpdateArch -eq 'x64' -and
                         $_.UpdateBuild -eq $build -and
                         $_.UpdateGroup -eq 'Optional'
-                    } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\Optional
+                    } | Get-DownOSDUpdate -DownloadPath $script:workingDirectory\updates\$OS\$build\Optional
             } catch {
                 Write-WimWitchLog -data 'Failed to download optional update' -Class Error
                 Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -127,7 +127,7 @@ function Get-WWWindowsPatch {
                         $_.UpdateArch -eq 'x64' -and
                         $_.UpdateBuild -eq $build -and
                         $_.UpdateGroup -eq 'SetupDU'
-                    } | Get-DownOSDUpdate -DownloadPath $Script:workdir\updates\$OS\$build\Dynamic
+                    } | Get-DownOSDUpdate -DownloadPath $script:workingDirectory\updates\$OS\$build\Dynamic
             } catch {
                 Write-WimWitchLog -data 'Failed to download dynamic update' -Class Error
                 Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -137,7 +137,4 @@ function Get-WWWindowsPatch {
         Write-WimWitchLog -Data "Downloading completed for $OS $build" -Class Information
     }
 }
-
-
-
 

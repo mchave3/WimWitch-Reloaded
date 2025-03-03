@@ -70,26 +70,23 @@ function Get-WWWindowsVersionNumber {
             }
 
             If ($IsMountPoint -eq $False) {
-                $Script:Win10VerDet = $null
+                $script:Win10VerDet = $null
 
                 Write-WimWitchLog -data 'Prompting user for Win10 version confirmation...' -class Information
 
                 Invoke-WW19041Select
 
-                if ($null -eq $Script:Win10VerDet) { return }
+                if ($null -eq $script:Win10VerDet) { return }
 
-                $temp = $Script:Win10VerDet
+                $temp = $script:Win10VerDet
 
                 $buildnum = $temp
                 Write-WimWitchLog -data "User selected $buildnum" -class Information
 
-                $Script:Win10VerDet = $null
+                $script:Win10VerDet = $null
             }
         }
         return $buildnum
     }
 }
-
-
-
 

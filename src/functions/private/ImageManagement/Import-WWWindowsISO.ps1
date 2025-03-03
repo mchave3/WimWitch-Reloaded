@@ -53,7 +53,7 @@ function Import-WWWindowsISO {
                 Write-WimWitchLog -Data 'Appending new file name with an extension' -Class Information
             }
 
-            if ((Test-Path -Path $Script:workdir\Imports\WIM\$newname) -eq $true) {
+            if ((Test-Path -Path $script:workingDirectory\Imports\WIM\$newname) -eq $true) {
                 Write-WimWitchLog -Data 'Destination WIM name already exists. Provide a new name and try again.' -Class Error
                 return
             } else {
@@ -111,14 +111,14 @@ function Import-WWWindowsISO {
             $version = Get-WWWindowsReleaseFromWim -wimversion $windowsver.version
 
             if ($version -eq 2004) {
-                $Script:Win10VerDet = $null
+                $script:Win10VerDet = $null
                 Invoke-WW19041Select
-                if ($null -eq $Script:Win10VerDet) {
+                if ($null -eq $script:Win10VerDet) {
                     Write-Host 'cancelling'
                     return
                 } else {
-                    $version = $Script:Win10VerDet
-                    $Script:Win10VerDet = $null
+                    $version = $script:Win10VerDet
+                    $script:Win10VerDet = $null
                 }
 
                 if ($version -eq '20H2') { $version = '2009' }
@@ -136,11 +136,11 @@ function Import-WWWindowsISO {
             #Copy out the WIM file from the selected ISO
             try {
                 Write-WimWitchLog -data 'Purging staging folder...' -Class Information
-                Remove-Item -Path $Script:workdir\staging\*.* -Force
+                Remove-Item -Path $script:workingDirectory\staging\*.* -Force
                 Write-WimWitchLog -data 'Purge complete.' -Class Information
                 if ($installWimFound) {
                     Write-WimWitchLog -Data 'Copying WIM file to the staging folder...' -Class Information
-                    Copy-Item -Path $iso\sources\install.wim -Destination $Script:workdir\staging -Force -ErrorAction Stop -PassThru
+                    Copy-Item -Path $iso\sources\install.wim -Destination $script:workingDirectory\staging -Force -ErrorAction Stop -PassThru
                 }
             } catch {
                 Write-WimWitchLog -data "Couldn't copy from the source" -Class Error
@@ -157,7 +157,7 @@ function Import-WWWindowsISO {
                     try {
                         Write-WimWitchLog -Data "Converting index $($index.ImageIndex) - $($index.ImageName)" -Class Information
                         Export-WindowsImage -SourceImagePath $sourceEsdFile -SourceIndex $($index.ImageIndex) `
-                            -DestinationImagePath (Join-Path $Script:workdir '\staging\install.wim') -CompressionType fast -ErrorAction Stop
+                            -DestinationImagePath (Join-Path $script:workingDirectory '\staging\install.wim') -CompressionType fast -ErrorAction Stop
                     } catch {
                         Write-WimWitchLog -Data "Converting index $($index.ImageIndex) failed - skipping..." -Class Error
                         continue
@@ -166,14 +166,14 @@ function Import-WWWindowsISO {
             }
             #Change file attribute to normal
             Write-WimWitchLog -Data 'Setting file attribute of install.wim to Normal' -Class Information
-            $attrib = Get-Item $Script:workdir\staging\install.wim
+            $attrib = Get-Item $script:workingDirectory\staging\install.wim
             $attrib.Attributes = 'Normal'
 
             #Rename install.wim to the new name
             try {
                 $text = 'Renaming install.wim to ' + $newname
                 Write-WimWitchLog -Data $text -Class Information
-                Rename-Item -Path $Script:workdir\Staging\install.wim -NewName $newname -ErrorAction Stop
+                Rename-Item -Path $script:workingDirectory\Staging\install.wim -NewName $newname -ErrorAction Stop
             } catch {
                 Write-WimWitchLog -data "Couldn't rename the copied file. Most likely a weird permissions issues." -Class Error
                 Invoke-WWRemoveISOMount -inputObject $isomount
@@ -182,7 +182,7 @@ function Import-WWWindowsISO {
             #Move the imported WIM to the imports folder
             try {
                 Write-WimWitchLog -data "Moving $newname to imports folder..." -Class Information
-                Move-Item -Path $Script:workdir\Staging\$newname -Destination $Script:workdir\Imports\WIM -ErrorAction Stop
+                Move-Item -Path $script:workingDirectory\Staging\$newname -Destination $script:workingDirectory\Imports\WIM -ErrorAction Stop
             } catch {
                 Write-WimWitchLog -Data "Couldn't move the new WIM to the staging folder." -Class Error
                 Invoke-WWRemoveISOMount -inputObject $isomount
@@ -196,14 +196,14 @@ function Import-WWWindowsISO {
         if ($WPFImportDotNetCheckBox.IsChecked -eq $true) {
             If (($windowsver.imagename -like '*Windows 10*') -or
                 (($windowsver.imagename -like '*server') -and ($windowsver.version -lt 10.0.20248.0))) {
-                $Path = "$Script:workdir\Imports\DotNet\$version"
+                $Path = "$script:workingDirectory\Imports\DotNet\$version"
             }
             If (($windowsver.Imagename -like '*server*') -and
                 ($windowsver.version -gt 10.0.20348.0)) {
-                $Path = "$Script:workdir\Imports\Dotnet\Windows Server\$version"
+                $Path = "$script:workingDirectory\Imports\Dotnet\Windows Server\$version"
             }
             If ($windowsver.imagename -like '*Windows 11*') {
-                $Path = "$Script:workdir\Imports\Dotnet\Windows 11\$version"
+                $Path = "$script:workingDirectory\Imports\Dotnet\Windows 11\$version"
             }
             if ((Test-Path -Path $Path) -eq $false) {
                 try {
@@ -230,28 +230,28 @@ function Import-WWWindowsISO {
             if ($windowsver.ImageName -like 'Windows 11*') { $OS = 'Windows 11' }
             if ($windowsver.ImageName -like '*Server*') { $OS = 'Windows Server' }
             Write-WimWitchLog -Data "$OS detected" -Class Information
-            if ((Test-Path -Path $Script:workdir\imports\iso\$OS\$Version) -eq $false) {
+            if ((Test-Path -Path $script:workingDirectory\imports\iso\$OS\$Version) -eq $false) {
                 Write-WimWitchLog -Data 'Path does not exist. Creating...' -Class Information
-                New-Item -Path $Script:workdir\imports\iso\$OS\ -Name $version -ItemType Directory
+                New-Item -Path $script:workingDirectory\imports\iso\$OS\ -Name $version -ItemType Directory
             }
 
             Write-WimWitchLog -Data 'Copying boot folder...' -Class Information
-            Copy-Item -Path $iso\boot\ -Destination $Script:workdir\imports\iso\$OS\$Version\boot -Recurse -Force #-Exclude install.wim
+            Copy-Item -Path $iso\boot\ -Destination $script:workingDirectory\imports\iso\$OS\$Version\boot -Recurse -Force #-Exclude install.wim
 
             Write-WimWitchLog -Data 'Copying efi folder...' -Class Information
-            Copy-Item -Path $iso\efi\ -Destination $Script:workdir\imports\iso\$OS\$Version\efi -Recurse -Force #-Exclude install.wim
+            Copy-Item -Path $iso\efi\ -Destination $script:workingDirectory\imports\iso\$OS\$Version\efi -Recurse -Force #-Exclude install.wim
 
             Write-WimWitchLog -Data 'Copying sources folder...' -Class Information
-            Copy-Item -Path $iso\sources\ -Destination $Script:workdir\imports\iso\$OS\$Version\sources -Recurse -Force -Exclude install.wim
+            Copy-Item -Path $iso\sources\ -Destination $script:workingDirectory\imports\iso\$OS\$Version\sources -Recurse -Force -Exclude install.wim
 
             Write-WimWitchLog -Data 'Copying support folder...' -Class Information
-            Copy-Item -Path $iso\support\ -Destination $Script:workdir\imports\iso\$OS\$Version\support -Recurse -Force #-Exclude install.wim
+            Copy-Item -Path $iso\support\ -Destination $script:workingDirectory\imports\iso\$OS\$Version\support -Recurse -Force #-Exclude install.wim
 
             Write-WimWitchLog -Data 'Copying files in root folder...' -Class Information
-            Copy-Item $iso\autorun.inf -Destination $Script:workdir\imports\iso\$OS\$Version\ -Force
-            Copy-Item $iso\bootmgr -Destination $Script:workdir\imports\iso\$OS\$Version\ -Force
-            Copy-Item $iso\bootmgr.efi -Destination $Script:workdir\imports\iso\$OS\$Version\ -Force
-            Copy-Item $iso\setup.exe -Destination $Script:workdir\imports\iso\$OS\$Version\ -Force
+            Copy-Item $iso\autorun.inf -Destination $script:workingDirectory\imports\iso\$OS\$Version\ -Force
+            Copy-Item $iso\bootmgr -Destination $script:workingDirectory\imports\iso\$OS\$Version\ -Force
+            Copy-Item $iso\bootmgr.efi -Destination $script:workingDirectory\imports\iso\$OS\$Version\ -Force
+            Copy-Item $iso\setup.exe -Destination $script:workingDirectory\imports\iso\$OS\$Version\ -Force
         }
         #Dismount and finish
         try {
@@ -265,7 +265,4 @@ function Import-WWWindowsISO {
         Write-WimWitchLog -data 'Importing complete' -class Information
     }
 }
-
-
-
 

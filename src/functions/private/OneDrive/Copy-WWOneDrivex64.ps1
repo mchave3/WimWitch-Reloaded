@@ -53,7 +53,7 @@ function Copy-WWOneDriveX64 {
         }
         try {
             Write-WimWitchLog -data 'Copying updated OneDrive agent installer...' -Class Information
-            Copy-Item "$Script:workdir\updates\OneDrive\x64\OneDriveSetup.exe" -Destination "$mountpath\Windows\System32" -Force -ErrorAction Stop
+            Copy-Item "$script:workingDirectory\updates\OneDrive\x64\OneDriveSetup.exe" -Destination "$mountpath\Windows\System32" -Force -ErrorAction Stop
             Write-WimWitchLog -Data 'OneDrive installer successfully copied.' -Class Information
         } catch {
             Write-WimWitchLog -data "Couldn't copy the OneDrive installer file." -class Error
@@ -69,7 +69,4 @@ function Copy-WWOneDriveX64 {
         }
     }
 }
-
-
-
 

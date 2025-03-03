@@ -30,7 +30,7 @@ function Select-WWConfig {
 
     process {
         $SourceXML = New-Object System.Windows.Forms.OpenFileDialog -Property @{
-            InitialDirectory = "$Script:workdir\Configs"
+            InitialDirectory = "$script:workingDirectory\Configs"
             Filter           = 'XML (*.XML)|'
         }
         $null = $SourceXML.ShowDialog()
@@ -38,7 +38,4 @@ function Select-WWConfig {
         Get-WWConfiguration -filename $WPFSLLoadTextBox.text
     }
 }
-
-
-
 

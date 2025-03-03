@@ -32,23 +32,20 @@ function Import-WWVersionCallback {
     process {
         $WPFImportOtherCBWinVer.Items.Clear()
         if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows Server') {
-            Foreach ($Script:WinSrvVer in $Script:WinSrvVer) {
-                $WPFImportOtherCBWinVer.Items.Add($Script:WinSrvVer)
+            Foreach ($script:WinSrvVer in $script:WinSrvVer) {
+                $WPFImportOtherCBWinVer.Items.Add($script:WinSrvVer)
             }
         }
         if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 10') {
-            Foreach ($Script:Win10Ver in $Script:Win10Ver) {
-                $WPFImportOtherCBWinVer.Items.Add($Script:Win10Ver)
+            Foreach ($script:Win10Ver in $script:Win10Ver) {
+                $WPFImportOtherCBWinVer.Items.Add($script:Win10Ver)
             }
         }
         if ($WPFImportOtherCBWinOS.SelectedItem -eq 'Windows 11') {
-            Foreach ($Script:Win11Ver in $Script:Win11Ver) {
-                $WPFImportOtherCBWinVer.Items.Add($Script:Win11Ver)
+            Foreach ($script:Win11Ver in $script:Win11Ver) {
+                $WPFImportOtherCBWinVer.Items.Add($script:Win11Ver)
             }
         }
     }
 }
-
-
-
 

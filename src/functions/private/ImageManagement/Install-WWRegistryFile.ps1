@@ -64,7 +64,7 @@ function Install-WWRegistryFile {
             #write-host $RegFile
 
             Try {
-                $Destination = $Script:workdir + '\staging\'
+                $Destination = $script:workingDirectory + '\staging\'
                 Write-WimWitchLog -Data 'Copying file to staging folder...' -Class Information
                 Copy-Item -Path $regfile -Destination $Destination -Force -ErrorAction Stop  #Copy Source Registry File to staging
             } Catch {
@@ -73,7 +73,7 @@ function Install-WWRegistryFile {
             }
 
             $regtemp = Split-Path $regfile -Leaf #get file name
-            $regpath = $Script:workdir + '\staging' + '\' + $regtemp
+            $regpath = $script:workingDirectory + '\staging' + '\' + $regtemp
 
             # Write-Host $regpath
             Try {
@@ -119,7 +119,4 @@ function Install-WWRegistryFile {
         }
     }
 }
-
-
-
 

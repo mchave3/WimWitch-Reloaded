@@ -60,7 +60,7 @@ function Get-WWConfiguration {
             # Configure AppX packages
             $WPFAppxCheckBox.IsChecked = $settings.AppxIsEnabled
             $WPFAppxTextBox.text = $settings.AppxSelected -split ' '
-            $Script:SelectedAppx = $settings.AppxSelected -split ' '
+            $script:SelectedAppx = $settings.AppxSelected -split ' '
 
             # Set WIM configuration
             $WPFMISWimNameTextBox.text = $settings.WIMName
@@ -170,7 +170,4 @@ function Get-WWConfiguration {
         Update-Log -data 'Config file loaded successfully' -Class Information
     }
 }
-
-
-
 

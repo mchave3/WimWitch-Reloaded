@@ -82,14 +82,14 @@ function Invoke-WW19041Select {
 
         #Button_OK_Click
         $WPFWin10PUOK.Add_Click({
-                $Script:Win10VerDet = $WPFWin10PUCombo.SelectedItem
+                $script:Win10VerDet = $WPFWin10PUCombo.SelectedItem
                 $Form.Close()
                 return
             })
 
         #Button_Cancel_Click
         $WPFWin10PUCancel.Add_Click({
-                $Script:Win10VerDet = $null
+                $script:Win10VerDet = $null
                 Write-WimWitchLog -data 'User cancelled the confirmation dialog box' -Class Warning
                 $Form.Close()
                 return
@@ -98,7 +98,4 @@ function Invoke-WW19041Select {
         $Form.ShowDialog() | Out-Null
     }
 }
-
-
-
 

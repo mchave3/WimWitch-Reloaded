@@ -35,9 +35,9 @@ function Test-WWDotNetExist {
 
         if ($OSType -eq 'Windows 10') {
             if ($buildnum -eq '20H2') { $Buildnum = '2009' }
-            $DotNetFiles = "$Script:workdir\imports\DotNet\$buildnum"
+            $DotNetFiles = "$script:workingDirectory\imports\DotNet\$buildnum"
         }
-        if (($OSType -eq 'Windows 11') -or ($OSType -eq 'Windows Server')) { $DotNetFiles = "$Script:workdir\imports\DotNet\$OSType\$buildnum" }
+        if (($OSType -eq 'Windows 11') -or ($OSType -eq 'Windows Server')) { $DotNetFiles = "$script:workingDirectory\imports\DotNet\$OSType\$buildnum" }
 
 
         Test-Path -Path $DotNetFiles\*
@@ -49,7 +49,4 @@ function Test-WWDotNetExist {
         }
     }
 }
-
-
-
 

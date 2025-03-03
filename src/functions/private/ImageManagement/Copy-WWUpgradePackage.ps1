@@ -32,7 +32,7 @@ function Copy-WWUpgradePackage {
         #copy staging folder to destination with force parameter
         try {
             Write-WimWitchLog -data 'Copying updated media to Upgrade Package folder...' -Class Information
-            Copy-Item -Path $Script:workdir\staging\media\* -Destination $WPFMISTBUpgradePackage.text -Force -Recurse -ErrorAction Stop
+            Copy-Item -Path $script:workingDirectory\staging\media\* -Destination $WPFMISTBUpgradePackage.text -Force -Recurse -ErrorAction Stop
             Write-WimWitchLog -Data 'Updated media has been copied' -Class Information
         } catch {
             Write-WimWitchLog -Data "Couldn't copy the updated media to the upgrade package folder" -Class Error
@@ -40,7 +40,4 @@ function Copy-WWUpgradePackage {
         }
     }
 }
-
-
-
 

@@ -32,15 +32,11 @@ function Invoke-WWConfigFile {
     process {
         Write-WimWitchLog -Data "Loading the config file: $filename" -Class Information
         Get-WWConfiguration -filename $filename
-        Write-WimWitchLog -Data $WWScriptVer
-        Invoke-WWMakeItSo -appx $Script:SelectedAppx
+        Write-WimWitchLog -Data $script:WimWitchVersion
+        Invoke-WWMakeItSo -appx $script:SelectedAppx
         Write-Output ' '
         Write-Output '##########################################################'
         Write-Output ' '
     }
 }
-
-
-
-
 

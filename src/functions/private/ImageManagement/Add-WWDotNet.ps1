@@ -34,8 +34,8 @@ function Add-WWDotNet {
 
         #fix the build number 21h
 
-        if ($OSType -eq 'Windows 10') { $DotNetFiles = "$Script:workdir\imports\DotNet\$buildnum" }
-        if (($OSType -eq 'Windows 11') -or ($OSType -eq 'Windows Server')) { $DotNetFiles = "$Script:workdir\imports\DotNet\$OSType\$buildnum" }
+        if ($OSType -eq 'Windows 10') { $DotNetFiles = "$script:workingDirectory\imports\DotNet\$buildnum" }
+        if (($OSType -eq 'Windows 11') -or ($OSType -eq 'Windows Server')) { $DotNetFiles = "$script:workingDirectory\imports\DotNet\$OSType\$buildnum" }
 
 
         try {
@@ -50,7 +50,4 @@ function Add-WWDotNet {
         Write-WimWitchLog -Data '.Net 3.5 injection complete' -Class Information
     }
 }
-
-
-
 

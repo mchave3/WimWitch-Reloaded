@@ -109,7 +109,7 @@ function Save-WWSetting {
             Write-WimWitchLog -data "Saving configuration file $filename" -Class Information
 
             try {
-                $CurrentConfig | Export-Clixml -Path $Script:workdir\Configs\$filename -ErrorAction Stop
+                $CurrentConfig | Export-Clixml -Path $script:workingDirectory\Configs\$filename -ErrorAction Stop
                 Write-WimWitchLog -data 'file saved' -Class Information
             } catch {
                 Write-WimWitchLog -data "Couldn't save file" -Class Error
@@ -122,16 +122,16 @@ function Save-WWSetting {
 
             $CurrentConfig.CMImageType
 
-            if ((Test-Path -Path $Script:workdir\ConfigMgr\PackageInfo) -eq $False) {
+            if ((Test-Path -Path $script:workingDirectory\ConfigMgr\PackageInfo) -eq $False) {
                 Write-WimWitchLog -Data 'Creating ConfigMgr Package Info folder...' -Class Information
                 try {
-                    New-Item -ItemType Directory -Path $Script:workdir\ConfigMgr\PackageInfo -ErrorAction Stop
+                    New-Item -ItemType Directory -Path $script:workingDirectory\ConfigMgr\PackageInfo -ErrorAction Stop
                 } catch {
                     Write-WimWitchLog -Data "Couldn't create the folder. Likely a permission issue" -Class Error
                 }
             }
             try {
-                $CurrentConfig | Export-Clixml -Path $Script:workdir\ConfigMgr\PackageInfo\$filename -Force -ErrorAction Stop
+                $CurrentConfig | Export-Clixml -Path $script:workingDirectory\ConfigMgr\PackageInfo\$filename -Force -ErrorAction Stop
                 Write-WimWitchLog -data 'file saved' -Class Information
             } catch {
                 Write-WimWitchLog -data "Couldn't save file" -Class Error
@@ -139,8 +139,4 @@ function Save-WWSetting {
         }
     }
 }
-
-
-
-
 

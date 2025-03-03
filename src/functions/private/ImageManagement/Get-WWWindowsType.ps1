@@ -46,6 +46,3 @@ function Get-WWWindowsType {
     }
 }
 
-
-
-

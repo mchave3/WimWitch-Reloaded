@@ -55,7 +55,7 @@ function Write-WimWitchLog {
     )
 
     process {
-        $Log = "$Script:workdir\logging\WIMWitch.log"
+        $Log = "$script:workingDirectory\logging\WIMWitch.log"
         $LogString = "$(Get-Date) $Class  -  $Data"
         $HostString = "$(Get-Date) $Class  -  $Data"
 
@@ -78,7 +78,4 @@ function Write-WimWitchLog {
         }
     }
 }
-
-
-
 

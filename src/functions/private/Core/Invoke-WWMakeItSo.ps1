@@ -51,16 +51,16 @@ function Invoke-WWMakeItSo {
         Write-WimWitchLog -Data 'Checking to see if the staging path exists...' -Class Information
 
         try {
-            if (!(Test-Path "$Script:workdir\Staging" -PathType 'Any')) {
-                New-Item -ItemType Directory -Force -Path $Script:workdir\Staging -ErrorAction Stop
+            if (!(Test-Path "$script:workingDirectory\Staging" -PathType 'Any')) {
+                New-Item -ItemType Directory -Force -Path $script:workingDirectory\Staging -ErrorAction Stop
                 Write-WimWitchLog -Data 'Path did not exist, but it does now' -Class Information -ErrorAction Stop
             } else {
-                Remove-Item -Path $Script:workdir\Staging\* -Recurse -ErrorAction Stop
+                Remove-Item -Path $script:workingDirectory\Staging\* -Recurse -ErrorAction Stop
                 Write-WimWitchLog -Data 'The path existed, and it has been purged.' -Class Information -ErrorAction Stop
             }
         } catch {
             Write-WimWitchLog -data $_.Exception.Message -class Error
-            Write-WimWitchLog -data "Something is wrong with folder $Script:workdir\Staging. Try deleting manually if it exists" -Class Error
+            Write-WimWitchLog -data "Something is wrong with folder $script:workingDirectory\Staging. Try deleting manually if it exists" -Class Error
             return
         }
 
@@ -93,7 +93,7 @@ function Invoke-WWMakeItSo {
         Write-WimWitchLog -Data 'Copying source WIM to the staging folder' -Class Information
 
         try {
-            Copy-Item $WPFSourceWIMSelectWIMTextBox.Text -Destination "$Script:workdir\Staging" -ErrorAction Stop
+            Copy-Item $WPFSourceWIMSelectWIMTextBox.Text -Destination "$script:workingDirectory\Staging" -ErrorAction Stop
         } catch {
             Write-WimWitchLog -data $_.Exception.Message -class Error
             Write-WimWitchLog -Data "The file couldn't be copied. No idea what happened" -class Error
@@ -105,13 +105,13 @@ function Invoke-WWMakeItSo {
         #Rename copied source WiM
 
         try {
-            $wimname = Get-Item -Path $Script:workdir\Staging\*.wim -ErrorAction Stop
+            $wimname = Get-Item -Path $script:workingDirectory\Staging\*.wim -ErrorAction Stop
             Rename-Item -Path $wimname -NewName $WPFMISWimNameTextBox.Text -ErrorAction Stop
             Write-WimWitchLog -Data 'Copied source WIM has been renamed' -Class Information
         } catch {
             Write-WimWitchLog -data $_.Exception.Message -class Error
             Write-WimWitchLog -data "The copied source file couldn't be renamed. This shouldn't have happened." -Class Error
-            Write-WimWitchLog -data "Go delete the WIM from $Script:workdir\Staging\, then try again" -Class Error
+            Write-WimWitchLog -data "Go delete the WIM from $script:workingDirectory\Staging\, then try again" -Class Error
             return
         }
 
@@ -119,7 +119,7 @@ function Invoke-WWMakeItSo {
         Clear-WWOSIndex
 
         #Mount the WIM File
-        $wimname = Get-Item -Path $Script:workdir\Staging\*.wim
+        $wimname = Get-Item -Path $script:workingDirectory\Staging\*.wim
         Write-WimWitchLog -Data "Mounting source WIM $wimname" -Class Information
         Write-WimWitchLog -Data 'to mount point:' -Class Information
         Write-WimWitchLog -data $WPFMISMountTextBox.Text -Class Information
@@ -143,7 +143,7 @@ function Invoke-WWMakeItSo {
         }
 
         #Get Mounted WIM version and save it to a variable for useage later in the Function
-        $Script:MISWinVer = (Get-WWWindowsVersionNumber)
+        $script:MISWinVer = (Get-WWWindowsVersionNumber)
 
         #Pause after mounting
         If ($WPFMISCBPauseMount.IsChecked -eq $True) {
@@ -303,7 +303,7 @@ function Invoke-WWMakeItSo {
         try {
             Write-WimWitchLog -Data 'Attempting to copy log to mounted image' -Class Information
             $mountlogdir = $WPFMISMountTextBox.Text + '\windows\'
-            Copy-Item $Script:workdir\logging\WIMWitch.log -Destination $mountlogdir -ErrorAction Stop
+            Copy-Item $script:workingDirectory\logging\WIMWitch.log -Destination $mountlogdir -ErrorAction Stop
             $CopyLogExist = Test-Path $mountlogdir\WIMWitch.log -PathType Leaf
             if ($CopyLogExist -eq $true) { Write-WimWitchLog -Data 'Log filed copied successfully' -Class Information }
         } catch {
@@ -339,7 +339,7 @@ function Invoke-WWMakeItSo {
             Copy-WWStageISOMedia
             Write-WimWitchLog -Data 'Exporting install.wim to media staging folder...' -Class Information
             Export-WindowsImage -SourceImagePath $wimname -SourceIndex 1 `
-                -DestinationImagePath ($Script:workdir + '\staging\media\sources\install.wim') `
+                -DestinationImagePath ($script:workingDirectory + '\staging\media\sources\install.wim') `
                 -DestinationName ('WW - ' + $WPFSourceWIMImgDesTextBox.text) | Out-Null
         }
 
@@ -409,7 +409,7 @@ function Invoke-WWMakeItSo {
         #Clear out staging folder
         try {
             Write-WimWitchLog -Data 'Clearing staging folder...' -Class Information
-            Remove-Item $Script:workdir\staging\* -Force -Recurse -ErrorAction Stop
+            Remove-Item $script:workingDirectory\staging\* -Force -Recurse -ErrorAction Stop
         } catch {
             Write-WimWitchLog -Data 'Could not clear staging folder' -Class Warning
             Write-WimWitchLog -data $_.Exception.Message -class Error
@@ -418,7 +418,7 @@ function Invoke-WWMakeItSo {
         #Copy log here
         try {
             Write-WimWitchLog -Data 'Copying build log to target folder' -Class Information
-            Copy-Item -Path $Script:workdir\logging\WIMWitch.log -Destination $WPFMISWimFolderTextBox.Text -ErrorAction Stop
+            Copy-Item -Path $script:workingDirectory\logging\WIMWitch.log -Destination $WPFMISWimFolderTextBox.Text -ErrorAction Stop
             $logold = $WPFMISWimFolderTextBox.Text + '\WIMWitch.log'
             $lognew = $WPFMISWimFolderTextBox.Text + '\' + $WPFMISWimNameTextBox.Text + '.log'
             #Put log detection code here
@@ -439,7 +439,4 @@ function Invoke-WWMakeItSo {
         Write-WimWitchLog -Data "Job's done." -Class Information
     }
 }
-
-
-
 

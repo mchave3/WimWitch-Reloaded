@@ -24,20 +24,16 @@
 #>
 function Write-WWClosingMessage {
     [CmdletBinding()]
-    param(
-
-    )
+    param()
 
     process {
-        Write-Host ' '
-        Write-Host '##########################################################'
-        Write-Host ' '
-        Write-Host 'Thank you for using WimWitch Reloaded.'
-        Write-Host ' '
-        Write-Host '##########################################################'
+        Write-Host ''
+        Write-Host '############################################################'
+        Write-Host '#                                                          #'
+        Write-Host '#         Thank you for using WimWitch Reloaded!           #'
+        Write-Host '#                                                          #'
+        Write-Host '############################################################'
+        Write-Host ''
     }
 }
-
-
-
 

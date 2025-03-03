@@ -52,22 +52,22 @@ function Invoke-WW2XXXPreReq {
         if ($regvalues.UBR -lt '985') {
             Write-WimWitchLog -data 'The image requires an additional required SSU.' -class Information
             Write-WimWitchLog -data 'Checking to see if the required SSU exists...' -class Information
-            if ((Test-Path "$Script:workdir\updates\Windows 10\2XXX_prereq\SSU-19041.985-x64.cab") -eq $false) {
+            if ((Test-Path "$script:workingDirectory\updates\Windows 10\2XXX_prereq\SSU-19041.985-x64.cab") -eq $false) {
                 Write-WimWitchLog -data 'The required SSU does not exist. Downloading it now...' -class Information
 
                 try {
-                    Invoke-WebRequest -Uri $KB_URI -OutFile "$Script:workdir\staging\extract_me.cab" -ErrorAction stop
+                    Invoke-WebRequest -Uri $KB_URI -OutFile "$script:workingDirectory\staging\extract_me.cab" -ErrorAction stop
                 } catch {
                     Write-WimWitchLog -data 'Failed to download the update' -class Error
                     Write-WimWitchLog -data $_.Exception.Message -Class Error
                     return $true
                 }
 
-                if ((Test-Path "$Script:workdir\updates\Windows 10\2XXX_prereq") -eq $false) {
+                if ((Test-Path "$script:workingDirectory\updates\Windows 10\2XXX_prereq") -eq $false) {
 
                     try {
                         Write-WimWitchLog -data 'The folder for the required SSU does not exist. Creating it now...' -class Information
-                        New-Item -Path "$Script:workdir\updates\Windows 10" -Name '2XXX_prereq' `
+                        New-Item -Path "$script:workingDirectory\updates\Windows 10" -Name '2XXX_prereq' `
                             -ItemType Directory -ErrorAction stop | Out-Null
                         Write-WimWitchLog -data 'The folder has been created' -class information
                     } catch {
@@ -80,9 +80,9 @@ function Invoke-WW2XXXPreReq {
                 try {
                     Write-WimWitchLog -data 'Extracting the SSU from the May 2021 LCU...' -class Information
                     Start-Process $executable -args @(
-                        "`"$Script:workdir\staging\extract_me.cab`"",
+                        "`"$script:workingDirectory\staging\extract_me.cab`"",
                         '/f:*SSU*.CAB',
-                        "`"$Script:workdir\updates\Windows 10\2XXX_prereq`""
+                        "`"$script:workingDirectory\updates\Windows 10\2XXX_prereq`""
                     ) -Wait -ErrorAction Stop
                     Write-WimWitchLog 'Extraction of SSU was success' -class information
                 } catch {
@@ -94,7 +94,7 @@ function Invoke-WW2XXXPreReq {
 
                 try {
                     Write-WimWitchLog -data 'Deleting the staged LCU file...' -class Information
-                    Remove-Item -Path $Script:workdir\staging\extract_me.cab -Force -ErrorAction stop | Out-Null
+                    Remove-Item -Path $script:workingDirectory\staging\extract_me.cab -Force -ErrorAction stop | Out-Null
                     Write-WimWitchLog -data 'The source file for the SSU has been Baleeted!' -Class Information
                 } catch {
                     Write-WimWitchLog -data 'Could not delete the source package' -Class Error
@@ -107,7 +107,7 @@ function Invoke-WW2XXXPreReq {
 
             try {
                 Write-WimWitchLog -data 'Applying the SSU...' -class Information
-                Add-WindowsPackage -PackagePath "$Script:workdir\updates\Windows 10\2XXX_prereq" `
+                Add-WindowsPackage -PackagePath "$script:workingDirectory\updates\Windows 10\2XXX_prereq" `
                     -Path $WPFMISMountTextBox.Text -ErrorAction Stop | Out-Null
                 Write-WimWitchLog -data 'SSU applied successfully' -class Information
 
@@ -124,7 +124,4 @@ function Invoke-WW2XXXPreReq {
         return $false
     }
 }
-
-
-
 

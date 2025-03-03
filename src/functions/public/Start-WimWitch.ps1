@@ -69,10 +69,7 @@ function Start-WimWitch {
 
         [parameter(mandatory = $false, HelpMessage = 'CM Option')]
         [ValidateSet('New', 'Edit')]
-        [string]$CM = 'none',
-
-        [parameter(mandatory = $false, HelpMessage = 'Select working directory')]
-        [string]$Script:workdir
+        [string]$CM = 'none'
     )
 
     process {
@@ -83,19 +80,19 @@ function Start-WimWitch {
 
         # Check version and include pre-release if available
         if ($module) {
-            $WWScriptVer = $module.Version.ToString()
+            $script:WimWitchVersion = $module.Version.ToString()
             if ($module.PrivateData.PSData.PreRelease) {
-                $WWScriptVer += "-$($module.PrivateData.PSData.PreRelease)"
+                $script:WimWitchVersion += "-$($module.PrivateData.PSData.PreRelease)"
             }
         } else {
-            $WWScriptVer = "Version not found"
+            $script:WimWitchVersion = "Version not found"
         }
 
         #region XAML
         #Your XAML goes here
         $inputXML = Get-Content -Path "$PSScriptRoot\resources\UI\MainWindow.xaml" -Raw
 
-        $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window' -replace 'WWScriptVer', $WWScriptVer
+        $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window' -replace 'WWScriptVer', $script:WimWitchVersion
         [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
         [void][System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
         [xml]$XAML = $inputXML
@@ -103,7 +100,7 @@ function Start-WimWitch {
 
         $reader = (New-Object System.Xml.XmlNodeReader $xaml)
         try {
-        $Form = [Windows.Markup.XamlReader]::Load($reader)
+        $form = [Windows.Markup.XamlReader]::Load($reader)
         } catch {
         Write-Warning @"
 Unable to parse XML, with error: $($Error[0])
@@ -114,11 +111,12 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         }
 
         #===========================================================================
+
         # Load XAML Objects In PowerShell
         #===========================================================================
 
         $xaml.SelectNodes('//*[@Name]') | ForEach-Object { "trying item $($_.Name)" | Out-Null
-            try { Set-Variable -Name "WPF$($_.Name)" -Value $Form.FindName($_.Name) -ErrorAction Stop }
+            try { Set-Variable -Name "WPF$($_.Name)" -Value $form.FindName($_.Name) -ErrorAction Stop }
             catch { throw }
         }
 
@@ -136,13 +134,14 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $form.Icon = $bitmap
         # This is the toolbar icon and description
         $form.TaskbarItemInfo.Overlay = $bitmap
-        $form.TaskbarItemInfo.Description = "WIM Witch - $wwscriptver"
+        $form.TaskbarItemInfo.Description = "WimWitch-Reloaded - $script:WimWitchVersion"
         ###################################################
 
         #endregion XAML
 
         #region Main
         #===========================================================================
+
         # Run commands to set values of files and variables, etc.
         #===========================================================================
 
@@ -150,9 +149,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         Write-WWOpeningMessage
 
-        # Get-WWFormVariable #lists all WPF variables
-        $Script:workdir = Select-WWWorkingDirectory
-        Test-WWWorkingDirectory
+        # Sets the working directory
+        Invoke-WWWorkingDirectory
 
         # Clears out old logs from previous builds and checks for other folders
         Initialize-WimWitchEnvironment
@@ -161,9 +159,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         Test-WWAdministrator
 
         # Setting default values for the WPF form
-        $WPFMISWimFolderTextBox.Text = "$Script:workdir\CompletedWIMs"
-        $WPFMISMountTextBox.Text = "$Script:workdir\Mount"
-        $WPFJSONTextBoxSavePath.Text = "$Script:workdir\Autopilot"
+        $WPFMISWimFolderTextBox.Text = "$script:workingDirectory\CompletedWIMs"
+        $WPFMISMountTextBox.Text = "$script:workingDirectory\Mount"
+        $WPFJSONTextBoxSavePath.Text = "$script:workingDirectory\Autopilot"
 
 
         ##################
@@ -188,6 +186,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         ###################
 
         #===========================================================================
+
         # Set default values for certain variables
         #===========================================================================
 
@@ -202,9 +201,10 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         $WPFMISAppxTextBox.Text = 'False'
 
-        $Script:Win10VerDet = ''
+        $script:Win10VerDet = ''
 
         #===========================================================================
+
         # Section for Combo box Functions
         #===========================================================================
 
@@ -212,9 +212,9 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         $ObjectTypes = @('Language Pack', 'Local Experience Pack', 'Feature On Demand')
         $WinOS = @('Windows Server', 'Windows 10', 'Windows 11')
-        $Script:WinSrvVer = @('2019', '21H2')
-        $Script:Win10Ver = @('1809', '2004')
-        $Script:Win11Ver = @('21H2', '22H2', '23H2')
+        $script:WinSrvVer = @('2019', '21H2')
+        $script:Win10Ver = @('1809', '2004')
+        $script:Win11Ver = @('21H2', '22H2', '23H2')
 
         Foreach ($ObjectType in $ObjectTypes) { $WPFImportOtherCBType.Items.Add($ObjectType) | Out-Null }
         Foreach ($WinOS in $WinOS) { $WPFImportOtherCBWinOS.Items.Add($WinOS) | Out-Null }
@@ -448,6 +448,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         }
 
         #===========================================================================
+
         # Section for Buttons to call Functions
         #===========================================================================
 
@@ -471,7 +472,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFDriverDir5Button.Add_Click( { Select-WWDriverSource -DriverTextBoxNumber $WPFDriverDir5TextBox })
 
         #Make it So Button, which builds the WIM file
-        $WPFMISMakeItSoButton.Add_Click( { Invoke-WWMakeItSo -appx $Script:SelectedAppx })
+        $WPFMISMakeItSoButton.Add_Click( { Invoke-WWMakeItSo -appx $script:SelectedAppx })
 
         #Update OSDBuilder Button
         $WPFUpdateOSDBUpdateButton.Add_Click( {
@@ -483,7 +484,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
         $WPFUpdatesDownloadNewButton.Add_Click( { Sync-WWWindowsUpdateSource })
 
         #Select Appx packages to remove
-        $WPFAppxButton.Add_Click( { $Script:SelectedAppx = Select-WWAppx })
+        $WPFAppxButton.Add_Click( { $script:SelectedAppx = Select-WWAppx })
 
         #Select Autopilot path to save button
         $WPFJSONButtonSavePath.Add_Click( { Select-WWNewJSONDirectory })
@@ -603,8 +604,8 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
         #Button to Select ConfigMgr Image Package
         $WPFCMBSelectImage.Add_Click({
-            $image = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_ImagePackage `
-                -ComputerName $Script:SiteServer |
+            $image = Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" -ClassName SMS_ImagePackage `
+                -ComputerName $script:SiteServer |
                 Select-Object -Property Name, version, language, ImageOSVersion, PackageID, Description |
                 Out-GridView -Title 'Pick an image' -PassThru
 
@@ -696,6 +697,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
 
 
         #===========================================================================
+
         # Section for Checkboxes to call Functions
         #===========================================================================
 
@@ -981,6 +983,7 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             })
 
         #==========================================================
+
         #Run WIM Witch below
         #==========================================================
 
@@ -1024,9 +1027,30 @@ Ensure that there are NO SelectionChanged or TextChanged properties in your text
             $WPFImportBDJ.Visibility = 'Visible'
         }
 
+        # Check for module updates automatically
+        $form.Add_ContentRendered({
+            $updateResult = Invoke-WimWitchUpgrade
+            if ($updateResult -eq "restart") {
+                # Close the form first
+                $form.Close()
+
+                # Start a new PowerShell process with WimWitch-Reloaded
+                $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+                $startInfo.FileName = "powershell.exe"
+                $startInfo.Arguments = "-NoProfile -Command Import-Module WimWitch-Reloaded; Start-WimWitch"
+                $startInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Normal
+
+                # Start the process
+                [System.Diagnostics.Process]::Start($startInfo)
+
+                # Exit current PowerShell session completely
+                [Environment]::Exit(0)
+            }
+        })
+
         #Start GUI
         Write-WimWitchLog -data 'Starting WIM Witch GUI' -class Information
-        $Form.ShowDialog() | Out-Null #This starts the GUI
+        $form.ShowDialog() | Out-Null #This starts the GUI
 
         #endregion Main
     }

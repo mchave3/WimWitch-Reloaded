@@ -41,7 +41,7 @@ function Install-WWLanguagePack {
 
         $mountdir = $WPFMISMountTextBox.text
 
-        $LPSourceFolder = $Script:workdir + '\imports\Lang\' + $WinOS + '\' + $winver + '\LanguagePacks\'
+        $LPSourceFolder = $script:workingDirectory + '\imports\Lang\' + $WinOS + '\' + $winver + '\LanguagePacks\'
         $items = $WPFCustomLBLangPacks.items
 
         foreach ($item in $items) {
@@ -61,7 +61,4 @@ function Install-WWLanguagePack {
         Write-WimWitchLog -Data 'Language Pack injections complete' -Class Information
     }
 }
-
-
-
 

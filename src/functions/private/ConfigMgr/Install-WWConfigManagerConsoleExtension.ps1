@@ -40,7 +40,7 @@ function Install-WWConfigManagerConsoleExtension {
 	<Executable>
 		<FilePath>$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe</FilePath>
 		<Parameters> -ExecutionPolicy Bypass -File "$PSCommandPath" -auto -autofile
-            "$Script:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
+            "$script:workingDirectory\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
 	</Executable>
 </ActionDescription>
 "@
@@ -55,7 +55,7 @@ function Install-WWConfigManagerConsoleExtension {
 	<Executable>
 		<FilePath>$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe</FilePath>
 		<Parameters> -ExecutionPolicy Bypass -File "$PSCommandPath" -CM "Edit" -autofile
-            "$Script:workdir\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
+            "$script:workingDirectory\ConfigMgr\PackageInfo\##SUB:PackageID##"</Parameters>
 	</Executable>
 </ActionDescription>
 "@
@@ -105,7 +105,4 @@ function Install-WWConfigManagerConsoleExtension {
         Write-WimWitchLog -Data 'Console extension installation complete!' -Class Information
     }
 }
-
-
-
 

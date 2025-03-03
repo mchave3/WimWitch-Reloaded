@@ -30,7 +30,7 @@ function Clear-WWOSIndex {
 
     process {
         Write-WimWitchLog -Data 'Attempting to remove unwanted image indexes' -Class Information
-        $wimname = Get-Item -Path $Script:workdir\Staging\*.wim
+        $wimname = Get-Item -Path $script:workingDirectory\Staging\*.wim
 
         Write-WimWitchLog -Data "Found Image $wimname" -Class Information
         $IndexesAll = Get-WindowsImage -ImagePath $wimname | ForEach-Object { $_.ImageName }
@@ -47,7 +47,4 @@ function Clear-WWOSIndex {
         }
     }
 }
-
-
-
 

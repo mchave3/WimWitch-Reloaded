@@ -46,15 +46,15 @@ function Invoke-WWConfigManagerUpdateCatalog {
                 $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 10'"
             }
 
-            $Updates = (Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
-                -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
+            $Updates = (Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+                -ComputerName $script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
                 Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($ver)*$($Arch)*") } )
         }
 
         if (($prod -like '*Windows Server*') -and ($ver -eq '1607')) {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2016'"
-            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
-                -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
+            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+                -ComputerName $script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
                 Where-Object {
                     ($_.IsSuperseded -eq $false) -and
                     ($_.LocalizedDisplayName -notlike '* Next *') -and
@@ -66,31 +66,31 @@ function Invoke-WWConfigManagerUpdateCatalog {
 
         if (($prod -like '*Windows Server*') -and ($ver -eq '1809')) {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows Server 2019'"
-            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
-                -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
+            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+                -ComputerName $script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
                 Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($Arch)*") } )
         }
 
         if (($prod -like '*Windows Server*') -and ($ver -eq '21H2')) {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'"
-            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
-                -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
+            $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+                -ComputerName $script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
                 Where-Object { ($_.IsSuperseded -eq $false) -and ($_.LocalizedDisplayName -like "*$($Arch)*") } )
         }
 
         if ($prod -eq 'Windows 11') {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Windows 11'"
             if ($ver -eq '21H2') {
-                $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" `
-                    -ClassName SMS_SoftwareUpdate -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
+                $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($script:SiteCode)" `
+                    -ClassName SMS_SoftwareUpdate -ComputerName $script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
                     Where-Object {
                         ($_.IsSuperseded -eq $false) -and
                         ($_.LocalizedDisplayName -like "*Windows 11 for $($Arch)*")
                     } )
             }
             else {
-                $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" `
-                    -ClassName SMS_SoftwareUpdate -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
+                $Updates = (Get-CimInstance -CimNamespace "root\SMS\Site_$($script:SiteCode)" `
+                    -ClassName SMS_SoftwareUpdate -ComputerName $script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
                     Where-Object {
                         ($_.IsSuperseded -eq $false) -and
                         ($_.LocalizedDisplayName -like "*$($ver)*$($Arch)*")
@@ -100,8 +100,8 @@ function Invoke-WWConfigManagerUpdateCatalog {
 
         if ($WPFUpdatesCBEnableDynamic.IsChecked -eq $True) {
             if ($prod -eq 'Windows 10') {
-                $Updates = $Updates + (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" `
-                    -ClassName SMS_SoftwareUpdate -ComputerName $Script:SiteServer `
+                $Updates = $Updates + (Get-CimInstance -CimNamespace "root\SMS\Site_$($script:SiteCode)" `
+                    -ClassName SMS_SoftwareUpdate -ComputerName $script:SiteServer `
                     -Filter "LocalizedCategoryInstanceNames = 'Windows 10 Dynamic Update'" -ErrorAction Stop |
                     Where-Object {
                         ($_.IsSuperseded -eq $false) -and
@@ -109,8 +109,8 @@ function Invoke-WWConfigManagerUpdateCatalog {
                     } )
             }
             if ($prod -eq 'Windows 11') {
-                $Updates = $Updates + (Get-CimInstance -CimNamespace "root\SMS\Site_$($Script:SiteCode)" `
-                    -ClassName SMS_SoftwareUpdate -ComputerName $Script:SiteServer `
+                $Updates = $Updates + (Get-CimInstance -CimNamespace "root\SMS\Site_$($script:SiteCode)" `
+                    -ClassName SMS_SoftwareUpdate -ComputerName $script:SiteServer `
                     -Filter "LocalizedCategoryInstanceNames = 'Windows 11 Dynamic Update'" -ErrorAction Stop |
                     Where-Object {
                         ($_.IsSuperseded -eq $false) -and
@@ -123,7 +123,7 @@ function Invoke-WWConfigManagerUpdateCatalog {
         if ($null -eq $updates) {
             Write-WimWitchLog -data 'No updates found. Product is likely not synchronized. Continuing with build...' `
             -class Warning
-            Set-Location $Script:workdir
+            Set-Location $script:workingDirectory
             return
         }
 
@@ -137,16 +137,12 @@ function Invoke-WWConfigManagerUpdateCatalog {
                 #write-host "Display Name"
                 #write-host $update.LocalizedDisplayName
                 #            if ($ver -eq  "20H2"){$ver = "2009"} #Another 20H2 naming work around
-                Get-WWMicrosoftUpdateItem -FilePath "$Script:workdir\updates\$Prod\$ver\" `
+                Get-WWMicrosoftUpdateItem -FilePath "$script:workingDirectory\updates\$Prod\$ver\" `
                 -UpdateName $update.LocalizedDisplayName
             }
         }
 
-        Set-Location $Script:workdir
+        Set-Location $script:workingDirectory
     }
 }
-
-
-
-
 

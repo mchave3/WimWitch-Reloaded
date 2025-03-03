@@ -38,9 +38,9 @@ function Get-WWConfigManagerConnection {
             #$WPFCMTBSiteServer.text = "nt-tpmemcm.notorious.local"
             #$WPFCMTBSitecode.text = "NTP"
 
-            $Script:SiteCode = $WPFCMTBSitecode.text
-            $Script:SiteServer = $WPFCMTBSiteServer.Text
-            $Script:CMDrive = $WPFCMTBSitecode.text + ':'
+            $script:SiteCode = $WPFCMTBSitecode.text
+            $script:SiteServer = $WPFCMTBSiteServer.Text
+            $script:CMDrive = $WPFCMTBSitecode.text + ':'
 
             Write-WimWitchLog -Data 'ConfigMgr detected and properties set' -Class Information
             Write-WimWitchLog -Data 'ConfigMgr feature enabled' -Class Information
@@ -54,7 +54,7 @@ function Get-WWConfigManagerConnection {
                 SiteServer = $WPFCMTBSiteServer.text
             }
             Write-WimWitchLog -data 'Saving ConfigMgr site information...'
-            $CMConfig | Export-Clixml -Path $Script:workdir\ConfigMgr\SiteInfo.xml -ErrorAction Stop
+            $CMConfig | Export-Clixml -Path $script:workingDirectory\ConfigMgr\SiteInfo.xml -ErrorAction Stop
 
             if ($CM -eq 'New') {
                 $WPFCMCBImageType.SelectedIndex = 1
@@ -69,7 +69,4 @@ function Get-WWConfigManagerConnection {
         }
     }
 }
-
-
-
 

@@ -43,6 +43,3 @@ function Get-WWOSDSUSCurrentVersion {
     }
 }
 
-
-
-

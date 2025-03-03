@@ -36,12 +36,12 @@ function Initialize-WimWitchEnvironment {
 
     process {
         # Initialize or reset the log file
-        if (!(Test-Path -Path "$Script:workdir\logging\WIMWitch.Log" -PathType Leaf)) {
-            New-Item -ItemType Directory -Force -Path "$Script:workdir\Logging" | Out-Null
-            New-Item -Path "$Script:workdir\logging" -Name 'WIMWitch.log' -ItemType 'file' -Value '***Logging Started***' | Out-Null
+        if (!(Test-Path -Path "$script:workingDirectory\logging\WIMWitch.Log" -PathType Leaf)) {
+            New-Item -ItemType Directory -Force -Path "$script:workingDirectory\Logging" | Out-Null
+            New-Item -Path "$script:workingDirectory\logging" -Name 'WIMWitch.log' -ItemType 'file' -Value '***Logging Started***' | Out-Null
         } Else {
-            Remove-Item -Path "$Script:workdir\logging\WIMWitch.log"
-            New-Item -Path "$Script:workdir\logging" -Name 'WIMWitch.log' -ItemType 'file' -Value '***Logging Started***' | Out-Null
+            Remove-Item -Path "$script:workingDirectory\logging\WIMWitch.log"
+            New-Item -Path "$script:workingDirectory\logging" -Name 'WIMWitch.log' -ItemType 'file' -Value '***Logging Started***' | Out-Null
         }
 
         # Create and verify required folders
@@ -54,10 +54,10 @@ function Initialize-WimWitchEnvironment {
         )
 
         foreach ($folder in $requiredFolders) {
-            $FileExist = Test-Path -Path "$Script:workdir\$($folder.Path)"
+            $FileExist = Test-Path -Path "$script:workingDirectory\$($folder.Path)"
             if (-not $FileExist) {
                 Write-WimWitchLog -Data "$($folder.Description) folder does not exist. Creating..." -Class Warning
-                New-Item -ItemType Directory -Force -Path "$Script:workdir\$($folder.Path)" | Out-Null
+                New-Item -ItemType Directory -Force -Path "$script:workingDirectory\$($folder.Path)" | Out-Null
                 Write-WimWitchLog -Data "$($folder.Description) folder created" -Class Information
             } else {
                 Write-WimWitchLog -Data "$($folder.Description) folder exists" -Class Information
@@ -65,7 +65,4 @@ function Initialize-WimWitchEnvironment {
         }
     }
 }
-
-
-
 

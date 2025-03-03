@@ -83,12 +83,13 @@ function Initialize-BuildDirectory {
 #region Configuration
 # Core module settings
 $moduleName = "WimWitch-Reloaded"
-$moduleVersion = "1.0.0"
+$moduleVersion = "0.0.1"
 
 # Directory structure
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $sourceDir = Join-Path $projectRoot "src"
 $functionsDir = Join-Path $sourceDir "functions"
+$variablesDir = Join-Path $sourceDir "variables"
 $outputDir = Join-Path $projectRoot "outputs"
 $binariesDir = Join-Path $outputDir "binaries"
 $moduleOutput = Join-Path $outputDir $moduleName
@@ -172,7 +173,32 @@ $moduleContent = @"
 # Auto-generated file - Do not modify
 "@
 
+# First, add all variables to ensure they're initialized before functions
+Write-WWLog "Processing variable files" -Type Info
+if (Test-Path $variablesDir) {
+    # Process private variables first, then public
+    $varFolders = @('private', 'public')
+
+    foreach ($folder in $varFolders) {
+        $varFolderPath = Join-Path $variablesDir $folder
+        if (Test-Path $varFolderPath) {
+            Write-WWLog "Processing $folder variable files" -Type Info
+            $varFiles = Get-ChildItem -Path $varFolderPath -Recurse -File -Filter "*.ps1"
+
+            foreach ($file in $varFiles) {
+                Write-WWLog "Adding variable file: $($file.Name)" -Type Info
+                $moduleContent += "`n# Source: $($file.FullName)`n"
+                $moduleContent += (Get-Content $file.FullName -Raw)
+                $moduleContent += "`n"
+            }
+        }
+    }
+} else {
+    Write-WWLog "No variables directory found at: $variablesDir" -Type Warning
+}
+
 # Combine function files
+Write-WWLog "Processing function files" -Type Info
 foreach ($folder in $requiredFolders) {
     $functionPath = Join-Path $functionsDir $folder
     if (Test-Path $functionPath) {
@@ -219,7 +245,7 @@ $manifestParams = @{
     Path               = $manifestFile
     RootModule         = "$moduleName.psm1"
     ModuleVersion      = $moduleVersion
-    Author             = "WimWitch Team"
+    Author             = "Mickaël CHAVE"
     Description        = "WimWitch-Reloaded Module"
     PowerShellVersion  = "5.1"
     RequiredModules    = @('OSDSUS', 'OSDUpdate')

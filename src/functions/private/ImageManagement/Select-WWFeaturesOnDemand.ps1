@@ -1726,7 +1726,7 @@ function Select-WWFeaturesOnDemand {
         #Out-GridView -title "Select Local Experience Packs" -PassThru)
 
         if ($WinOS -eq 'Windows 11') {
-            $items = (Get-ChildItem -Path "$Script:workdir\imports\fods\Windows 11\$winver" |
+            $items = (Get-ChildItem -Path "$script:workingDirectory\imports\fods\Windows 11\$winver" |
                 Select-Object -Property Name |
                 Out-GridView -Title 'Select Featres' -PassThru)
             foreach ($item in $items) {
@@ -1740,7 +1740,4 @@ function Select-WWFeaturesOnDemand {
         }
     }
 }
-
-
-
 

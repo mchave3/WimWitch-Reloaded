@@ -38,9 +38,9 @@ function Find-WWConfigManager {
                 $WPFCMTBSitecode.text = $MEMCMsiteinfo.'Site Code'
                 #$WPFCMTBSiteServer.text = "nt-tpmemcm.notorious.local"
                 #$WPFCMTBSitecode.text = "NTP"
-                $Script:SiteCode = $WPFCMTBSitecode.text
-                $Script:SiteServer = $WPFCMTBSiteServer.Text
-                $Script:CMDrive = $WPFCMTBSitecode.text + ':'
+                $script:SiteCode = $WPFCMTBSitecode.text
+                $script:SiteServer = $WPFCMTBSiteServer.Text
+                $script:CMDrive = $WPFCMTBSitecode.text + ':'
                 Write-WimWitchLog -Data 'ConfigMgr detected and properties set' -Class Information
                 Write-WimWitchLog -Data 'ConfigMgr feature enabled' -Class Information
                 $sitecodetext = 'Site Code - ' + $WPFCMTBSitecode.text
@@ -59,9 +59,9 @@ function Find-WWConfigManager {
                 return $false
             }
         }
-        if ((Test-Path -Path $Script:workdir\ConfigMgr\SiteInfo.XML) -eq $true) {
+        if ((Test-Path -Path $script:workingDirectory\ConfigMgr\SiteInfo.XML) -eq $true) {
             Write-WimWitchLog -data 'ConfigMgr Site info XML found' -class Information
-            $settings = Import-Clixml -Path $Script:workdir\ConfigMgr\SiteInfo.xml -ErrorAction Stop
+            $settings = Import-Clixml -Path $script:workingDirectory\ConfigMgr\SiteInfo.xml -ErrorAction Stop
             $WPFCMTBSitecode.text = $settings.SiteCode
             $WPFCMTBSiteServer.text = $settings.SiteServer
             Write-WimWitchLog -Data 'ConfigMgr detected and properties set' -Class Information
@@ -70,9 +70,9 @@ function Find-WWConfigManager {
             Write-WimWitchLog -Data $sitecodetext -Class Information
             $siteservertext = 'Site Server - ' + $WPFCMTBSiteServer.text
             Write-WimWitchLog -Data $siteservertext -Class Information
-            $Script:SiteCode = $WPFCMTBSitecode.text
-            $Script:SiteServer = $WPFCMTBSiteServer.Text
-            $Script:CMDrive = $WPFCMTBSitecode.text + ':'
+            $script:SiteCode = $WPFCMTBSitecode.text
+            $script:SiteServer = $WPFCMTBSiteServer.Text
+            $script:CMDrive = $WPFCMTBSitecode.text + ':'
             return $true
         }
         Write-WimWitchLog -Data 'ConfigMgr not detected' -Class Information
@@ -81,7 +81,4 @@ function Find-WWConfigManager {
         Return $false
     }
 }
-
-
-
 

@@ -123,23 +123,23 @@ function Get-WWMicrosoftUpdateItem {
             $WMIQueryFilter = "LocalizedCategoryInstanceNames = 'Microsoft Server operating system-21H2'"
         }
 
-        $UpdateItem = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" -ClassName SMS_SoftwareUpdate `
-            -ComputerName $Script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
+        $UpdateItem = Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" -ClassName SMS_SoftwareUpdate `
+            -ComputerName $script:SiteServer -Filter $WMIQueryFilter -ErrorAction Stop |
             Where-Object { ($_.LocalizedDisplayName -eq $UpdateName) }
 
         if ($null -ne $UpdateItem) {
 
             # Determine the ContentID instances associated with the update instance
-            $UpdateItemContentIDs = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
-                -ClassName SMS_CIToContent -ComputerName $Script:SiteServer -Filter "CI_ID = $($UpdateItem.CI_ID)" `
+            $UpdateItemContentIDs = Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" `
+                -ClassName SMS_CIToContent -ComputerName $script:SiteServer -Filter "CI_ID = $($UpdateItem.CI_ID)" `
                 -ErrorAction Stop
             if ($null -ne $UpdateItemContentIDs) {
 
                 # Account for multiple content ID items
                 foreach ($UpdateItemContentID in $UpdateItemContentIDs) {
                     # Get the content files associated with current Content ID
-                    $UpdateItemContent = Get-CimInstance -Namespace "root\SMS\Site_$($Script:SiteCode)" `
-                        -ClassName SMS_CIContentFiles -ComputerName $Script:SiteServer `
+                    $UpdateItemContent = Get-CimInstance -Namespace "root\SMS\Site_$($script:SiteCode)" `
+                        -ClassName SMS_CIContentFiles -ComputerName $script:SiteServer `
                         -Filter "ContentID = $($UpdateItemContentID.ContentID)" -ErrorAction Stop
                     if ($null -ne $UpdateItemContent) {
                         # Create new custom object for the update content
@@ -199,8 +199,4 @@ function Get-WWMicrosoftUpdateItem {
         return $ReturnValue | Out-Null
     }
 }
-
-
-
-
 
